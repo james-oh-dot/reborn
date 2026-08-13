@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Rebornsoft — Technology for Interactive Environments">
+  <title>Rebornsoft — Prototype v0.1</title>
+  <style>
+    :root {
+      --bg-ink:#090a0b; --bg-graphite:#111315; --bg-paper:#f6f5f1;
+      --text-dark:#f2f1ed; --text-light:#141618;
+      --muted-dark:rgba(242,241,237,.60); --muted-light:rgba(20,22,24,.58);
+      --accent:#5d72ff; --accent-soft:#a9b4ff;
+      --line-dark:rgba(255,255,255,.14); --line-light:rgba(20,22,24,.14);
+      --gutter:clamp(32px,4vw,72px); --section:clamp(112px,12vw,200px);
+      --max-wide:1760px; --ease:cubic-bezier(.16,1,.3,1);
+    }
+    *{box-sizing:border-box} html{scroll-behavior:smooth;background:var(--bg-ink)}
+    body{margin:0;background:var(--bg-ink);color:var(--text-dark);font-family:Pretendard,Inter,Arial,"Noto Sans KR",sans-serif;-webkit-font-smoothing:antialiased}
+    button,a{font:inherit} a{color:inherit;text-decoration:none} button{color:inherit}
+    :focus-visible{outline:2px solid var(--accent-soft);outline-offset:5px}
+    .wrap{width:min(100%,var(--max-wide));margin:auto;padding-inline:var(--gutter)}
+    .eyebrow,.meta{font-size:12px;line-height:1.2;letter-spacing:.12em;text-transform:uppercase}
+    .site-header{position:fixed;inset:0 0 auto;z-index:1000;height:80px;transition:background .28s var(--ease),border-color .28s var(--ease);border-bottom:1px solid transparent}
+    .site-header.scrolled{background:rgba(9,10,11,.86);backdrop-filter:blur(14px);border-color:var(--line-dark)}
+    .nav{height:100%;display:flex;align-items:center;justify-content:space-between}
+    .wordmark{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:.10em}
+    .wordmark-mark{width:9px;height:9px;background:#e30613}
+    .nav-right,.nav-links,.lang{display:flex;align-items:center}.nav-right{gap:34px}.nav-links{gap:32px}
+    .nav a,.lang button,.menu-trigger{font-size:12px;font-weight:600;letter-spacing:.08em;background:none;border:0;padding:8px 0;cursor:pointer}
+    .lang{gap:7px}.lang button{color:rgba(242,241,237,.45)}.lang button.active{color:var(--text-dark)}.lang span{opacity:.35}
+    .menu-trigger{display:none}.mobile-panel{display:none}
+
+    /* H01 Hero */
+    .hero{position:relative;min-height:100svh;overflow:hidden;isolation:isolate;background:#050607}
+    .hero-media,.hero-overlay{position:absolute;inset:0}
+    .hero-media{width:100%;height:104%;object-fit:cover;object-position:center;opacity:0;transform:scale(1.015);transition:opacity 1.2s var(--ease),transform 1.2s var(--ease)}
+    .loaded .hero-media{opacity:1;transform:scale(1)}
+    .hero-overlay{background:linear-gradient(90deg,rgba(9,10,11,.82) 0%,rgba(9,10,11,.48) 42%,rgba(9,10,11,.08) 72%,rgba(9,10,11,.22) 100%)}
+    .hero-content{position:relative;z-index:2;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding-top:120px;padding-bottom:clamp(72px,10vh,116px)}
+    .hero-copy{max-width:1050px}.hero .eyebrow{color:rgba(242,241,237,.68);margin-bottom:24px}
+    .hero-title{margin:0;max-width:1000px;font-weight:560;opacity:0;transform:translateY(36px);transition:opacity .9s .22s var(--ease),transform .9s .22s var(--ease)}
+    html[lang=ko] .hero-title{font-size:clamp(52px,6.1vw,92px);line-height:1.04;letter-spacing:-.035em}
+    html[lang=en] .hero-title{font-size:clamp(60px,7vw,112px);line-height:.94;letter-spacing:-.045em;max-width:1050px}
+    .hero-body{font-size:clamp(19px,1.5vw,24px);line-height:1.55;max-width:650px;margin:30px 0 0;color:rgba(242,241,237,.78);opacity:0;transform:translateY(24px);transition:opacity .8s .42s var(--ease),transform .8s .42s var(--ease)}
+    .hero .eyebrow,.hero-link,.scroll-marker{opacity:0;transform:translateY(18px);transition:opacity .7s .12s var(--ease),transform .7s .12s var(--ease)}
+    .hero-link{display:inline-block;margin-top:34px;font-size:12px;letter-spacing:.1em;transition-delay:.56s}.hero-link span{display:inline-block;transition:transform .22s}.hero-link:hover span{transform:translateX(4px)}
+    .loaded .hero-title,.loaded .hero-body,.loaded .hero .eyebrow,.loaded .hero-link,.loaded .scroll-marker{opacity:1;transform:none}
+    .scroll-marker{position:absolute;right:var(--gutter);bottom:58px;z-index:3;display:flex;align-items:center;gap:12px;color:rgba(242,241,237,.55);font-size:10px;letter-spacing:.14em;transition-delay:.56s}.scroll-marker:after{content:"";width:44px;height:1px;background:currentColor}
+
+    /* H02 Evolution */
+    .evolution{background:var(--bg-paper);color:var(--text-light);padding-block:var(--section)}
+    .editorial-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px}
+    .evolution .section-label{grid-column:1/3;color:var(--muted-light)}
+    .evolution-main{grid-column:4/12}.evolution h2{margin:0;font-size:clamp(42px,4.4vw,68px);line-height:1.08;letter-spacing:-.04em;font-weight:560;max-width:930px}
+    html[lang=en] .evolution h2{font-size:clamp(48px,5vw,80px)}
+    .evolution-body{margin:64px 0 0 auto;max-width:670px;font-size:clamp(19px,1.6vw,24px);line-height:1.65;color:var(--muted-light)}
+    .dna{grid-column:4/12;margin-top:100px;padding-top:18px;border-top:1px solid var(--line-light);font-size:clamp(11px,1vw,14px);letter-spacing:.11em;word-spacing:.35em}
+    .reveal{opacity:0;transform:translateY(36px);transition:opacity .85s var(--ease),transform .85s var(--ease)}.reveal.is-visible{opacity:1;transform:none}
+
+    /* H03 Capabilities */
+    .capabilities{position:relative;background:var(--bg-ink);min-height:300vh}
+    .cap-sticky{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center}
+    .cap-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;align-items:center;width:100%}
+    .cap-copy{grid-column:1/6;position:relative;z-index:2;height:min(68vh,760px)}.cap-kicker{position:absolute;inset:0 0 auto;color:var(--muted-dark);display:flex;justify-content:space-between;margin:0}
+    .cap-step{position:absolute;left:0;right:0;opacity:0;transform:translateY(26px);pointer-events:none;transition:opacity .75s var(--ease),transform .75s var(--ease)}
+    .cap-step{top:29%}.cap-step.active{position:absolute;opacity:1;transform:none;pointer-events:auto}.step-no{color:var(--accent-soft);margin-bottom:22px}
+    .cap-step h2{font-size:clamp(44px,4.2vw,70px);line-height:1.02;letter-spacing:-.04em;margin:0 0 24px;font-weight:540}.cap-lead{font-size:clamp(19px,1.6vw,24px);line-height:1.35;margin:0 0 20px}.cap-body{max-width:530px;color:var(--muted-dark);font-size:16px;line-height:1.7;margin:0}
+    .cap-stage{grid-column:6/13;position:relative;height:min(68vh,760px);border-left:1px solid var(--line-dark);overflow:hidden;background:var(--bg-graphite)}
+    .visual{position:absolute;inset:0;opacity:0;transform:scale(1.02);transition:opacity .8s var(--ease),transform .8s var(--ease)}.visual.active{opacity:1;transform:scale(1)}
+    .sensor{background:radial-gradient(circle at 52% 47%,rgba(93,114,255,.10),transparent 24%),#0d0f11}
+    .sensor:before,.sensor:after{content:"";position:absolute;border:1px solid rgba(242,241,237,.28);border-radius:50%;inset:20%}.sensor:after{inset:34%;border-color:var(--accent)}
+    .sensor-grid{position:absolute;inset:0;background-image:linear-gradient(var(--line-dark) 1px,transparent 1px),linear-gradient(90deg,var(--line-dark) 1px,transparent 1px);background-size:56px 56px;mask-image:linear-gradient(to bottom,transparent,#000 25%,#000 75%,transparent)}
+    .sensor-node{position:absolute;left:52%;top:47%;width:9px;height:9px;background:var(--accent);box-shadow:0 0 0 12px rgba(93,114,255,.12)}
+    .digital{display:grid;grid-template-columns:1fr 1fr;gap:5px;background:#0b0c0d;padding:5px}.digital img{width:100%;height:100%;object-fit:cover;filter:saturate(.82) brightness(.76)}
+    .spatial{background:#0d0f11;perspective:800px}.spatial-lines{position:absolute;inset:7% 9%;border:1px solid var(--line-dark);transform:rotateX(58deg) rotateZ(-9deg);background:repeating-linear-gradient(90deg,transparent 0 52px,var(--line-dark) 53px),repeating-linear-gradient(0deg,transparent 0 52px,var(--line-dark) 53px)}
+    .spatial-volume{position:absolute;left:26%;top:19%;width:48%;height:58%;border:1px solid rgba(242,241,237,.45);box-shadow:inset 0 0 0 1px rgba(93,114,255,.25)}
+    .spatial-volume:before{content:"VISITOR / MEDIA / SPACE";position:absolute;left:20px;bottom:18px;font-size:10px;letter-spacing:.15em;color:var(--muted-dark)}
+    .integration{position:absolute;z-index:5;left:0;right:0;bottom:clamp(32px,5vh,60px);display:grid;grid-template-columns:repeat(3,1fr);align-items:center;color:var(--muted-dark);font-size:10px;letter-spacing:.11em}
+    .integration:before{content:"";position:absolute;left:5%;right:5%;top:4px;height:1px;background:linear-gradient(90deg,var(--accent) var(--progress,0%),var(--line-dark) var(--progress,0%))}.integration span{position:relative;padding-top:22px}.integration span:before{content:"";position:absolute;top:0;width:9px;height:9px;border:1px solid rgba(242,241,237,.4);background:var(--bg-ink)}.integration span.active:before{background:var(--accent);border-color:var(--accent)}
+    .integration-note{position:absolute;z-index:6;right:var(--gutter);bottom:clamp(32px,5vh,60px);max-width:330px;text-align:right;color:var(--muted-dark);font-size:13px;line-height:1.5;transform:translateY(4px)}
+
+    /* H04 Project */
+    .project{background:var(--bg-paper);color:var(--text-light);padding-block:var(--section)}
+    .project-top{display:flex;justify-content:space-between;padding-bottom:24px;border-bottom:1px solid var(--line-light);margin-bottom:clamp(48px,6vw,88px)}
+    .project-status{font-weight:700;letter-spacing:.09em}.project-media{width:82%;margin-left:auto;display:grid;grid-template-columns:1.08fr .92fr;gap:6px;overflow:hidden;background:#d8d7d2}
+    .project-media img{display:block;width:100%;height:clamp(240px,29vw,520px);object-fit:cover}.project-media img:first-child{grid-row:span 2;height:100%}.project-media img:nth-child(n+2){height:calc((clamp(240px,29vw,520px) - 6px)/2)}
+    .project-info{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;margin-top:52px}.project-title{grid-column:1/6;margin:0;font-size:clamp(54px,7vw,112px);letter-spacing:-.055em;line-height:.9;font-weight:560}.project-copy{grid-column:7/12}.project-cap{color:var(--muted-light);margin-bottom:28px}.project-description{font-size:clamp(18px,1.5vw,22px);line-height:1.65;margin:0 0 34px}.text-link{font-size:12px;font-weight:650;letter-spacing:.1em;border-bottom:1px solid currentColor;padding-bottom:7px}.text-link span{display:inline-block;transition:transform .22s}.text-link:hover span{transform:translateX(4px)}
+    .truth-note{margin-top:14px;text-align:right;color:var(--muted-light);font-size:10px;letter-spacing:.05em}
+
+    @media(max-width:1023px){.nav-links{display:none}.menu-trigger{display:block}.capabilities{min-height:auto;padding-block:120px}.cap-sticky{position:relative;height:auto;overflow:visible}.cap-grid{display:block}.cap-copy{display:block;height:auto}.cap-kicker{position:relative;margin-bottom:68px}.cap-step{position:relative!important;top:auto;opacity:1;transform:none;margin-bottom:32px;padding-top:72px;border-top:1px solid var(--line-dark)}.cap-step:first-of-type{padding-top:0;border-top:0}.cap-stage{display:none}.integration{position:relative;bottom:auto;margin-top:72px;padding-top:24px}.integration-note{position:relative;right:auto;bottom:auto;margin:38px 0 0;max-width:540px;text-align:left}.project-media{width:100%}}
+    @media(max-width:767px){:root{--gutter:20px;--section:104px}.site-header{height:68px}.hero{min-height:max(92svh,720px)}.hero-content{min-height:max(92svh,720px);padding-bottom:72px}.hero-media{object-position:60% center}.hero-overlay{background:linear-gradient(180deg,rgba(9,10,11,.12),rgba(9,10,11,.28) 40%,rgba(9,10,11,.92) 86%,rgba(9,10,11,.98))}.scroll-marker{display:none}html[lang=ko] .hero-title{font-size:clamp(43px,12vw,58px)}html[lang=en] .hero-title{font-size:clamp(48px,13vw,64px);line-height:.94}.hero-body{font-size:18px;margin-top:24px}.hero-link{margin-top:28px}.editorial-grid{display:block}.evolution .section-label{margin-bottom:64px}.evolution-body{margin-top:46px}.dna{margin-top:64px;font-size:10px;line-height:1.8;word-spacing:0}.cap-step h2{font-size:43px}.cap-kicker{display:block}.cap-kicker span:last-child{display:block;margin-top:12px}.integration{font-size:8px}.integration-note{font-size:13px}.project-top{align-items:flex-end}.project-media{display:block}.project-media img,.project-media img:first-child,.project-media img:nth-child(n+2){height:auto;margin-bottom:5px}.project-media img:nth-child(n+3){display:none}.project-info{display:block}.project-title{font-size:72px;margin-bottom:44px}.project-copy{margin-left:18%}.mobile-panel{display:flex;position:fixed;inset:0;z-index:999;background:var(--bg-ink);padding:112px 20px 40px;flex-direction:column;justify-content:space-between;opacity:0;visibility:hidden;transform:translateY(-16px);transition:.45s var(--ease)}.mobile-panel.open{opacity:1;visibility:visible;transform:none}.mobile-links{display:flex;flex-direction:column;gap:20px}.mobile-links a{font-size:38px;letter-spacing:-.03em}.mobile-lang{display:flex;gap:16px}.mobile-lang button{background:none;border:0;padding:12px 0;font-size:14px;color:var(--muted-dark)}.mobile-lang button.active{color:var(--text-dark)}body.menu-open{overflow:hidden}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.hero-media{transform:none!important}.reveal{opacity:1!important;transform:none!important}}
+  </style>
+</head>
+<body>
+  <header class="site-header" id="header">
+    <nav class="nav wrap" aria-label="주요 내비게이션" data-aria-ko="주요 내비게이션" data-aria-en="Primary navigation">
+      <a class="wordmark" href="#hero" aria-label="Rebornsoft home"><span class="wordmark-mark" aria-hidden="true"></span>REBORN SOFT</a>
+      <div class="nav-right">
+        <div class="nav-links">
+          <a href="#evolution" data-ko="COMPANY" data-en="COMPANY">COMPANY</a><a href="#capabilities" data-ko="CAPABILITIES" data-en="CAPABILITIES">CAPABILITIES</a><a href="#project" data-ko="PROJECTS" data-en="PROJECTS">PROJECTS</a><a href="#project" data-ko="CONTACT →" data-en="CONTACT →">CONTACT →</a>
+        </div>
+        <div class="lang" aria-label="Language"><button type="button" data-lang="ko">KR</button><span>/</span><button type="button" data-lang="en">EN</button></div>
+        <button class="menu-trigger" type="button" aria-expanded="false" aria-controls="mobile-menu">MENU</button>
+      </div>
+    </nav>
+  </header>
+  <div class="mobile-panel" id="mobile-menu" aria-hidden="true"><nav class="mobile-links" aria-label="Mobile navigation"><a href="#evolution">COMPANY</a><a href="#capabilities">CAPABILITIES</a><a href="#project">PROJECTS</a><a href="#project">CONTACT →</a></nav><div class="mobile-lang"><button type="button" data-lang="ko">KR</button><button type="button" data-lang="en">EN</button></div></div>
+  <main>
+    <section class="hero" id="hero" aria-labelledby="hero-title">
+      <img class="hero-media" src="../assets/hero/HERO_REBORNSOFT_PROTOTYPE_A1_v0.1.png" alt="" fetchpriority="high">
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="hero-content wrap"><div class="hero-copy"><div class="eyebrow">TECHNOLOGY + EXPERIENCE</div><h1 class="hero-title" id="hero-title" data-ko="인터랙티브 환경을 위한 기술" data-en="Technology for Interactive Environments">인터랙티브 환경을 위한 기술</h1><p class="hero-body" data-ko="사람과 시스템, 디지털과 실제 공간이 연결되는 환경을 만듭니다." data-en="We build environments where people, digital systems, and physical spaces connect.">사람과 시스템, 디지털과 실제 공간이 연결되는 환경을 만듭니다.</p><a class="hero-link" href="#project" data-ko="프로젝트 보기 <span>→</span>" data-en="VIEW PROJECTS <span>→</span>">프로젝트 보기 <span>→</span></a></div></div>
+      <div class="scroll-marker">SCROLL</div>
+    </section>
+
+    <section class="evolution" id="evolution" aria-labelledby="evolution-title"><div class="wrap editorial-grid"><div class="section-label meta">01 / EVOLUTION</div><div class="evolution-main"><h2 class="reveal" id="evolution-title" data-ko="기술의 범위를 넓혀 왔습니다." data-en="Technology, applied at a larger scale.">기술의 범위를 넓혀 왔습니다.</h2><p class="evolution-body reveal" data-ko="얼굴과 움직임을 인식하는 기술에서 시작해, 사용자가 활동하는 디지털 환경과 실제 공간 경험까지 적용 범위를 확장해 왔습니다." data-en="Rebornsoft began with technologies that recognize people and movement, then expanded into digital environments and physical experiences built around interaction.">얼굴과 움직임을 인식하는 기술에서 시작해, 사용자가 활동하는 디지털 환경과 실제 공간 경험까지 적용 범위를 확장해 왔습니다.</p></div><div class="dna reveal">PERCEPTION → INTERACTION → ENVIRONMENT → EXPERIENCE</div></div></section>
+
+    <section class="capabilities" id="capabilities" aria-labelledby="cap-title"><div class="cap-sticky"><div class="wrap cap-grid"><div class="cap-copy"><div class="cap-kicker meta"><span>02 / CAPABILITIES</span><span>FROM PERCEPTION TO EXPERIENCE</span></div>
+      <article class="cap-step active" data-step="0"><div class="step-no meta">CORE 01</div><h2 id="cap-title" data-ko="지능형 인터랙션" data-en="Intelligent Interaction">지능형 인터랙션</h2><p class="cap-lead" data-ko="사람과 행동을 이해하는 기술." data-en="Technology that understands people and movement.">사람과 행동을 이해하는 기술.</p><p class="cap-body" data-ko="컴퓨터 비전, 동작인식, 추적 기술을 기반으로 시스템이 사용자를 인식하고 반응하도록 만듭니다." data-en="Computer vision, motion recognition, and tracking enable systems to sense and respond to users.">컴퓨터 비전, 동작인식, 추적 기술을 기반으로 시스템이 사용자를 인식하고 반응하도록 만듭니다.</p></article>
+      <article class="cap-step" data-step="1"><div class="step-no meta">CORE 02</div><h2 data-ko="디지털 환경" data-en="Digital Environments">디지털 환경</h2><p class="cap-lead" data-ko="사람이 활동할 수 있는 디지털 공간." data-en="Digital spaces built for interaction.">사람이 활동할 수 있는 디지털 공간.</p><p class="cap-body" data-ko="가상환경, 플랫폼, 디지털트윈을 통해 연결·협업·상호작용이 가능한 환경을 구축합니다." data-en="Virtual environments, platforms, and digital twins create spaces for connection, collaboration, and use.">가상환경, 플랫폼, 디지털트윈을 통해 연결·협업·상호작용이 가능한 환경을 구축합니다.</p></article>
+      <article class="cap-step" data-step="2"><div class="step-no meta">CORE 03</div><h2 data-ko="경험 시스템" data-en="Experience Systems">경험 시스템</h2><p class="cap-lead" data-ko="기술을 실제 경험으로 확장합니다." data-en="Extending technology into real-world experiences.">기술을 실제 경험으로 확장합니다.</p><p class="cap-body" data-ko="소프트웨어, 미디어, VR·AR, 시뮬레이터와 콘텐츠를 실제 공간과 방문자 경험에 연결합니다." data-en="Software, media, VR/AR, simulation, and content come together in physical spaces and visitor experiences.">소프트웨어, 미디어, VR·AR, 시뮬레이터와 콘텐츠를 실제 공간과 방문자 경험에 연결합니다.</p></article>
+      <div class="integration" aria-label="Technology Integration"><span class="active">INTELLIGENT</span><span>DIGITAL</span><span>EXPERIENCE</span></div></div>
+      <div class="cap-stage" aria-hidden="true"><div class="visual sensor active"><div class="sensor-grid"></div><i class="sensor-node"></i></div><div class="visual digital"><img src="../assets/products/7cubic/7cubic-ui-01.png" alt=""><img src="../assets/products/7cubic/7cubic-ui-02.png" alt=""><img src="../assets/products/7cubic/7cubic-ui-03.png" alt=""><img src="../assets/products/7cubic/7cubic-ui-04.png" alt=""></div><div class="visual spatial"><div class="spatial-lines"></div><div class="spatial-volume"></div></div></div>
+      <p class="integration-note" data-ko="프로젝트에 필요한 기술을 하나의 작동 구조로 연결합니다." data-en="We bring multiple technologies together around the needs of each project.">프로젝트에 필요한 기술을 하나의 작동 구조로 연결합니다.</p></div></div></section>
+
+    <section class="project" id="project" aria-labelledby="project-title"><div class="wrap"><div class="project-top meta"><span>03 / PROJECTS</span><strong class="project-status" data-ko="출시 · 2022" data-en="RELEASED · 2022">출시 · 2022</strong></div><div class="project-media reveal"><img src="../assets/products/7cubic/7cubic-ui-01.png" alt="7 Cubic 가상공간의 숲과 캠프 환경" data-alt-ko="7 Cubic 가상공간의 숲과 캠프 환경" data-alt-en="Forest and camp environment in the 7 Cubic platform"><img src="../assets/products/7cubic/7cubic-ui-02.png" alt="7 Cubic 가상 회의 공간" data-alt-ko="7 Cubic 가상 회의 공간" data-alt-en="Virtual meeting environment in the 7 Cubic platform"><img src="../assets/products/7cubic/7cubic-ui-03.png" alt="7 Cubic 가상 상담 공간" data-alt-ko="7 Cubic 가상 상담 공간" data-alt-en="Virtual consultation environment in the 7 Cubic platform"></div><div class="truth-note" data-ko="실제 제품 UI · IR PDF 추출본 · 프로토타입 전용" data-en="ACTUAL PRODUCT UI · EXTRACTED FROM IR PDF · PROTOTYPE ONLY">실제 제품 UI · IR PDF 추출본 · 프로토타입 전용</div><div class="project-info"><h2 class="project-title" id="project-title">7 Cubic</h2><div class="project-copy"><div class="project-cap meta" data-ko="디지털 환경" data-en="DIGITAL ENVIRONMENTS">디지털 환경</div><p class="project-description" data-ko="가상공간에서 회의·상담·협업을 진행할 수 있도록 개발한 3D 플랫폼. CBT를 거쳐 2022년 정식 출시했습니다." data-en="A 3D environment developed for virtual meetings, consultation, and collaboration. The platform moved from closed beta to release in 2022.">가상공간에서 회의·상담·협업을 진행할 수 있도록 개발한 3D 플랫폼. CBT를 거쳐 2022년 정식 출시했습니다.</p><a class="text-link" href="#project" data-ko="프로젝트 보기 <span>→</span>" data-en="VIEW PROJECT <span>→</span>">프로젝트 보기 <span>→</span></a></div></div></div></section>
+  </main>
+  <script>
+    (()=>{
+      const root=document.documentElement, body=document.body, header=document.getElementById('header');
+      const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const setLanguage=(lang)=>{lang=lang==='en'?'en':'ko';root.lang=lang;localStorage.setItem('rebornsoft_lang',lang);document.querySelectorAll('[data-ko][data-en]').forEach(el=>el.innerHTML=el.dataset[lang]);document.querySelectorAll('[data-alt-ko]').forEach(el=>el.alt=el.dataset['alt'+(lang==='ko'?'Ko':'En')]);document.querySelectorAll('[data-aria-ko]').forEach(el=>el.setAttribute('aria-label',el.dataset['aria'+(lang==='ko'?'Ko':'En')]));document.querySelectorAll('[data-lang]').forEach(btn=>{btn.classList.toggle('active',btn.dataset.lang===lang);btn.setAttribute('aria-pressed',btn.dataset.lang===lang)});};
+      setLanguage(localStorage.getItem('rebornsoft_lang')||'ko');document.querySelectorAll('[data-lang]').forEach(btn=>btn.addEventListener('click',()=>setLanguage(btn.dataset.lang)));
+      requestAnimationFrame(()=>body.classList.add('loaded'));addEventListener('scroll',()=>header.classList.toggle('scrolled',scrollY>48),{passive:true});
+      const trigger=document.querySelector('.menu-trigger'),panel=document.getElementById('mobile-menu');const closeMenu=()=>{trigger.setAttribute('aria-expanded','false');panel.classList.remove('open');panel.setAttribute('aria-hidden','true');body.classList.remove('menu-open')};trigger.addEventListener('click',()=>{const open=trigger.getAttribute('aria-expanded')!=='true';trigger.setAttribute('aria-expanded',open);panel.classList.toggle('open',open);panel.setAttribute('aria-hidden',!open);body.classList.toggle('menu-open',open)});panel.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
+      const observer=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add('is-visible')),{threshold:.18,rootMargin:'0px 0px -8%'});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+      const cap=document.querySelector('.capabilities'),steps=[...document.querySelectorAll('.cap-step')],visuals=[...document.querySelectorAll('.visual')],nodes=[...document.querySelectorAll('.integration span')],line=document.querySelector('.integration');
+      const updateCaps=()=>{if(innerWidth<1024||reduce)return;const rect=cap.getBoundingClientRect(),range=cap.offsetHeight-innerHeight;const p=Math.max(0,Math.min(1,-rect.top/range));const idx=Math.min(2,Math.floor(p*3));steps.forEach((x,i)=>x.classList.toggle('active',i===idx));visuals.forEach((x,i)=>x.classList.toggle('active',i===idx));nodes.forEach((x,i)=>x.classList.toggle('active',i<=idx));line.style.setProperty('--progress',`${idx*50}%`)};
+      addEventListener('scroll',updateCaps,{passive:true});addEventListener('resize',updateCaps);updateCaps();
+      if(!reduce){addEventListener('scroll',()=>{if(scrollY<innerHeight){const y=scrollY/innerHeight;document.querySelector('.hero-media').style.transform=`translateY(${y*3}%) scale(1)`;document.querySelector('.hero-copy').style.transform=`translateY(${-y*2}vh)`}},{passive:true})}
+    })();
+  </script>
+</body>
+</html>
