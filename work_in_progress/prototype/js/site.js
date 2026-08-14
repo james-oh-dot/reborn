@@ -31,3 +31,10 @@ const span=()=>{const first=cards[0].getBoundingClientRect(),last=cards[cards.le
 const update=()=>{ticking=false;if(!pinned()){strip.style.removeProperty('--rail-x');return}const travel=track.offsetHeight-sticky.offsetHeight;if(travel<=0)return;const headerH=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))||80;const p=clamp((headerH-track.getBoundingClientRect().top)/travel,0,1);strip.style.setProperty('--rail-x',(-p*span()).toFixed(1)+'px')};
 const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);reduce.addEventListener?.('change',onScroll);update()})();
 (()=>{const block=document.querySelector('.reveal-block'),spacer=document.querySelector('.reveal-spacer');if(!block||!spacer)return;const sync=()=>{spacer.style.height=block.offsetHeight+'px'};sync();addEventListener('resize',sync,{passive:true});addEventListener('load',sync);if(document.fonts?.ready)document.fonts.ready.then(sync)})();
+(()=>{const block=document.querySelector('.reveal-block'),main=document.querySelector('main');if(!block||!main)return;if(!document.body.classList.contains('subpage'))return;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+/* Dim the closing block while it is still mostly hidden, easing back to its own
+   colour as the last of it is uncovered. */
+const MAX=.34;let ticking=false;
+const update=()=>{ticking=false;const h=block.offsetHeight||1;const revealed=Math.max(0,Math.min(h,innerHeight-Math.max(0,main.getBoundingClientRect().bottom)));const p=revealed/h;block.style.setProperty('--reveal-dim',((1-p)*MAX).toFixed(3))};
+const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};
+addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);update()})();
