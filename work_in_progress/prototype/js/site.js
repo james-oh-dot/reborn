@@ -31,6 +31,13 @@ track.style.setProperty('--dna-rot',rot.toFixed(2)+'deg');raf=requestAnimationFr
 (()=>{const rail=document.querySelector('.work-rail');if(!rail)return;const track=rail.querySelector('.rail-track'),sticky=rail.querySelector('.rail-sticky'),strip=rail.querySelector('.rail-strip'),cards=[...rail.querySelectorAll('.visual-card')];if(!track||!strip||cards.length<2)return;const reduce=matchMedia('(prefers-reduced-motion: reduce)');const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));const pinned=()=>innerWidth>=1024&&!reduce.matches;let ticking=false;
 /* Distance the strip must travel so the LAST card lands where the FIRST began. */
 const span=()=>{const first=cards[0].getBoundingClientRect(),last=cards[cards.length-1].getBoundingClientRect();return Math.max(0,last.left-first.left)};
+/* The horizontal span grows with every card, but the vertical scroll budget was a flat
+   220vh — so adding cards silently sped the rail up. Budget per GAP instead of per rail
+   (220vh over the original three gaps = 73.3vh each) and the pace stays put no matter
+   how many cards the rail holds. */
+const VH_PER_GAP=73.3;
+const setBudget=()=>track.style.setProperty('--rail-scroll',((cards.length-1)*VH_PER_GAP).toFixed(0)+'vh');
+setBudget();
 const update=()=>{ticking=false;if(!pinned()){strip.style.removeProperty('--rail-x');return}const travel=track.offsetHeight-sticky.offsetHeight;if(travel<=0)return;const headerH=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))||80;const p=clamp((headerH-track.getBoundingClientRect().top)/travel,0,1);strip.style.setProperty('--rail-x',(-p*span()).toFixed(1)+'px')};
 const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);reduce.addEventListener?.('change',onScroll);update()})();
 (()=>{const block=document.querySelector('.reveal-block'),spacer=document.querySelector('.reveal-spacer');if(!block||!spacer)return;
