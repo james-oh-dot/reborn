@@ -26,7 +26,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .dna-track{display:flex;width:max-content;transform:translate3d(var(--dna-x,0px),0,0)}
 .dna-half{display:flex;flex:none}
 .dna-seq{display:inline-flex;align-items:center;white-space:nowrap;
-  font-size:clamp(24px,3.4vw,58px);font-weight:600;letter-spacing:.04em;color:var(--deep)}
+  font-size:clamp(12px,1.7vw,29px);font-weight:600;letter-spacing:.04em;color:var(--deep)}
 .dna-arrow{font-style:normal;margin-inline:clamp(14px,1.6vw,30px);color:rgba(20,22,24,.45)}
 .dna-star{font-weight:400;color:var(--deep);margin-inline:clamp(60px,9vw,170px)}
 
@@ -592,13 +592,15 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
    dark/graphite/light rhythm. Rather than overriding each rule, the palette
    tokens are redefined inside those sections so existing rules resolve to
    light-surface values on their own. */
-.subpage main>section:not(.page-hero){
+.subpage main>section:not(.page-hero),
+.subpage .reveal-block>section{
   --ink:#F9F5EF;--graphite:#F9F5EF;--paper:#F9F5EF;--deep:#000;--warm:#000;
   --muted-d:rgba(0,0,0,.62);--muted-l:rgba(0,0,0,.62);
   --line-d:rgba(0,0,0,.14);--line-l:rgba(0,0,0,.14);
   --blue-soft:var(--blue);
   background:#F9F5EF;color:#000}
 /* Media wells lose their dark fill so contained artwork sits on the same paper. */
+.subpage .reveal-block>section .media,
 .subpage main>section:not(.page-hero) .media,
 .subpage main>section:not(.page-hero) .evidence-media,
 .subpage main>section:not(.page-hero) .evidence-media.contain img,
@@ -610,3 +612,40 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
   --line-d:rgba(255,255,255,.14);--blue-soft:#a9b4ff;color:#f2f1ed}
 .subpage .visual-card{background:#090a0b}
 .subpage .sco-evidence{background:#0b0d0f}
+
+/* ---------- CLOSING BLOCK — sits behind the page and is uncovered on scroll ----------
+   The last section plus the footer are fixed at the bottom of the viewport, one
+   layer below <main>. As main scrolls up past the viewport bottom the block is
+   revealed from the bottom edge upward, like a panel opening behind the page.
+   .reveal-spacer adds the scroll distance that reveal needs (height set in JS). */
+main{position:relative;z-index:1;background:var(--ink)}
+.subpage main{background:#F9F5EF}
+.reveal-block{position:fixed;left:0;right:0;bottom:0;z-index:0;
+  display:flex;flex-direction:column;justify-content:flex-end;min-height:100svh}
+.reveal-spacer{height:100svh}
+
+/* Closing sections: generous air, everything centred, CTA last. */
+.closing-block{flex:1;display:flex;align-items:center;
+  padding-block:clamp(120px,14vh,220px)!important}
+.closing-block>.wrap{width:min(100%,var(--wide))}
+.closing-block .bridge{display:flex;flex-direction:column;align-items:center;text-align:center;gap:0}
+.closing-block .bridge-copy{display:flex;flex-direction:column;align-items:center;max-width:820px}
+.closing-block .section-title{max-width:20ch}
+.closing-block .bridge-support{max-width:52ch;margin-top:28px}
+.closing-block .bridge-links{align-items:center;margin-top:clamp(48px,6vh,88px)}
+.closing-block .current-grid,.closing-block .contact-profile .bridge{text-align:center}
+
+@media(max-width:767px){
+  .closing-block{padding-block:clamp(96px,12vh,160px)!important}
+}
+/* No fixed layering when motion is reduced — the block simply ends the page. */
+@media(prefers-reduced-motion:reduce){
+  .reveal-block{position:static;min-height:0}
+  .reveal-spacer{display:none}
+}
+
+/* The closing block lives outside <main>, so it carries its own surface. */
+.reveal-block{background:var(--graphite)}
+.subpage .reveal-block{background:#F9F5EF}
+.subpage .reveal-block .footer{background:#F9F5EF;color:rgba(0,0,0,.62);border-top-color:rgba(0,0,0,.14)}
+.subpage .reveal-block .footer a{color:#000}
