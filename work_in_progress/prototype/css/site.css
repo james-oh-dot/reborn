@@ -764,3 +764,29 @@ main{position:relative;z-index:1;background:var(--ink)}
 html[lang=en] .integration-ko{display:none}
 /* Stacked on phones: labels return to the flow, no nudge needed. */
 @media(max-width:767px){.integration-ko{margin-top:0}}
+
+/* ---------- SUBPAGE HERO KEY COPY — two forced lines ----------
+   Each line is its own span (not a <br>) because setLang rewrites textContent,
+   which would strip a break element on every language toggle. Sized so the
+   longest line still holds two lines down to small phones. */
+.hero-lines span{display:block}
+.subpage .page-hero .hero-lines{
+  max-width:none;
+  font-size:clamp(21px,6.4vw,76px);
+  line-height:1.05;
+  letter-spacing:-.035em;
+  text-wrap:balance}
+.subpage .page-hero .body-large{margin-top:clamp(26px,3vw,44px)}
+
+/* ---------- HOME HERO — oversized background wordmark ----------
+   Sits above the photograph and below the copy: it should register as texture,
+   not as the headline. Runs from mid-screen out past the right edge, where the
+   hero's own overflow:hidden trims it. */
+.hero-bg-type{
+  position:absolute;z-index:1;left:44%;bottom:clamp(28px,7vh,104px);
+  white-space:nowrap;pointer-events:none;user-select:none;
+  font-size:clamp(96px,15vw,260px);font-weight:800;letter-spacing:-.06em;
+  line-height:.8;color:rgba(255,255,255,.05)}
+@media(max-width:767px){
+  .hero-bg-type{left:22%;bottom:clamp(96px,18vh,150px);font-size:clamp(84px,26vw,140px)}
+}
