@@ -249,3 +249,22 @@ const apply=()=>{const want=KEYS.some(k=>body.classList.contains(k));if(want===l
   /* restore instantly — html{scroll-behavior:smooth} would otherwise animate the jump */
   const prev=root.style.scrollBehavior;root.style.scrollBehavior='auto';scrollTo(0,y);root.style.scrollBehavior=prev}};
 new MutationObserver(apply).observe(body,{attributes:true,attributeFilter:['class']});apply()})();
+/* Deep link from HOME 05 / CURRENT PROJECT. A bare #hash makes the browser paint the
+   page already scrolled, which reads as a broken jump rather than as arriving at a
+   section. Start at the top instead, wait for images so the target has settled at its
+   final offset, then glide down. Reduced motion goes straight there. */
+(()=>{const id='ongoing-project';if(location.hash!=='#'+id)return;
+const section=document.getElementById(id);if(!section)return;
+/* Aim at the content, not the section box: the section carries ~270px of top padding,
+   so landing on its edge would show the visitor a screen of empty space. */
+const target=section.querySelector('.wrap')||section;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if('scrollRestoration' in history)history.scrollRestoration='manual';
+if(reduce){addEventListener('load',()=>target.scrollIntoView());return}
+scrollTo(0,0);
+/* A timer, not rAF: rAF is starved while the tab is backgrounded, which would leave the
+   visitor sitting at the top with no idea the link went anywhere. */
+let done=false;
+const go=()=>{if(done)return;done=true;setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'start'}),80)};
+if(document.readyState==='complete')go();else addEventListener('load',go,{once:true});
+setTimeout(go,1200)})();
