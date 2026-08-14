@@ -934,11 +934,14 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 @media(min-width:768px){
   .sco-head{margin-top:clamp(9.5px,calc(1.5625vw - 6.5px),16.6px)}
 }
-/* 34px floor, not 36: the 768px rail is only 162px wide and "노아의 방주" measures 156px
-   at 36px — six pixels of slack, which a different font build would eat. */
-@media(min-width:768px){
+/* The rail title is a section title like every other, so it takes --h2 rather than a
+   scale of its own. It wraps to three lines in the narrow rail; that is accepted.
+   Only the hard floor is held back: the 768px rail is 162px wide and a four-syllable
+   word at 40px very nearly fills it, so below 900px the title steps down enough to
+   keep clear of the edge. */
+@media(min-width:768px) and (max-width:899px){
   .work-page .work-current .sco-head h2,
-  .sco-head h2{font-size:clamp(34px,3.6vw,54px)}
+  .sco-head h2{font-size:34px}
 }
 .sco-status-line{display:flex;align-items:center;gap:9px;margin:22px 0 0;
   font-size:11px;font-weight:700;letter-spacing:.13em;color:var(--blue-soft)}
@@ -1071,3 +1074,8 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .site-header .lang button{position:relative;z-index:1}
 .site-header .lang button.active{background:transparent;color:#08080a}
 @media(max-width:1023px){.lang-pill{top:2px;bottom:2px}}
+
+/* HOME 05 flagship banner is the one title deliberately above --h2: it is the single
+   full-bleed band on the page and carries the current-scale statement. */
+.home-page .sco-hero-title{font-size:clamp(66px,6.7vw,104px)}
+@media(max-width:767px){.home-page .sco-hero-title{font-size:52px}}
