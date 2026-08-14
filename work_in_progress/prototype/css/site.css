@@ -229,3 +229,190 @@
   .link,.brand,.footer a{position:relative}
   .link::after,.brand::after,.footer a::after{content:"";position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:44px}
 }
+
+/* ============================================================
+   VISUAL AUTHORITY PASS 02
+   01 HOME SCO flagship band · 02 CTA system · 03 CORE density
+   04 type mid-tier · 05 background rhythm · 07 hero + interaction
+   ============================================================ */
+
+:root{
+  --fs-sub:clamp(27px,2.6vw,38px);
+  --cta:13px;
+  --cta-lg:15px;
+}
+
+/* ---------- 02. CTA SYSTEM — links become real targets ---------- */
+.link{
+  gap:14px;
+  margin-top:36px;
+  padding:15px 24px;
+  border:1px solid currentColor;
+  border-bottom-width:1px;
+  font-size:var(--cta);
+  letter-spacing:.07em;
+  transition:background .34s var(--ease),color .34s var(--ease),border-color .34s var(--ease);
+}
+.link span{font-size:1.15em;line-height:1}
+.link-lg{padding:19px 32px;font-size:var(--cta-lg);margin-top:40px}
+.light .link:hover{background:var(--deep);color:var(--paper);border-color:var(--deep)}
+.dark .link:hover,.graphite .link:hover,.home-hero .link:hover,.page-hero .link:hover{
+  background:var(--warm);color:var(--ink);border-color:var(--warm)}
+.link:focus-visible{outline:2px solid var(--blue-soft);outline-offset:4px}
+.bridge-links{gap:16px}
+.footer a{padding:10px 0;font-weight:650}
+
+/* ---------- 01. HOME · SCO FLAGSHIP BAND ---------- */
+.home-page .home-sco{padding-block:clamp(118px,10vw,168px)}
+.home-page .home-sco .sco-head{
+  display:grid;grid-template-columns:4fr 8fr;gap:clamp(30px,5vw,80px);
+  align-items:end;margin-bottom:clamp(46px,5vw,74px)}
+.home-page .home-sco .sco-headline .status{display:block;margin-bottom:18px}
+.home-page .home-sco .sco-headline h2{
+  margin:0;font-weight:700;letter-spacing:-.045em;line-height:1;
+  font-size:clamp(50px,6.4vw,100px);max-width:14ch}
+.sco-band{
+  position:relative;margin:0;width:100%;overflow:hidden;background:#0b0d0f;
+  height:clamp(330px,42vw,620px)}
+.sco-band img{
+  display:block;width:100%;height:100%;object-fit:cover;object-position:center 56%;
+  transform:scale(1.03);transition:transform 1.2s var(--ease)}
+.sco-band:hover img{transform:scale(1)}
+.sco-band:after{
+  content:"";position:absolute;inset:auto 0 0;height:54%;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(9,10,11,.86))}
+.sco-band figcaption{
+  position:absolute;z-index:1;left:var(--gutter);bottom:24px;
+  padding:8px 12px;border:1px solid var(--line-d);background:rgba(9,10,11,.55);
+  backdrop-filter:blur(10px);color:var(--warm);
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+.home-page .home-sco .sco-foot{
+  display:grid;grid-template-columns:7fr 5fr;gap:clamp(34px,5vw,86px);
+  align-items:start;margin-top:clamp(42px,4.5vw,70px)}
+.home-page .home-sco .sco-foot-copy .body-large{margin:0;max-width:640px;color:var(--muted-d)}
+.home-page .home-sco .sco-disclaimer{margin:22px 0 0}
+.sco-inset{
+  position:relative;margin:0;overflow:hidden;background:#0b0d0f;
+  border:1px solid var(--line-d);height:clamp(210px,20vw,300px)}
+.sco-inset img{display:block;width:100%;height:100%;object-fit:cover;
+  transition:transform .8s var(--ease)}
+.sco-inset:hover img{transform:scale(1.03)}
+.sco-inset figcaption{
+  position:absolute;left:12px;bottom:10px;padding:6px 9px;
+  background:rgba(9,10,11,.78);backdrop-filter:blur(8px);
+  color:rgba(242,241,237,.85);font-size:10px;letter-spacing:.13em;text-transform:uppercase}
+@media(max-width:1023px){
+  .home-page .home-sco .sco-head{grid-template-columns:1fr;gap:22px;align-items:start}
+  .home-page .home-sco .sco-foot{grid-template-columns:1fr;gap:40px}
+}
+@media(max-width:767px){
+  .home-page .home-sco{padding-block:104px}
+  .home-page .home-sco .sco-headline h2{font-size:44px}
+  .sco-band{height:64vw;min-height:270px}
+  .sco-band figcaption{bottom:16px}
+  .sco-inset{height:54vw}
+  .link{padding:15px 20px}
+  .link-lg{padding:17px 24px;font-size:14px}
+}
+
+/* ---------- 02b. CTA scale by context ---------- */
+.home-hero .link,.page-hero .link,.bridge .link,.current-copy .link,.sco-foot-copy .link{
+  padding:19px 32px;font-size:var(--cta-lg)}
+.section-head .link{margin-top:0}
+.bridge-links .link{margin-top:0}
+.bridge-links{gap:14px}
+
+/* ---------- 03. CORE 01 — perception visual gains real density ---------- */
+.technical-visual{
+  background-image:
+    linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);
+  background-size:46px 46px}
+.technical-visual:before{
+  content:"";position:absolute;inset:33%;border-radius:50%;
+  border:1px solid rgba(93,114,255,.5)}
+.technical-visual:after{
+  inset:21%;border:1px solid rgba(93,114,255,.3);
+  box-shadow:0 0 0 1px rgba(93,114,255,.08),inset 0 0 110px rgba(93,114,255,.16)}
+.evidence-window{
+  right:7%;bottom:11%;width:58%;padding:9px;
+  border-color:rgba(169,180,255,.5);
+  box-shadow:0 26px 80px rgba(0,0,0,.55),0 0 0 1px rgba(93,114,255,.12)}
+.evidence-window:before{
+  content:"";position:absolute;inset:-10px;pointer-events:none;opacity:.9;
+  background:
+    linear-gradient(var(--blue-soft),var(--blue-soft)) 0 0/15px 1px no-repeat,
+    linear-gradient(var(--blue-soft),var(--blue-soft)) 0 0/1px 15px no-repeat,
+    linear-gradient(var(--blue-soft),var(--blue-soft)) 100% 0/15px 1px no-repeat,
+    linear-gradient(var(--blue-soft),var(--blue-soft)) 100% 0/1px 15px no-repeat,
+    linear-gradient(var(--blue-soft),var(--blue-soft)) 0 100%/15px 1px no-repeat,
+    linear-gradient(var(--blue-soft),var(--blue-soft)) 0 100%/1px 15px no-repeat,
+    linear-gradient(var(--blue-soft),var(--blue-soft)) 100% 100%/15px 1px no-repeat,
+    linear-gradient(var(--blue-soft),var(--blue-soft)) 100% 100%/1px 15px no-repeat}
+.evidence-window span{font-size:10px;letter-spacing:.13em}
+
+/* ---------- 03b. Stop muting the strongest assets ---------- */
+.product-primary,.product-details img,.cap-visual.photo img,.proof-feature img,
+.company-credibility .proof-feature img{filter:none}
+
+/* ---------- 04. Type scale — restore the missing middle ---------- */
+.proof-row h3{font-size:clamp(21px,1.9vw,27px)}
+.proof-row p{font-size:16px}
+.fact h3{font-size:var(--fs-sub)}
+.archive-col h3{font-size:var(--fs-sub)}
+.timeline-row strong{font-size:clamp(22px,2vw,28px)}
+.contact-reserved strong{font-size:var(--fs-sub)}
+.meta,.eyebrow{font-size:12px}
+.status{font-size:12px}
+.integration-line{font-size:11px;letter-spacing:.11em}
+.integration-line i{width:11px;height:11px;top:-6px;transition:background .35s var(--ease),border-color .35s var(--ease),box-shadow .35s var(--ease)}
+.integration-line i.on{box-shadow:0 0 0 4px rgba(93,114,255,.22)}
+.sco-evidence figcaption{font-size:10px}
+.tag{font-size:11px}
+.archive-list li{font-size:15px}
+.integration-system span{font-size:13px}
+
+/* Company DNA is a top-level brand asset, not a footnote */
+.dna{font-size:clamp(13px,1.15vw,17px);letter-spacing:.15em}
+@media(min-width:1024px){
+  .home-page main>.section:nth-of-type(2) .dna{font-size:17px;letter-spacing:.16em}
+}
+@media(max-width:767px){
+  .home-page main>.section:nth-of-type(2) .dna{font-size:13px;line-height:1.9;letter-spacing:.1em}
+  .integration-line{font-size:10px}
+}
+
+/* ---------- 05. BACKGROUND RHYTHM ---------- */
+/* graphite must read as a genuine third surface, not a shade of ink */
+:root{--graphite:#171a1d}
+
+/* Blocks authored for the paper surface, re-hosted on a dark band */
+.on-dark .proof-list,.on-dark .proof-rows,.on-dark .proof-row,
+.on-dark .fact-line,.on-dark .fact,.on-dark .fact+.fact,
+.on-dark .phases,.on-dark .phase,.on-dark .project-row,
+.on-dark .engagement,.on-dark .contact-list,.on-dark .contact-row,
+.on-dark .contact-reserved,.on-dark .placeholder,
+.on-dark .editorial-cases,.on-dark .editorial-case,
+.on-dark .editorial-case:nth-child(even),.on-dark .dna,
+.on-dark .section-head,.on-dark .tag-list,.on-dark .tag,
+.on-dark .timeline,.on-dark .timeline-row,.on-dark .archive-list li{
+  border-color:var(--line-d)}
+.on-dark .proof-row p,.on-dark .fact p,.on-dark .phase p,
+.on-dark .project-row p,.on-dark .work-info p,.on-dark .contact-row p,
+.on-dark .contact-reserved,.on-dark .placeholder,.on-dark .evo-label,
+.on-dark .evo-main .body-large,.on-dark .archive-list li,.on-dark .tag{
+  color:var(--muted-d)}
+.on-dark .contact-reserved strong,.on-dark .archive-list strong{color:var(--warm)}
+.on-dark .editorial-case .thumb img,.on-dark .secondary-work .media{background:#16191b}
+
+/* Capabilities CORE 02 chapter now sits on paper */
+.capabilities-page .cap-band{padding-block:0}
+.on-light .cap-detail{border-top-color:var(--line-l)}
+.on-light .muted-dark,.on-light .body-large,.on-light .tag{color:var(--muted-l)}
+.on-light .tag,.on-light .tag-list{border-color:var(--line-l)}
+.on-light .evidence-media,.on-light .evidence-media.contain img,
+.on-light .cap-detail-core02 .evidence-media{background:#e9e8e3}
+.on-light .integration-system,.on-light .integration-system span{border-color:var(--line-l)}
+.on-dark .contact-reserved .contact-pending-tag{
+  color:rgba(242,241,237,.82);background:rgba(242,241,237,.1);border-color:var(--line-d)}
+.on-dark .contact-pending-note{color:var(--muted-d)}
