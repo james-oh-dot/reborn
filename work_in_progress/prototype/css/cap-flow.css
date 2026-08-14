@@ -15,11 +15,15 @@
 
 .cap-flow-body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(40px,5vw,72px);align-items:stretch;margin-top:clamp(28px,3.5vh,52px)}
 
-/* ---------- step slot: all three stack in one place, one shows at a time ---------- */
-.cap-flow-steps{position:relative;align-self:center;min-height:min(46vh,340px)}
-.cap-flow-step{position:absolute;inset:0;display:block;padding-left:26px;
-  transform:translateY(var(--step-y,0));opacity:var(--step-o,0);pointer-events:none;
-  will-change:transform,opacity}
+/* ---------- step slot ----------
+ * The slot is clipped: its top edge sits just under the section title and its
+ * bottom edge runs to the foot of the pinned area. A step therefore vanishes
+ * *under the title* on the way out and rises in from off-screen on the way in,
+ * instead of cross-fading on top of its neighbour. */
+.cap-flow-steps{position:relative;align-self:stretch;height:100%;min-height:min(46vh,340px);overflow:hidden}
+.cap-flow-step{position:absolute;left:0;right:0;top:50%;display:block;padding-left:26px;
+  transform:translateY(calc(-50% + var(--step-y,0px)));opacity:var(--step-o,0);pointer-events:none;
+  will-change:transform}
 .cap-flow-step:before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:2px;background:var(--blue);box-shadow:0 0 12px rgba(93,114,255,.55)}
 
 .cap-flow-step-top{display:flex;align-items:baseline;gap:14px}
