@@ -555,8 +555,12 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .rail-sticky{position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));display:flex;align-items:center;overflow:hidden}
 .rail-inner{width:min(100%,var(--wide));display:flex;flex-direction:column;justify-content:center;height:100%;padding-block:clamp(28px,4vh,56px)}
 .work-rail .section-head{flex:none}
+/* Starts flush with the section title (no full-bleed breakout, which drifted
+   left of the title once the wrap hit its max width) and simply overflows to
+   the right — .rail-sticky already clips at the viewport edges, so cards run
+   off both sides while scrolling. */
 .rail-viewport{flex:1;min-height:0;display:flex;align-items:center;margin-top:clamp(28px,3.5vh,52px);
-  width:100vw;margin-left:calc(50% - 50vw);padding-inline:var(--gutter);overflow:hidden}
+  overflow:visible}
 .rail-strip{display:flex;gap:clamp(16px,1.6vw,28px);will-change:transform;
   transform:translate3d(var(--rail-x,0px),0,0)}
 .work-rail .visual-card{flex:none;width:calc((min(100vw,var(--wide)) - var(--gutter)*2)/2);height:min(41vh,413px)}
