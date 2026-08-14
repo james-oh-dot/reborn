@@ -11,3 +11,18 @@ const ease=t=>t*t*(3-2*t);
 const offsetFor=d=>{const a=Math.abs(d);return a<=HOLD?0:Math.sign(d)*ease(clamp((a-HOLD)/RAMP,0,1))};
 steps.forEach((s,i)=>{const off=offsetFor(idx-i);s.style.setProperty('--step-y',(-off*slotH).toFixed(1)+'px');s.style.setProperty('--step-o',Math.abs(off)>=1?'0':'1')});
 visuals.forEach((v,i)=>{const off=offsetFor(idx-i);v.style.setProperty('--vis-y',(-off*100).toFixed(2)+'%');v.style.setProperty('--vis-o',Math.abs(off)>=1?'0':'1')});const near=Math.round(idx);rail.forEach((r,i)=>r.classList.toggle('on',i===near));steps.forEach((s,i)=>s.classList.toggle('active',i===near))};const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);reduce.addEventListener?.('change',onScroll);update()})();
+(()=>{const band=document.querySelector('.dna-band'),track=band?.querySelector('.dna-track'),half=band?.querySelector('.dna-half');if(!band||!track||!half)return;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+/* Marquee driven by scroll: a slow constant drift at rest, accelerated while the
+   user scrolls, and flipped to run backwards when they scroll up. `x` wraps on the
+   width of one half so the loop stays seamless in either direction. */
+const DRIFT=-.035,BOOST=-1.15,DECAY=.9,MAXBOOST=26;let x=0,loop=half.offsetWidth,lastY=scrollY,vel=0,inView=false,raf=0;
+new IntersectionObserver(es=>{inView=es[0].isIntersecting;if(inView&&!raf)raf=requestAnimationFrame(tick)},{threshold:0}).observe(band);
+addEventListener('resize',()=>{loop=half.offsetWidth},{passive:true});
+addEventListener('scroll',()=>{const y=scrollY,d=y-lastY;lastY=y;vel=Math.max(-MAXBOOST,Math.min(MAXBOOST,vel+d*.35))},{passive:true});
+function tick(){raf=0;if(!inView){return}const step=DRIFT+vel*BOOST*.06;x+=step;vel*=DECAY;if(Math.abs(vel)<.01)vel=0;if(loop>0){while(x<=-loop)x+=loop;while(x>0)x-=loop}track.style.setProperty('--dna-x',x.toFixed(1)+'px');raf=requestAnimationFrame(tick)}
+})();
+(()=>{const rail=document.querySelector('.work-rail');if(!rail)return;const track=rail.querySelector('.rail-track'),sticky=rail.querySelector('.rail-sticky'),strip=rail.querySelector('.rail-strip'),cards=[...rail.querySelectorAll('.visual-card')];if(!track||!strip||cards.length<2)return;const reduce=matchMedia('(prefers-reduced-motion: reduce)');const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));const pinned=()=>innerWidth>=1024&&!reduce.matches;let ticking=false;
+/* Distance the strip must travel so the LAST card lands where the FIRST began. */
+const span=()=>{const first=cards[0].getBoundingClientRect(),last=cards[cards.length-1].getBoundingClientRect();return Math.max(0,last.left-first.left)};
+const update=()=>{ticking=false;if(!pinned()){strip.style.removeProperty('--rail-x');return}const travel=track.offsetHeight-sticky.offsetHeight;if(travel<=0)return;const headerH=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))||80;const p=clamp((headerH-track.getBoundingClientRect().top)/travel,0,1);strip.style.setProperty('--rail-x',(-p*span()).toFixed(1)+'px')};
+const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);reduce.addEventListener?.('change',onScroll);update()})();
