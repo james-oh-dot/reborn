@@ -276,8 +276,8 @@ new MutationObserver(apply).observe(body,{attributes:true,attributeFilter:['clas
    page already scrolled, which reads as a broken jump rather than as arriving at a
    section. Start at the top instead, wait for images so the target has settled at its
    final offset, then glide down. Reduced motion goes straight there. */
-(()=>{const id='ongoing-project';if(location.hash!=='#'+id)return;
-const section=document.getElementById(id);if(!section)return;
+(()=>{const id=location.hash.slice(1);if(!id)return;
+const section=document.querySelector('main>section[id="'+CSS.escape(id)+'"]');if(!section)return;
 /* Aim at the content, not the section box: the section carries ~270px of top padding,
    so landing on its edge would show the visitor a screen of empty space. */
 const target=section.querySelector('.wrap')||section;

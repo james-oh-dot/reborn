@@ -1031,10 +1031,10 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 
 /* Deep link from HOME 05 lands on the section, not under the fixed header. Applies to
    the load-time jump and to in-page anchor scrolling alike. */
-#ongoing-project{scroll-margin-top:calc(var(--header-h) + clamp(16px,2vh,32px))}
+main>section[id]{scroll-margin-top:calc(var(--header-h) + clamp(16px,2vh,32px))}
 /* The anchor lands on the content row, with a little air above it. The id itself keeps
    its own margin as the no-JS fallback. */
-#ongoing-project>.wrap{scroll-margin-top:calc(var(--header-h) + clamp(28px,4vh,56px))}
+main>section[id]>.wrap{scroll-margin-top:calc(var(--header-h) + clamp(28px,4vh,56px))}
 
 /* ---------- CTA HOVER — colour wipes in like a progress fill ----------
    The fill is a pseudo-element scaled on X from the left edge, not a background
