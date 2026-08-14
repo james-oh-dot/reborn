@@ -1111,3 +1111,45 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   .engagement .status{grid-column:2;grid-row:3;justify-self:start;text-align:left;white-space:normal}
   .engagement-year{padding:26px 0 8px}
 }
+
+/* ---------- CAPABILITIES — the left column had 164-307px of nothing ----------
+   Four elements (eyebrow, title, one sentence, chips) sat against a 480-690px image.
+   The practice list is what fills it: how the work is approached, which is the bridge
+   between "what field is this" and "have they actually done it". */
+.cap-practice{margin-top:clamp(30px,3vw,44px)}
+.cap-practice ul{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:16px}
+.cap-practice strong{display:block;font-size:15px;font-weight:650;letter-spacing:-.01em}
+.cap-practice span{display:block;margin-top:4px;font-size:14px;line-height:1.6;color:var(--muted-d)}
+.on-light .cap-practice span{color:var(--muted-l)}
+
+/* Evidence was a run-on sentence naming projects with nowhere to go. Same shape in all
+   three bands now, and the named projects that exist as cards are links. */
+.cap-evidence{margin-top:clamp(20px,2vw,28px)}
+.cap-evidence ul{list-style:none;margin:12px 0 0;padding:0;
+  display:flex;flex-wrap:wrap;gap:8px 10px}
+.cap-evidence li{display:flex;align-items:center}
+.cap-evidence li+li:before{content:"·";margin-right:10px;opacity:.45}
+.cap-evidence a,.cap-evidence span{font-size:14px;color:var(--muted-d)}
+.on-light .cap-evidence a,.on-light .cap-evidence span{color:var(--muted-l)}
+.cap-evidence a{border-bottom:1px solid currentColor;padding-bottom:1px;
+  transition:color .28s var(--ease),border-color .28s var(--ease)}
+.cap-evidence a:hover{color:var(--warm)}
+.on-light .cap-evidence a:hover{color:var(--ink)}
+
+/* Three identical bands read as one screen repeated; vary the media proportion so the
+   scroll has somewhere to go. */
+.cap-detail-core02 .evidence-media{height:min(38vw,480px)}
+
+@media(min-width:768px) and (max-width:1023px){
+  /* The left column is only 2 of 8 here; with the practice list it would be squeezed,
+     so the two halves stack instead of competing for a narrow rail. */
+  .subpage main>section:not(.page-hero)>.wrap>.cap-detail{display:block}
+  .cap-detail>div+div{margin-top:clamp(34px,4vw,52px)}
+}
+/* These links are new, so they were outside the existing hit-area rule. They sit inline
+   in a wrapping list where an invisible ::after expander would overlap the row above, so
+   the box itself grows instead. */
+@media(max-width:1023px){
+  .cap-evidence ul{gap:2px 10px}
+  .cap-evidence a,.cap-evidence span{display:inline-flex;align-items:center;min-height:44px}
+}

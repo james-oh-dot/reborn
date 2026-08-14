@@ -229,6 +229,13 @@ const close=()=>{if(!drawer.classList.contains('is-open'))return;
  drawer.classList.remove('is-open');document.body.classList.remove('drawer-open');
  if(opener){opener.focus();opener=null}};
 cards.forEach(c=>c.addEventListener('click',e=>{e.preventDefault();open(c)}));
+/* Arriving from a capability link: ?project=<key> opens that card's drawer once the
+   page has settled, so the capabilities page can point at real evidence instead of
+   just naming it. Unknown keys are ignored rather than throwing. */
+(()=>{const key=new URLSearchParams(location.search).get('project');if(!key)return;
+ const card=cards.find(c=>c.dataset.project===key);if(!card)return;
+ const go=()=>setTimeout(()=>open(card),420);
+ if(document.readyState==='complete')go();else addEventListener('load',go,{once:true})})();
 drawer.querySelectorAll('[data-drawer-close]').forEach(b=>b.addEventListener('click',close));
 addEventListener('keydown',e=>{
  if(e.key==='Escape')return close();
