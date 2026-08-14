@@ -477,6 +477,12 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 
 /* WCAG 2.2 SC 2.5.8 — remaining sub-24px targets in the header */
 .brand{display:inline-flex;align-items:center;min-height:26px}
+/* Header logo. The source art is full-colour (red marks plus a gradient), so it is
+   flattened to solid white rather than shipping a second recoloured file — the header
+   sits on the dark hero and on the blurred dark bar, and reads white on both.
+   Height is tied to the header so it fills it without crowding the 1px bottom rule. */
+.brand-mark{display:block;width:auto;height:clamp(26px,calc(var(--header-h) * .42),34px);
+  filter:brightness(0) invert(1)}
 .lang button{min-height:32px}
 
 /* ---------- SELECTED WORK — visual card grid (3 cols, lead spans full) ---------- */
@@ -784,7 +790,10 @@ html[lang=en] .integration-ko{display:none}
 .hero-lines span{display:block}
 .subpage .page-hero .hero-lines{
   max-width:none;
-  font-size:clamp(21px,6.4vw,76px);
+  /* 7.2vw is the largest the hero can go while every page still holds two lines in
+     both languages — measured at 360px the binding case is the English capabilities
+     line, which wraps above 27.5px. Anything larger needs shorter copy or a third line. */
+  font-size:clamp(23px,7.2vw,76px);
   line-height:1.05;
   letter-spacing:-.035em;
   text-wrap:balance}
@@ -803,7 +812,11 @@ html[lang=en] .integration-ko{display:none}
   /* Desktop lets the wordmark run off the right edge on purpose. At phone widths only
      ~40% of it survived, which reads as a typo rather than a device — so here it is
      sized to sit fully inside the viewport instead. */
-  .hero-bg-type{left:var(--gutter);bottom:clamp(60px,12vh,110px);font-size:clamp(44px,13.5vw,72px)}
+  /* Sized to sit fully inside the viewport, and moved to the open area ABOVE the copy:
+     anchored to the bottom it landed behind the CTA, where the button's border cut
+     straight through the letters. */
+  .hero-bg-type{left:var(--gutter);bottom:auto;top:clamp(120px,20vh,200px);
+    font-size:clamp(44px,13.5vw,72px)}
 }
 
 /* ---------- PROJECT DETAIL DRAWER ----------
@@ -888,3 +901,24 @@ body.reveal-static .reveal-block:after{display:none}
    rubber-banding behind an open menu or drawer. JS pins the body at its scroll offset
    via inline top and restores it on release. */
 body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+
+/* Collapsed-grid double rule. At >=768px the section head is a grid COLUMN beside its
+   content, so the head's bottom rule and the content block's top rule read as one
+   aligned baseline. Below 768px the grid stacks and the two land on top of each other
+   with only a gap between them — two rules with nothing in between. The head rule
+   already closes the header, so the block below it drops its own opening rule (the
+   same call already made for HOME 04 / TECHNOLOGY PROOF).
+   Covers .phases, .timeline, .proof-list, .fact-line, .integration-stack,
+   .contact-list, .contact-reserved and the first .engagement row. */
+@media(max-width:767px){
+  .section-head+*{border-top:0}
+}
+
+/* Stacked-layer images need an explicit box once a grid collapses. .progressive-image
+   positions its preview and full layers absolutely, so the wrapper has no intrinsic
+   height — on desktop the proof grid stretches it to the row height, but below 768px
+   .proof-list becomes display:block and the certificate collapsed to 350x0, leaving a
+   bare gap under the section title. Give it a box; object-fit:contain letterboxes. */
+@media(max-width:767px){
+  .proof-feature .progressive-image{display:block;height:clamp(280px,86vw,460px)}
+}

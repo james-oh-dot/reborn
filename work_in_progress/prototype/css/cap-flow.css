@@ -96,7 +96,15 @@
   .cap-flow-inner{height:auto;display:block;padding-block:0}
   .cap-flow-title{font-size:clamp(32px,6vw,46px)}
   .cap-flow-body{display:none}
-  .cap-flow-accordion{display:block;margin-top:44px;border-top:1px solid var(--line-d)}
+  /* The rail is absolutely positioned against .cap-flow-track, not against the hidden
+     .cap-flow-body, so hiding the body alone leaves it floating in the right margin. */
+  .cap-flow-rail{display:none}
+  /* The accordion is a sibling of .cap-flow-track, so it sits OUTSIDE the .wrap that
+     gutters the section title — without this it runs edge to edge and the row text
+     touches the screen. Match the wrap's content width instead of padding the box, so
+     the row rules align with the title rather than bleeding past it. */
+  .cap-flow-accordion{display:block;margin-top:44px;border-top:1px solid var(--line-d);
+    max-width:calc(min(100vw,var(--wide)) - var(--gutter) * 2);margin-inline:auto}
   .cap-flow-accordion-item{border-bottom:1px solid var(--line-d)}
   .cap-flow-accordion-trigger{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;padding:24px 4px;gap:16px;color:var(--muted-d)}
   .cap-flow-accordion-label{display:flex;align-items:baseline;gap:14px}
@@ -133,5 +141,13 @@
   .cap-flow-sticky{position:static;height:auto;overflow:visible;display:block}
   .cap-flow-inner{height:auto;display:block;padding-block:0}
   .cap-flow-body{display:none}
-  .cap-flow-accordion{display:block;margin-top:44px;border-top:1px solid var(--line-d)}
+  /* The rail is absolutely positioned against .cap-flow-track, not against the hidden
+     .cap-flow-body, so hiding the body alone leaves it floating in the right margin. */
+  .cap-flow-rail{display:none}
+  /* The accordion is a sibling of .cap-flow-track, so it sits OUTSIDE the .wrap that
+     gutters the section title — without this it runs edge to edge and the row text
+     touches the screen. Match the wrap's content width instead of padding the box, so
+     the row rules align with the title rather than bleeding past it. */
+  .cap-flow-accordion{display:block;margin-top:44px;border-top:1px solid var(--line-d);
+    max-width:calc(min(100vw,var(--wide)) - var(--gutter) * 2);margin-inline:auto}
 }
