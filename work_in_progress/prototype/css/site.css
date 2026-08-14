@@ -223,3 +223,9 @@
 .contact-pending-note{max-width:640px;margin:26px 0 0;color:var(--muted-l);font-size:16px;line-height:1.72}
 .contact-pending-links{display:flex;flex-wrap:wrap;gap:0 40px}
 @media(max-width:767px){.contact-reserved.is-pending{grid-template-columns:1fr auto}.contact-reserved .contact-pending-tag{grid-column:2;justify-self:end}.contact-pending-links{flex-direction:column;gap:0}}
+
+/* Touch target minimum (WCAG 2.2 AA 2.5.8) — invisible hit area, no layout shift. */
+@media(max-width:1023px){
+  .link,.brand,.footer a{position:relative}
+  .link::after,.brand::after,.footer a::after{content:"";position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:44px}
+}
