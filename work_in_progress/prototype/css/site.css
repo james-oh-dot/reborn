@@ -215,3 +215,11 @@
   .company-page .company-history,.company-page .company-credibility{padding-block:86px}
   .company-page .company-facts{padding-block:78px}
 }
+
+/* CONTACT pending-endpoint state — honest status, no false link affordance. */
+.contact-reserved.is-pending{grid-template-columns:2fr 8fr auto;cursor:default}
+.contact-reserved.is-pending strong{color:var(--muted-l)}
+.contact-pending-tag{align-self:center;padding:6px 10px;border:1px solid var(--line-l);color:var(--muted-l);white-space:nowrap}
+.contact-pending-note{max-width:640px;margin:26px 0 0;color:var(--muted-l);font-size:16px;line-height:1.72}
+.contact-pending-links{display:flex;flex-wrap:wrap;gap:0 40px}
+@media(max-width:767px){.contact-reserved.is-pending{grid-template-columns:1fr auto}.contact-pending-tag{grid-column:2}.contact-pending-links{flex-direction:column;gap:0}}

@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Contact Rebornsoft">
 <title>[작업중] Contact — Rebornsoft</title>
-<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/site.css"><link rel="stylesheet" href="css/wip.css">
 </head>
-<body><div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#e8590c;color:#fff;text-align:center;font:600 13px/1 -apple-system,sans-serif;padding:8px 12px;letter-spacing:.02em;">🚧 작업 중 (WORK IN PROGRESS) — REBURNSOFT_DEV_HANDOFF 기준 복제본</div><div style="height:34px;"></div>
+<body><div class="wip-banner" role="status">🚧 작업 중 (WORK IN PROGRESS) — REBURNSOFT_DEV_HANDOFF 기준 복제본</div>
 <header class="site-header">
 <nav class="nav wrap">
 <a class="brand" href="index.html">REBORN SOFT</a>
@@ -87,12 +87,17 @@
 <h2 class="section-title" data-ko="프로젝트 대화의 연결점" data-en="A point of contact for project conversations">프로젝트 대화의 연결점</h2>
 </div>
 </div>
-<div class="contact-reserved" aria-disabled="true">
+<div class="contact-reserved is-pending">
 <span class="meta muted-light">EMAIL</span>
-<strong data-ko="확인 예정" data-en="TO BE CONFIRMED">확인 예정</strong>
-<span aria-hidden="true">→</span>
+<strong data-ko="공개 준비 중" data-en="Not yet published">공개 준비 중</strong>
+<span class="contact-pending-tag meta" data-ko="검증 후 공개" data-en="PENDING VERIFICATION">검증 후 공개</span>
 </div>
-<!-- PRODUCTION INPUT REQUIRED: insert only an approved public contact endpoint. -->
+<p class="contact-pending-note" data-ko="공개 문의 채널을 확정하는 중입니다. 그동안 리본소프트의 수행 범위와 기술 근거는 아래에서 확인하실 수 있습니다." data-en="Our public inquiry channel is being finalized. In the meantime, you can review Rebornsoft's delivered work and technical evidence below.">공개 문의 채널을 확정하는 중입니다. 그동안 리본소프트의 수행 범위와 기술 근거는 아래에서 확인하실 수 있습니다.</p>
+<div class="contact-pending-links">
+<a class="link" href="work.html"><b data-ko="수행 프로젝트 보기" data-en="VIEW DELIVERED WORK">수행 프로젝트 보기</b><span>→</span></a>
+<a class="link" href="company.html"><b data-ko="회사 연혁 보기" data-en="VIEW COMPANY HISTORY">회사 연혁 보기</b><span>→</span></a>
+</div>
+<!-- PRODUCTION INPUT REQUIRED: insert only an approved public contact endpoint (see MASTER_FRAMEWORK_v2.1 Q-13). -->
 </div>
 </section>
 <section class="section graphite contact-profile">
@@ -103,6 +108,7 @@
 </div>
 <div class="placeholder" style="margin:0;border-color:var(--line-d);color:var(--muted-d)">
 <p data-ko="최신 공개용 회사소개서가 제공되면 다운로드 링크를 연결합니다." data-en="A download link will be added when an approved public company profile is supplied.">최신 공개용 회사소개서가 제공되면 다운로드 링크를 연결합니다.</p>
+<a class="link" href="capabilities.html" style="margin-top:22px"><b data-ko="기술 역량 확인" data-en="REVIEW CAPABILITIES">기술 역량 확인</b><span>→</span></a>
 </div>
 </div>
 </section>
@@ -114,6 +120,6 @@
 </div>
 </footer>
 <script src="js/site.js">
-</script>
+</script><script src="js/wip.js"></script>
 </body>
 </html>

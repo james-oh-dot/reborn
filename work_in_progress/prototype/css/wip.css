@@ -1,0 +1,22 @@
+/* WIP label — temporary; remove this file and its <link>/<script> before production handoff. */
+:root { --wip-h: 0px; }
+
+.wip-banner {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1200;
+  background: #e8590c;
+  color: #fff;
+  text-align: center;
+  font: 600 12px/1.35 Pretendard, Inter, Arial, "Noto Sans KR", sans-serif;
+  letter-spacing: .02em;
+  padding: 8px 16px;
+}
+
+body { padding-top: var(--wip-h); }
+.site-header { top: var(--wip-h); }
+.mobile-panel { padding-top: calc(112px + var(--wip-h)); }
+
+@media (max-width: 767px) {
+  .wip-banner { font-size: 11px; padding: 7px 12px; }
+}
