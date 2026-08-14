@@ -749,7 +749,8 @@ main{position:relative;z-index:1;background:var(--ink)}
   padding:clamp(26px,3vw,42px) clamp(22px,2.6vw,40px)}
 .integration-final .integration-index{color:var(--blue-soft)}
 .integration-final .integration-name{color:#f2f1ed}
-.integration-note{margin-left:auto;display:flex;flex-direction:column;gap:6px;text-align:right}
+.integration-note{margin-left:auto;display:flex;flex-direction:column;gap:6px;text-align:right;
+  margin-top:calc(var(--int-name) * .22)}
 .integration-note strong{font-size:13px;font-weight:650;letter-spacing:.04em;color:#f2f1ed}
 .integration-note em{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.12em;
   text-transform:uppercase;color:var(--blue-soft)}
