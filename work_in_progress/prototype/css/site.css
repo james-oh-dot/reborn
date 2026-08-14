@@ -1153,3 +1153,38 @@ main>section[id]>.wrap{scroll-margin-top:calc(var(--header-h) + clamp(28px,4vh,5
   .cap-evidence ul{gap:2px 10px}
   .cap-evidence a,.cap-evidence span{display:inline-flex;align-items:center;min-height:44px}
 }
+
+/* ---------- SECTION ROUTES ----------
+   company.html and contact.html had zero links in <main>: they named capabilities and
+   projects and gave the reader nowhere to go, the same dead end capabilities.html had.
+   One shared block so every section that names something can point at it. */
+.section-relate{margin-top:clamp(40px,4vw,64px);padding-top:clamp(20px,2vw,28px);
+  border-top:1px solid var(--line-l)}
+.on-dark .section-relate,.dark .section-relate,.graphite .section-relate{border-top-color:var(--line-d)}
+.section-relate ul{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px 10px}
+.section-relate li{display:flex;align-items:center}
+.section-relate li+li:before{content:"·";margin-right:10px;opacity:.45}
+.section-relate a{font-size:14px;color:var(--muted-l);
+  border-bottom:1px solid currentColor;padding-bottom:1px;
+  transition:color .28s var(--ease)}
+.on-dark .section-relate a,.dark .section-relate a,.graphite .section-relate a{color:var(--muted-d)}
+.section-relate a:hover{color:var(--ink)}
+.on-dark .section-relate a:hover,.dark .section-relate a:hover,.graphite .section-relate a:hover{color:var(--warm)}
+
+/* 05 / COMPANY FACTS held 149px of content under a 172px heading, and one of its three
+   facts was "SYSTEMS + ENVIRONMENTS", which states nothing. Reuses the proof-row shape
+   already carrying the validation list directly above it. */
+.company-summary{border-top:1px solid var(--line-d)}
+.company-summary .proof-row{grid-template-columns:minmax(140px,2fr) minmax(0,8fr);padding:22px 0 22px 0}
+.company-summary .proof-row p{margin:0;color:var(--muted-d);font-size:16px;line-height:1.6}
+
+@media(max-width:1023px){
+  /* Same reason as the capability evidence links: new inline links in a wrapping list,
+     where an invisible expander would overlap the row above. */
+  .section-relate ul{gap:2px 10px}
+  .section-relate a{display:inline-flex;align-items:center;min-height:44px}
+}
+@media(max-width:767px){
+  .company-summary .proof-row{grid-template-columns:1fr;gap:6px}
+  .company-summary .proof-row p{font-size:15px}
+}
