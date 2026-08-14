@@ -981,3 +981,26 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   .sco-evidence-duo .sco-evidence-primary{height:62vw}
   .sco-evidence-duo .sco-evidence-secondary{height:52vw}
 }
+
+/* ---------- PROJECT CARD / DRAWER DETAIL ---------- */
+/* Cityfield has no project image in the archive, so the card carries a labelled
+   placeholder rather than an unrelated stand-in photograph. */
+.card-media-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:#101315;
+  background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+  background-size:34px 34px}
+.card-media-empty span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(242,241,237,.34)}
+
+.drawer-class{margin:10px 0 0;color:var(--blue-soft);letter-spacing:.13em}
+.drawer-desc{margin-top:22px;display:flex;flex-direction:column;gap:15px}
+.drawer-desc p{margin:0;color:var(--muted-d);font-size:15px;line-height:1.75}
+.drawer-extra:not(:empty){position:relative;height:clamp(180px,26vh,240px);margin-top:26px;
+  overflow:hidden;background:#0d0f11;border:1px solid var(--line-d)}
+.drawer-extra .progressive-image__preview,.drawer-extra .progressive-image__full{object-fit:cover}
+/* Scope limits read as a qualification, not as another body paragraph. */
+.drawer-boundary:not(:empty){margin-top:26px}
+.drawer-limit{margin:0 0 12px;font-size:13px;line-height:1.7;color:rgba(242,241,237,.44)}
+.drawer-limit:last-child{margin-bottom:0}
+.drawer-tags span{white-space:nowrap}

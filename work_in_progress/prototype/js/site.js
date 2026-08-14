@@ -59,13 +59,116 @@ const cards=[...document.querySelectorAll('.visual-card[data-project]')];if(!car
 const panel=drawer.querySelector('.drawer-panel'),media=drawer.querySelector('.drawer-media'),
  elStatus=drawer.querySelector('.drawer-status'),elTitle=drawer.querySelector('.drawer-title'),
  elSummary=drawer.querySelector('.drawer-summary'),elTags=drawer.querySelector('.drawer-tags'),
+ elClass=drawer.querySelector('.drawer-class'),elDesc=drawer.querySelector('.drawer-desc'),
+ elExtra=drawer.querySelector('.drawer-extra'),elBound=drawer.querySelector('.drawer-boundary'),
+ elNote=drawer.querySelector('.drawer-note'),
  scroll=drawer.querySelector('.drawer-scroll');
-/* Tags restate wording already published on the card itself — no new claims. */
-const TAGS={
- yancheng:[['곡면 스크린','CURVED SCREEN'],['시뮬레이션 콘텐츠','SIMULATION CONTENT'],['DELIVERED · 2022','DELIVERED · 2022']],
- hongdae:[['VR 공간','VR SPACE'],['곡면 스크린','CURVED SCREEN'],['DELIVERED · 2022','DELIVERED · 2022']],
- fitm:[['AI 동작인식','AI MOTION RECOGNITION'],['공동 개발','CO-DEVELOPMENT'],['CO-DEVELOPED · 2021–2022','CO-DEVELOPED · 2021–2022']],
- hana:[['얼굴인식','FACE RECOGNITION'],['출입보안','ACCESS SECURITY'],['DEPLOYED · 2019','DEPLOYED · 2019']]};
+/* Project detail copy. Every claim, status and boundary sentence here is transcribed
+   from the approved write-up, which matches EVIDENCE_LEDGER_v2.1 section 6 claim
+   boundaries; `bound` paragraphs are the scope limits and render demoted. */
+const DETAIL={
+ yancheng:{cls:['Physical Experience / Media & Simulation','Physical Experience / Media & Simulation'],
+  lead:['리본소프트는 2022년 중국 옌청 자동차 테마파크 프로젝트에서 곡면 스크린 디스플레이 구현과 콘텐츠 제작을 수행했습니다.',
+        'In 2022 Rebornsoft carried out curved-screen display implementation and content production for the Yancheng Automotive Theme Park project in China.'],
+  body:[['프로젝트에서는 자동차를 주제로 한 공간에 대형 곡면 스크린을 적용하고, 해당 디스플레이 환경에서 구동되는 시각 콘텐츠를 제작했습니다. 공간의 형태와 화면 비율을 고려해 콘텐츠가 곡면 디스플레이에 적합하게 표현될 수 있도록 구성했습니다.',
+         'A large curved screen was applied to a space themed around automobiles, and visual content running on that display environment was produced. The content was composed so that it would read correctly on a curved display, taking the shape of the space and the screen ratio into account.'],
+        ['레이싱 체험을 위한 시뮬레이션 콘텐츠도 함께 제작했습니다. 자동차 주행과 레이싱을 주제로 한 콘텐츠를 시뮬레이션 환경에 적용하고, 이용자가 공간 안에서 콘텐츠를 직접 경험할 수 있도록 구성했습니다.',
+         'Simulation content for a racing experience was produced alongside it. Content themed around driving and racing was applied to a simulation environment and arranged so that visitors could experience it directly within the space.'],
+        ['프로젝트 수행 범위에는 곡면 스크린 디스플레이 구현, 화면용 콘텐츠 제작, 레이싱 시뮬레이션 콘텐츠 제작이 포함됩니다. 디지털 콘텐츠와 대형 디스플레이, 시뮬레이션 시스템을 실제 테마파크 공간에 적용한 해외 프로젝트입니다.',
+         'The scope of work covers curved-screen display implementation, content production for the screen, and racing simulation content production. It is an overseas project in which digital content, a large-format display and a simulation system were applied to an actual theme-park space.']],
+  bound:[],
+  keys:['Curved Display','Racing Simulation','Media Content','Simulator','Physical Experience','Spatial Media']},
+
+ hana:{cls:['Intelligent Interaction / Enterprise Security','Intelligent Interaction / Enterprise Security'],
+  lead:['리본소프트는 2019년 자체 개발한 얼굴인식 기술을 하나은행 출입보안 환경에 적용했습니다.',
+        'In 2019 Rebornsoft applied its own facial-recognition technology to a Hana Bank access-security environment.'],
+  body:[['얼굴 및 이미지 인식 기술을 기반으로 사용자를 식별하고, 등록된 사용자의 얼굴 정보를 출입보안 시스템과 연계하는 방식으로 구축했습니다. 사용자의 얼굴을 인식한 결과가 실제 출입 절차와 연결될 수 있도록 얼굴인식 기능을 기업 보안 환경에 적용했습니다.',
+         'The system identifies users on the basis of face and image recognition, linking the facial data of registered users to the access-security system. Facial recognition was applied within a corporate security environment so that the result of recognising a user could be connected to the actual access procedure.'],
+        ['리본소프트는 설립 초기부터 얼굴인식과 이미지 인식 관련 기술을 개발해 왔으며, 해당 프로젝트를 통해 자체 Computer Vision 기술을 실제 기업 환경에 적용했습니다.',
+         'Rebornsoft has developed face- and image-recognition technology since its earliest years, and this project applied its own computer-vision technology in a real enterprise environment.'],
+        ['이후 얼굴인식뿐 아니라 이미지 분석, 동작인식, 사용자 추적 등으로 Computer Vision 관련 기술 개발을 이어갔습니다. 하나은행 프로젝트는 이러한 기술 개발 과정에서 실제 기업 시스템에 적용된 출입보안 구축 사례입니다.',
+         'Development then continued beyond facial recognition into image analysis, motion recognition and user tracking. The Hana Bank project is an access-security implementation in which that line of development was applied to an actual enterprise system.']],
+  bound:[['본 프로젝트의 공개 범위는 2019년 하나은행 관련 얼굴인식 출입보안 시스템 적용 이력입니다. 현재 운영 상태 또는 하나금융그룹 전체의 시스템 구축을 의미하지 않습니다.',
+          'What is disclosed here is the 2019 record of applying a facial-recognition access-security system in a Hana Bank context. It does not indicate current operational status, nor a group-wide implementation across Hana Financial Group.']],
+  keys:['Face Recognition','Computer Vision','Access Security','Intelligent Interaction','Enterprise Deployment','User Recognition']},
+
+ fitm:{cls:['Healthcare AI / Intelligent Interaction','Healthcare AI / Intelligent Interaction'],
+  lead:['FIT-M은 AI 동작인식 기술을 활용해 뇌졸중 환자의 움직임과 운동기능을 분석하는 의료·재활 분야 공동개발 프로젝트입니다.',
+        'FIT-M is a co-development project in the medical and rehabilitation field that uses AI motion-recognition technology to analyse the movement and motor function of stroke patients.'],
+  body:[['리본소프트는 2021년 아주대학교 산학협력단과 AI 뇌졸중 환자 운동기능 관련 서비스 개발 계약을 체결하고 FIT-M 개발을 진행했습니다. 아주대학교의료원과는 AI 의료서비스 공동개발 및 사업화를 위한 협력 관계를 구축했습니다.',
+         'In 2021 Rebornsoft signed a service-development contract with the Ajou University Industry-Academic Cooperation Foundation covering AI-based motor function for stroke patients, and developed FIT-M under it. A cooperative relationship for the co-development and commercialisation of AI medical services was established with Ajou University Medical Center.'],
+        ['FIT-M은 카메라로 촬영한 사용자의 움직임을 AI 동작인식 기술로 분석하고, 인식된 움직임을 바탕으로 운동능력을 측정해 결과를 제공하는 방식으로 개발되었습니다.',
+         'FIT-M analyses a user’s movement captured on camera using AI motion recognition, then measures motor ability from the recognised movement and returns a result.'],
+        ['프로젝트에는 사람의 주요 움직임을 인식하는 Computer Vision 기술과 동작 데이터를 분석하는 기능이 적용되었습니다. 별도의 센서를 신체에 부착하는 방식이 아니라 카메라 영상에서 사용자의 움직임을 인식하고 분석하는 방향으로 개발했습니다.',
+         'The project applied computer-vision technology that recognises a person’s principal movements, together with functions that analyse motion data. It was developed to recognise and analyse movement from camera imagery rather than by attaching sensors to the body.'],
+        ['리본소프트는 FIT-M을 통해 기존의 얼굴·이미지 인식 기술과 함께 사람의 움직임을 인식하고 분석하는 Motion Recognition 기술을 의료·재활 분야에 적용했습니다.',
+         'Through FIT-M, Rebornsoft applied motion-recognition technology, alongside its existing face and image recognition, to the medical and rehabilitation field.']],
+  bound:[['FIT-M의 공개 상태는 CO-DEVELOPED · 2021–2022이며, 아주대학교 산학협력단과의 개발 계약을 기반으로 진행한 공동개발 프로젝트입니다.',
+          'The disclosed status of FIT-M is CO-DEVELOPED · 2021–2022: a co-development project carried out on the basis of a development contract with the Ajou University Industry-Academic Cooperation Foundation.']],
+  keys:['Motion Recognition','Healthcare AI','Movement Analysis','Computer Vision','Rehabilitation Technology','Institutional Co-development']},
+
+ hongdae:{cls:['Physical Experience / Spatial Media','Physical Experience / Spatial Media'],
+  lead:['리본소프트는 2022년 서울 홍대 VR 경험 공간에 곡면 스크린 비주얼을 구현했습니다.',
+        'In 2022 Rebornsoft implemented curved-screen visuals for a VR experience space in Hongdae, Seoul.'],
+  body:[['프로젝트에서는 VR 체험 공간 내부에 곡면 디스플레이를 적용하고, 공간의 형태와 화면 구조에 맞춰 시각 콘텐츠가 표현될 수 있도록 화면 환경을 구성했습니다.',
+         'A curved display was applied inside the VR experience space, and the screen environment was composed so that visual content would render in keeping with the shape of the space and the structure of the screen.'],
+        ['곡면 스크린은 일반적인 평면 디스플레이와 달리 화면의 각도와 관람 위치에 따라 시각적 표현이 달라질 수 있습니다. 리본소프트는 공간과 디스플레이의 형태를 고려해 비주얼 콘텐츠가 실제 공간 안에서 자연스럽게 보일 수 있도록 구현했습니다.',
+         'Unlike a flat display, a curved screen can change in appearance depending on the angle of the screen and the viewing position. Rebornsoft implemented the visual content with the form of the space and the display in mind, so that it would read naturally inside the actual space.'],
+        ['해당 스크린은 VR 콘텐츠를 이용하기 위해 방문한 사용자가 공간 안에서 접하게 되는 시각적 요소로 적용되었습니다. 디지털 비주얼과 대형 화면을 실제 방문형 체험 공간에 적용한 프로젝트입니다.',
+         'The screen was applied as a visual element encountered within the space by visitors who came to use the VR content. It is a project applying digital visuals and a large-format screen to an actual walk-in experience space.']],
+  bound:[['리본소프트의 수행 범위는 홍대 VR Experience Space의 곡면 스크린 비주얼 구현입니다. 전체 VR 공간의 설계·운영 또는 전체 시스템 구축을 의미하지 않습니다.',
+          'Rebornsoft’s scope of work is the curved-screen visual implementation at the Hongdae VR Experience Space. It does not indicate design or operation of the whole VR venue, nor implementation of the entire system.']],
+  keys:['VR Experience','Curved Screen','Spatial Media','Physical Environment','Digital Visual','Experience Space']},
+
+ hyundai:{cls:['Presentation Environment / Spatial Media','Presentation Environment / Spatial Media'],
+  lead:['리본소프트는 2022년 현대건설의 반포 재개발 시공사 선정 사업계획 발표 환경에 곡면 스크린 디스플레이를 구현했습니다.',
+        'In 2022 Rebornsoft implemented a curved-screen display for the environment in which Hyundai E&C presented its business plan for the Banpo redevelopment contractor selection.'],
+  body:[['프로젝트에서는 대규모 발표 공간 안에서 사업계획과 관련된 시각 자료를 전달할 수 있도록 곡면 형태의 대형 디스플레이 환경을 구성했습니다.',
+         'A large curved display environment was composed so that visual material relating to the business plan could be delivered inside a large presentation space.'],
+        ['곡면 스크린의 형태와 발표 공간의 시야를 고려해 화면이 공간 안에서 안정적으로 보일 수 있도록 구현했으며, 대형 시각 콘텐츠가 프레젠테이션 과정에서 활용될 수 있도록 디스플레이를 적용했습니다.',
+         'The implementation accounted for the form of the curved screen and the sightlines of the presentation space so that the screen would read stably within it, and the display was applied so that large-format visual content could be used during the presentation.'],
+        ['기업의 사업계획 발표 환경은 다수의 참석자가 동일한 시각 정보를 확인해야 하는 공간입니다. 리본소프트는 이러한 환경에 대형 곡면 디스플레이를 적용해 발표용 시각 정보가 실제 공간 안에서 전달될 수 있도록 했습니다.',
+         'A corporate business-plan presentation is a setting in which many attendees must take in the same visual information. Rebornsoft applied a large curved display to that environment so the presentation visuals could be delivered within the actual space.']],
+  bound:[['본 프로젝트의 수행 범위는 현대건설 관련 사업계획 발표 환경의 곡면 스크린 디스플레이 구현입니다. 행사 전체 제작, 공간 전체 설계 또는 전체 콘텐츠 제작을 의미하지 않습니다.',
+          'The scope of work is the curved-screen display implementation for the Hyundai E&C business-plan presentation environment. It does not indicate production of the whole event, design of the entire space, or production of all the content.']],
+  keys:['Curved Display','Presentation Environment','Spatial Media','Corporate Experience','Large-Format Media','Physical Environment']},
+
+ sevencubic:{cls:['Digital Environments / Platform','Digital Environments / Platform'],
+  lead:['7 Cubic은 리본소프트가 개발한 3D 기반 디지털 환경 플랫폼입니다. 개발과 CBT 과정을 거쳐 2022년 정식 출시했습니다.',
+        '7 Cubic is a 3D-based digital environment platform developed by Rebornsoft. It was formally released in 2022 after development and a closed beta test.'],
+  body:[['사용자는 3D 공간 안에서 아바타를 이용해 이동하고 다른 사용자와 상호작용할 수 있도록 구성되었습니다. 아바타 커스터마이징 기능을 적용해 사용자가 자신의 캐릭터를 설정할 수 있도록 개발했습니다.',
+         'Users move through a 3D space using an avatar and can interact with other users. Avatar customisation was implemented so that users can configure their own character.'],
+        ['플랫폼에는 사용자 계정 연동 기능과 함께 화면 공유, 화상 커뮤니케이션, 음성 및 채팅 기능을 구현했습니다. 여러 사용자가 하나의 디지털 공간에 접속해 콘텐츠를 이용하고 서로 커뮤니케이션할 수 있도록 기능을 구성했습니다.',
+         'The platform implements user-account linking together with screen sharing, video communication, voice and chat. These were composed so that multiple users can enter a single digital space, use content there and communicate with one another.'],
+        ['리본소프트는 3D 공간과 사용자 계정, 아바타, 커뮤니케이션 기능을 하나의 플랫폼 안에 통합해 7 Cubic을 개발했습니다. 개별 기능을 별도로 제공하는 방식이 아니라 사용자가 접속해 활동할 수 있는 하나의 디지털 환경으로 제품화했습니다.',
+         'Rebornsoft built 7 Cubic by integrating 3D space, user accounts, avatars and communication features into a single platform. Rather than offering each capability separately, it was productised as one digital environment that users log into and act within.'],
+        ['7 Cubic 이전에는 모바일 기반 가상환경 서비스와 Meta Campus 관련 개발 및 테스트를 진행했으며, 이를 바탕으로 3D 환경과 원격 커뮤니케이션 기능을 지속적으로 개발했습니다.',
+         'Before 7 Cubic, Rebornsoft carried out development and testing on a mobile-based virtual-environment service and on Meta Campus, and continued developing 3D environments and remote communication features on that basis.']],
+  bound:[['7 Cubic은 2022년 출시된 과거 제품으로, 현재 홈페이지에서는 리본소프트의 3D Digital Environment 개발 및 제품화 이력으로 소개합니다.',
+          '7 Cubic is a past product released in 2022. On this site it is presented as a record of Rebornsoft’s 3D digital-environment development and productisation.']],
+  keys:['3D Environment','Avatar','Collaboration','Virtual Environment','Digital Platform','Screen Sharing','Video Communication','Productization']},
+
+ cityfield:{cls:['Experience Systems / Technology Integration','Experience Systems / Technology Integration'],
+  lead:['리본소프트는 2022년 Cityfield Theme Park 관련 디지털 기술 및 체험 시스템 공급·설치 계약을 체결했습니다.',
+        'In 2022 Rebornsoft signed a contract to supply and install digital technology and experience systems for Cityfield Theme Park.'],
+  body:[['계약 범위에는 Digital City와 Digital Twin 관련 시스템을 비롯해 VR·AR 및 Simulator 기술을 활용하는 체험 시스템이 포함되었습니다.',
+         'The scope of the contract covered Digital City and Digital Twin systems, along with experience systems using VR/AR and simulator technology.'],
+        ['Digital Twin은 실제 공간과 관련된 정보를 디지털 환경으로 구성하고 활용하기 위한 기술 영역이며, VR·AR과 Simulator는 사용자가 디지털 콘텐츠와 직접 상호작용할 수 있도록 하는 체험 기술로 구성되었습니다.',
+         'Digital Twin is the technical area concerned with composing and using information about a physical space within a digital environment, while VR/AR and simulators were included as experience technologies that let users interact directly with digital content.'],
+        ['Cityfield 계약에서는 이러한 개별 기술을 각각 분리해 다루는 것이 아니라 하나의 테마파크 프로젝트 안에서 디지털 환경과 체험 시스템을 함께 공급·설치하는 범위를 설정했습니다.',
+         'Rather than treating each of these technologies separately, the Cityfield contract set a scope in which the digital environment and the experience systems are supplied and installed together within a single theme-park project.'],
+        ['리본소프트는 프로젝트 계약을 통해 Digital Twin, VR·AR, Simulator 등 서로 다른 기술 영역이 함께 포함된 공간형 프로젝트의 공급 범위를 다뤘습니다.',
+         'Through this contract Rebornsoft handled the supply scope of a spatial project bringing together distinct technical areas — Digital Twin, VR/AR and simulators.']],
+  bound:[['현재 확인된 프로젝트 상태는 2022년 공급·설치 계약 체결입니다. 계약 이후 전체 프로젝트의 구축 완료 또는 운영 개시는 현재 공개 자료에서 확인되지 않았습니다.',
+          'The project status confirmed at present is the signing of a supply and installation contract in 2022. Completion of the overall build, or the start of operation, is not confirmed in currently available public material.'],
+         ['따라서 Cityfield Theme Park는 완료 프로젝트가 아닌 CONTRACTED · 2022 상태로 소개하며, 계약서에서 확인되는 Digital Twin, VR·AR, Simulator 관련 공급·설치 범위만을 공개합니다.',
+          'Cityfield Theme Park is therefore presented as CONTRACTED · 2022 rather than as a completed project, and only the Digital Twin, VR/AR and simulator supply and installation scope evidenced in the contract is disclosed.']],
+  keys:['Digital Twin','VR/AR','Simulator','Experience Systems','Technology Integration','Digital City','Contracted Project']}};
+/* A second, unused-on-page image where one exists and adds something the card shot does
+   not: the Yancheng simulator mid-installation, the Hongdae screen in use. */
+const EXTRA={
+ yancheng:['projects/yancheng/installation','옌청 자동차 테마파크 레이싱 시뮬레이터 설치 현장','Racing simulator being installed at Yancheng Automotive Theme Park'],
+ hongdae:['projects/hongdae/vr-screen','홍대 VR 경험 공간 곡면 스크린 이용 장면','A visitor using the curved screen at the Hongdae VR experience space']};
 const lang=()=>document.documentElement.lang==='en'?'en':'ko';
 const bi=(el,ko,en)=>{el.dataset.ko=ko;el.dataset.en=en;el.textContent=lang()==='en'?en:ko};
 let opener=null;
@@ -77,11 +180,32 @@ const open=card=>{
        p=card.querySelector('.card-link p');
  media.replaceChildren();
  if(img){const c=img.cloneNode(true);c.removeAttribute('data-parallax');c.style.removeProperty('transform');media.appendChild(c)}
+ else{/* cards with no archive image carry a placeholder — carry it through, don't leave an empty box */
+  const ph=card.querySelector('.card-media-empty');if(ph)media.appendChild(ph.cloneNode(true))}
+ const d=DETAIL[key];
  elStatus.textContent=eyebrow?eyebrow.textContent.trim():'';
  if(h)bi(elTitle,h.dataset.ko||h.textContent.trim(),h.dataset.en||h.textContent.trim());
- if(p)bi(elSummary,p.dataset.ko||p.textContent.trim(),p.dataset.en||p.textContent.trim());
+ /* Detail copy wins over the card blurb when it exists; the card stays the fallback. */
+ if(d)bi(elClass,d.cls[0],d.cls[1]); elClass.hidden=!d;
+ if(d)bi(elSummary,d.lead[0],d.lead[1]);
+ else if(p)bi(elSummary,p.dataset.ko||p.textContent.trim(),p.dataset.en||p.textContent.trim());
+ const fill=(host,rows,cls)=>{host.replaceChildren();
+  (rows||[]).forEach(([ko,en])=>{const el=document.createElement('p');if(cls)el.className=cls;bi(el,ko,en);host.appendChild(el)})};
+ fill(elDesc,d&&d.body);
+ fill(elBound,d&&d.bound,'drawer-limit');
+ elExtra.replaceChildren();
+ const ex=EXTRA[key];
+ if(ex){const [base,ako,aen]=ex;
+  const w=document.createElement('span');w.className='progressive-image';w.setAttribute('data-progressive','');
+  const mk=(cls,src,alt)=>{const im=document.createElement('img');im.className=cls;im.src=src;im.alt=alt;
+   im.draggable=false;im.loading='eager';im.decoding='async';return im};
+  const pv=mk('progressive-image__preview','../assets/'+base+'.preview.webp','');pv.setAttribute('aria-hidden','true');
+  const full=mk('progressive-image__full','../assets/'+base+'.webp',lang()==='en'?aen:ako);
+  full.dataset.altKo=ako;full.dataset.altEn=aen;
+  w.append(pv,full);elExtra.appendChild(w)}
  elTags.replaceChildren();
- (TAGS[key]||[]).forEach(([ko,en])=>{const s=document.createElement('span');bi(s,ko,en);elTags.appendChild(s)});
+ ((d&&d.keys)||[]).forEach(t=>{const s=document.createElement('span');s.textContent=t;elTags.appendChild(s)});
+ elNote.hidden=!(d&&d.keys&&d.keys.length);
  scroll.scrollTop=0;opener=card;
  drawer.classList.add('is-open');document.body.classList.add('drawer-open');
  panel.focus()};
