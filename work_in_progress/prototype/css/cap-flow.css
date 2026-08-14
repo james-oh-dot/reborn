@@ -28,8 +28,9 @@
 .cap-flow-step.active .cap-flow-step-title{color:var(--warm);font-weight:560}
 
 .cap-flow-step-copy{display:block;max-height:0;opacity:0;overflow:hidden;transition:max-height .6s var(--ease),opacity .45s var(--ease)}
-.cap-flow-step.active .cap-flow-step-copy{max-height:180px;opacity:1}
-.cap-flow-step-desc{display:block;margin-top:12px;max-width:44ch;color:var(--muted-d);font-size:14px;line-height:1.7}
+.cap-flow-step.active .cap-flow-step-copy{max-height:240px;opacity:1}
+.cap-flow-step-lead{display:block;margin-top:14px;max-width:44ch;color:var(--warm);font-size:16px;line-height:1.6}
+.cap-flow-step-desc{display:block;margin-top:10px;max-width:44ch;color:var(--muted-d);font-size:14px;line-height:1.7}
 .cap-flow-step-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
 .cap-flow-step-tags span{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-d);padding:6px 10px;border:1px solid var(--line-d)}
 
