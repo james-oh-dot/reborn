@@ -513,3 +513,80 @@
 .brand{display:inline-flex;align-items:center;min-height:26px}
 .lang button{min-width:26px;min-height:26px;padding:6px 4px;text-align:center}
 .lang{gap:4px}
+
+/* ---------- SELECTED WORK — visual card grid (3 cols, lead spans full) ---------- */
+.selected-work-section .card-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px}
+.visual-card{
+  position:relative;display:block;overflow:hidden;
+  background:var(--ink);color:var(--warm);
+  height:clamp(300px,26vw,382px)}
+.visual-card-lead{grid-column:1/-1;height:clamp(380px,42vw,620px)}
+.visual-card img{
+  display:block;width:100%;height:100%;object-fit:cover;
+  transform:scale(1.02);transition:transform 1s var(--ease)}
+.visual-card:hover img{transform:scale(1.06)}
+/* Our stills run from dark venue photos to white product UI, and each card's
+   copy block is a different height — so the scrim rides on .card-copy itself
+   rather than a fixed percentage of the card. */
+.visual-card:after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(9,10,11,.10),rgba(9,10,11,.24))}
+.card-copy{
+  position:absolute;z-index:1;inset:auto 0 0;
+  padding:clamp(64px,7vw,104px) clamp(22px,2.4vw,40px) clamp(22px,2.4vw,40px);
+  background:linear-gradient(180deg,
+    rgba(9,10,11,0) 0%,
+    rgba(9,10,11,.66) 34%,
+    rgba(9,10,11,.94) 64%,
+    rgba(9,10,11,.99) 100%)}
+.card-eyebrow{
+  display:block;color:var(--blue-soft);
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.card-link{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-top:14px}
+.card-link h3{
+  margin:0;font-weight:700;line-height:1.06;letter-spacing:-.035em;
+  font-size:clamp(23px,2.1vw,31px)}
+.visual-card-lead .card-link h3{font-size:clamp(34px,3.6vw,54px)}
+.card-link p{
+  margin:12px 0 0;font-size:14px;line-height:1.7;
+  color:rgba(242,241,237,.74);max-width:54ch}
+.visual-card-lead .card-link p{font-size:15px;max-width:60ch}
+.card-arrow{
+  flex:none;font-size:22px;line-height:1;color:var(--blue-soft);
+  transition:transform .34s var(--ease)}
+.visual-card:hover .card-arrow{transform:translate(4px,-4px)}
+.visual-card:focus-visible{outline:2px solid var(--blue-soft);outline-offset:3px}
+
+/* Keep the 3-up rhythm on tablet; only collapse to a single column on phones. */
+@media(max-width:1023px){
+  .visual-card{height:min(46vw,330px)}
+  .visual-card-lead{height:min(58vw,470px)}
+  .card-copy{padding:clamp(52px,7vw,72px) 20px 20px}
+  .card-link{gap:14px;margin-top:10px}
+  .card-link h3{font-size:clamp(18px,2.3vw,23px)}
+  .visual-card-lead .card-link h3{font-size:clamp(28px,4vw,42px)}
+  .card-link p{font-size:13px;line-height:1.6}
+  .visual-card-lead .card-link p{font-size:14px}
+  .card-eyebrow{font-size:10px;letter-spacing:.12em}
+  .card-arrow{font-size:18px}
+}
+@media(max-width:767px){
+  .selected-work-section .card-grid{grid-template-columns:1fr;gap:12px}
+  .visual-card{height:68vw;min-height:290px}
+  .visual-card-lead{height:82vw;min-height:340px}
+  .card-link{gap:16px}
+  .card-link p{font-size:13.5px}
+}
+@media(prefers-reduced-motion:reduce){
+  .visual-card img{transform:none}
+  .visual-card:hover img{transform:none}
+  .visual-card:hover .card-arrow{transform:none}
+}
+@media(max-width:767px){
+  /* title and the section CTA each get their own line once the CTA is a button */
+  .section-head{flex-direction:column;align-items:flex-start;gap:22px}
+  .section-head .link{margin-top:0}
+}
+/* Mobile panel language buttons become visible when the menu opens */
+.mobile-lang button{min-width:44px;min-height:44px;text-align:left}
