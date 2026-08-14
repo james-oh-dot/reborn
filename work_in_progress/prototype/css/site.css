@@ -1079,3 +1079,35 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
    full-bleed band on the page and carries the current-scale statement. */
 .home-page .sco-hero-title{font-size:clamp(66px,6.7vw,104px)}
 @media(max-width:767px){.home-page .sco-hero-title{font-size:52px}}
+
+/* ---------- 05 / PARTNERSHIPS — a register, four fields ----------
+   The old row was `140px 1fr 220px` carrying a single short name, leaving ~430px of
+   dead space per row and making the two ends read as unrelated. The gap is now the
+   scope field, transcribed from EVIDENCE_LEDGER_v2.1 — the answer to "what", which
+   was the only one of when/who/what/how-far the row did not answer.
+   The year is a cohort header rather than a repeated cell: it read "2022" six times
+   in the column the eye lands on first. */
+.engagement-list{border-top:1px solid var(--line-l)}
+.engagement-year{padding:clamp(30px,3vw,44px) 0 10px;
+  font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--muted-l)}
+.engagement-year:first-child{padding-top:clamp(18px,1.8vw,26px)}
+.engagement{grid-template-columns:46px minmax(0,5fr) minmax(0,6fr) auto;
+  gap:clamp(16px,1.8vw,28px);align-items:baseline;padding:clamp(15px,1.6vw,21px) 0}
+.engagement-month{font-size:13px;color:var(--muted-l);font-variant-numeric:tabular-nums}
+.engagement strong{font-size:clamp(17px,1.35vw,21px);font-weight:600;letter-spacing:-.015em;line-height:1.3}
+.engagement-scope{color:var(--muted-l);font-size:15px;line-height:1.45}
+.engagement .status{justify-self:end;text-align:right;color:var(--muted-l);white-space:nowrap}
+
+@media(max-width:1023px){
+  /* Scope wraps under the name rather than squeezing four columns into a tablet. */
+  .engagement{grid-template-columns:46px minmax(0,1fr) auto;gap:4px 18px}
+  .engagement-scope{grid-column:2;grid-row:2}
+  .engagement .status{grid-row:1}
+}
+@media(max-width:767px){
+  .engagement{grid-template-columns:40px minmax(0,1fr);gap:5px 12px;padding:16px 0}
+  .engagement strong{font-size:17px}
+  .engagement-scope{grid-column:2;grid-row:2;font-size:14px}
+  .engagement .status{grid-column:2;grid-row:3;justify-self:start;text-align:left;white-space:normal}
+  .engagement-year{padding:26px 0 8px}
+}
