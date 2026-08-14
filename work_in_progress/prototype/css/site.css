@@ -1,4 +1,4 @@
-:root{--ink:#090a0b;--graphite:#111315;--paper:#f6f5f1;--warm:#f2f1ed;--deep:#141618;--muted-d:rgba(242,241,237,.6);--muted-l:rgba(20,22,24,.66);--line-d:rgba(255,255,255,.14);--line-l:rgba(20,22,24,.14);--blue:#5d72ff;--blue-soft:#a9b4ff;--gutter:clamp(28px,4vw,72px);--space:clamp(200px,20vw,360px);--wide:1760px;--ease:cubic-bezier(.16,1,.3,1);--header-h:80px;--h2:clamp(40px,4.8vw,76px);--cap-flow-scroll:200vh}
+:root{--ink:#090a0b;--graphite:#111315;--paper:#f6f5f1;--warm:#f2f1ed;--deep:#141618;--muted-d:rgba(242,241,237,.6);--muted-l:rgba(20,22,24,.66);--line-d:rgba(255,255,255,.14);--line-l:rgba(20,22,24,.14);--blue:#5d72ff;--blue-soft:#a9b4ff;--gutter:clamp(28px,4vw,72px);--space:clamp(200px,20vw,360px);--wide:1760px;--ease:cubic-bezier(.16,1,.3,1);--header-h:80px;--h2:clamp(40px,4.8vw,76px);--sco-measure:900px;--cap-flow-scroll:200vh}
 @media(max-width:1023px){:root{--header-h:68px}}
 
 /* Design Gate A refinement: evidence-led desktop capability visuals and selected-work balance */
@@ -955,7 +955,7 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 
 .sco-lead{margin:0;color:var(--warm)}
 .sco-body{margin-top:clamp(26px,2.6vw,38px);display:flex;flex-direction:column;gap:18px}
-.sco-body .copy{margin:0;color:var(--muted-d);max-width:64ch}
+.sco-body .copy{margin:0;color:var(--muted-d);max-width:var(--sco-measure)}
 
 /* Evidence pair. Equal columns, and the box is sized by aspect-ratio rather than a
    shared row height: both sources are 16:9, and the old 7fr/5fr split with one row
@@ -979,7 +979,7 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
    demotion is carried by size, leading and a footnote hairline. The hairline is derived
    from currentColor, never a literal rgba, so it survives the cream-surface remap; it is
    vertical, so it adds no horizontal rule beneath the framed evidence boxes. */
-.sco-disclaimer{margin:0;max-width:62ch;font-size:14px;line-height:1.78;
+.sco-disclaimer{margin:0;max-width:var(--sco-measure);font-size:14px;line-height:1.78;
   color:var(--muted-d);padding-left:clamp(16px,1.6vw,22px);
   border-left:1px solid;border-left-color:color-mix(in srgb,currentColor 24%,transparent)}
 
