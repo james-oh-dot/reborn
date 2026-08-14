@@ -11,4 +11,4 @@ npm run typecheck
 npm run render
 ```
 
-Output: `out/rebornsoft-hero-particle-wave.mp4`
+Output: `out/rebornsoft-hero-particle-wave-v2.mp4`

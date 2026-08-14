@@ -85,3 +85,8 @@ addEventListener('keydown',e=>{
  if(!f.length)return;const first=f[0],last=f[f.length-1];
  if(e.shiftKey&&(document.activeElement===first||document.activeElement===panel)){e.preventDefault();last.focus()}
  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}})})();
+(()=>{const v=document.querySelector('.hero-video');if(!v)return;
+/* Reduced motion: hold the poster frame instead of looping the clip. */
+const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+const apply=()=>{if(reduce.matches){v.removeAttribute('autoplay');v.pause()}else{v.play().catch(()=>{})}};
+apply();reduce.addEventListener?.('change',apply)})();

@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "studio": "remotion studio --no-open",
-    "render": "remotion render src/index.ts HeroParticleWave out/rebornsoft-hero-particle-wave.mp4 --codec=h264 --crf=16",
-    "still": "remotion still src/index.ts HeroParticleWave out/rebornsoft-hero-particle-wave.png --frame=120",
+    "render": "remotion render src/index.ts HeroParticleWave out/rebornsoft-hero-particle-wave-v2.mp4 --codec=h264 --crf=16",
+    "still": "remotion still src/index.ts HeroParticleWave out/rebornsoft-hero-particle-wave-v2.png --frame=90",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
