@@ -416,3 +416,100 @@
 .on-dark .contact-reserved .contact-pending-tag{
   color:rgba(242,241,237,.82);background:rgba(242,241,237,.1);border-color:var(--line-d)}
 .on-dark .contact-pending-note{color:var(--muted-d)}
+
+/* ---------- 07. HERO IDENTITY PER PAGE + INTERACTION ---------- */
+/* Heroes stay T-E brand visuals per ASSET GOVERNANCE — no project evidence. */
+.page-hero:after{opacity:.9}
+.page-hero .wrap,.home-hero-inner{position:relative;z-index:2}
+
+/* COMPANY — strata: a company read as accumulated layers */
+.company-page .page-hero:before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(180deg,transparent 0 78px,rgba(255,255,255,.05) 78px 79px);
+  -webkit-mask-image:linear-gradient(90deg,#000 0 42%,transparent 82%);
+          mask-image:linear-gradient(90deg,#000 0 42%,transparent 82%)}
+
+/* CAPABILITIES — perception grid with a focus reticle */
+.capabilities-page .page-hero:before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px) 0 0/54px 54px,
+    linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px) 0 0/54px 54px;
+  -webkit-mask-image:radial-gradient(circle at 76% 46%,#000 0 34%,transparent 72%);
+          mask-image:radial-gradient(circle at 76% 46%,#000 0 34%,transparent 72%)}
+.capabilities-page .page-hero:after{
+  border-color:rgba(93,114,255,.34);
+  box-shadow:0 0 0 8vw rgba(93,114,255,.03),0 0 0 18vw rgba(93,114,255,.02)}
+
+/* WORK — field marks: plotted, measured, delivered */
+.work-page .page-hero:before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(90deg,transparent 0 118px,rgba(255,255,255,.07) 118px 119px),
+    repeating-linear-gradient(90deg,transparent 0 29px,rgba(255,255,255,.028) 29px 30px);
+  -webkit-mask-image:linear-gradient(180deg,transparent 12%,#000 62%);
+          mask-image:linear-gradient(180deg,transparent 12%,#000 62%)}
+
+/* CONTACT — converging lines: a conversation meeting in one place */
+.contact-hero:before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    conic-gradient(from 210deg at 88% 78%,
+      transparent 0 6deg,rgba(255,255,255,.055) 6deg 7deg,transparent 7deg 15deg,
+      rgba(255,255,255,.045) 15deg 16deg,transparent 16deg 26deg,
+      rgba(255,255,255,.04) 26deg 27deg,transparent 27deg 40deg,
+      rgba(255,255,255,.03) 40deg 41deg,transparent 41deg 360deg)}
+.contact-hero:after{border-color:rgba(255,255,255,.09)}
+
+/* Scroll cue */
+.scroll-cue{
+  position:absolute;z-index:3;right:var(--gutter);bottom:34px;
+  display:flex;align-items:center;gap:14px;
+  color:var(--muted-d);font-size:10px;letter-spacing:.22em}
+.scroll-cue-rail{position:relative;display:block;width:1px;height:56px;background:var(--line-d);overflow:hidden}
+.scroll-cue-rail i{
+  position:absolute;left:0;top:0;width:1px;height:18px;background:var(--blue-soft);
+  animation:cue 2.1s var(--ease) infinite}
+@keyframes cue{0%{transform:translateY(-20px)}60%,100%{transform:translateY(58px)}}
+.is-scrolled .scroll-cue{opacity:0;transition:opacity .4s}
+
+/* Media reacts enough to feel alive */
+.media img,.sco-inset img,.evidence-media img{transition:transform .85s var(--ease)}
+.media:hover img{transform:scale(1.045)}
+.editorial-case{transition:background .35s var(--ease)}
+.editorial-case:hover{background:rgba(20,22,24,.035)}
+.on-dark .editorial-case:hover{background:rgba(255,255,255,.035)}
+.proof-row,.project-row,.contact-row,.timeline-row,.engagement,.archive-list li{
+  transition:background .3s var(--ease)}
+.proof-row:hover,.project-row:hover,.contact-row:hover,.timeline-row:hover,
+.engagement:hover,.archive-list li:hover{background:rgba(20,22,24,.03)}
+.dark .proof-row:hover,.dark .timeline-row:hover,.dark .archive-list li:hover,
+.graphite .proof-row:hover,.graphite .timeline-row:hover,.graphite .archive-list li:hover,
+.on-dark .proof-row:hover,.on-dark .project-row:hover,.on-dark .contact-row:hover,
+.on-dark .timeline-row:hover,.on-dark .engagement:hover,.on-dark .archive-list li:hover{
+  background:rgba(255,255,255,.045)}
+
+/* Nav gets a real hover state */
+.nav-links a{position:relative;transition:color .25s var(--ease)}
+.nav-links a:after{
+  content:"";position:absolute;left:0;right:0;bottom:4px;height:1px;
+  background:currentColor;transform:scaleX(0);transform-origin:right;
+  transition:transform .34s var(--ease)}
+.nav-links a:hover{color:#fff}
+.nav-links a:hover:after{transform:scaleX(1);transform-origin:left}
+.nav-links a.active:after{display:none}
+
+@media(max-width:767px){
+  .scroll-cue{right:auto;left:var(--gutter);bottom:22px;gap:10px}
+  .scroll-cue-rail{height:40px}
+  @keyframes cue{0%{transform:translateY(-18px)}60%,100%{transform:translateY(42px)}}
+}
+@media(prefers-reduced-motion:reduce){
+  .scroll-cue-rail i{animation:none;height:100%;opacity:.5}
+  .media:hover img{transform:none}
+}
+
+/* WCAG 2.2 SC 2.5.8 — remaining sub-24px targets in the header */
+.brand{display:inline-flex;align-items:center;min-height:26px}
+.lang button{min-width:26px;min-height:26px;padding:6px 4px;text-align:center}
+.lang{gap:4px}
