@@ -33,12 +33,25 @@ track.style.setProperty('--dna-rot',rot.toFixed(2)+'deg');raf=requestAnimationFr
 const span=()=>{const first=cards[0].getBoundingClientRect(),last=cards[cards.length-1].getBoundingClientRect();return Math.max(0,last.left-first.left)};
 const update=()=>{ticking=false;if(!pinned()){strip.style.removeProperty('--rail-x');return}const travel=track.offsetHeight-sticky.offsetHeight;if(travel<=0)return;const headerH=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))||80;const p=clamp((headerH-track.getBoundingClientRect().top)/travel,0,1);strip.style.setProperty('--rail-x',(-p*span()).toFixed(1)+'px')};
 const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);reduce.addEventListener?.('change',onScroll);update()})();
-(()=>{const block=document.querySelector('.reveal-block'),spacer=document.querySelector('.reveal-spacer');if(!block||!spacer)return;const sync=()=>{spacer.style.height=block.offsetHeight+'px'};sync();addEventListener('resize',sync,{passive:true});addEventListener('load',sync);if(document.fonts?.ready)document.fonts.ready.then(sync)})();
+(()=>{const block=document.querySelector('.reveal-block'),spacer=document.querySelector('.reveal-spacer');if(!block||!spacer)return;
+/* Height guard: the block is fixed and bottom-anchored, so anything taller than the
+   viewport escapes off the TOP with no way to scroll to it. Measure the real content
+   height and fall back to normal document flow when it will not fit. Hysteresis keeps
+   the mobile URL bar from flipping the state on every scroll. */
+const SLACK=24;
+const guard=()=>{const isStatic=document.body.classList.contains('reveal-static');
+ const need=block.scrollHeight;
+ if(!isStatic&&need>innerHeight)document.body.classList.add('reveal-static');
+ else if(isStatic&&need<=innerHeight-SLACK)document.body.classList.remove('reveal-static')};
+const sync=()=>{guard();spacer.style.height=block.offsetHeight+'px'};sync();addEventListener('resize',sync,{passive:true});addEventListener('orientationchange',sync);addEventListener('load',sync);if(document.fonts?.ready)document.fonts.ready.then(sync)})();
 (()=>{const block=document.querySelector('.reveal-block'),main=document.querySelector('main');if(!block||!main)return;if(!document.body.classList.contains('subpage'))return;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
 /* Dim the closing block while it is still mostly hidden, easing back to its own
    colour as the last of it is uncovered. */
 const MAX=.34;let ticking=false;
-const update=()=>{ticking=false;const h=block.offsetHeight||1;const revealed=Math.max(0,Math.min(h,innerHeight-Math.max(0,main.getBoundingClientRect().bottom)));const p=revealed/h;block.style.setProperty('--reveal-dim',((1-p)*MAX).toFixed(3))};
+const update=()=>{ticking=false;
+ /* No reveal, no dim — the height guard has dropped the block into normal flow. */
+ if(document.body.classList.contains('reveal-static')){block.style.setProperty('--reveal-dim','0');return}
+ const h=block.offsetHeight||1;const revealed=Math.max(0,Math.min(h,innerHeight-Math.max(0,main.getBoundingClientRect().bottom)));const p=revealed/h;block.style.setProperty('--reveal-dim',((1-p)*MAX).toFixed(3))};
 const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};
 addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);update()})();
 (()=>{const drawer=document.getElementById('project-drawer');if(!drawer)return;
@@ -86,7 +99,29 @@ addEventListener('keydown',e=>{
  if(e.shiftKey&&(document.activeElement===first||document.activeElement===panel)){e.preventDefault();last.focus()}
  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}})})();
 (()=>{const v=document.querySelector('.hero-video');if(!v)return;
-/* Reduced motion: hold the poster frame instead of looping the clip. */
+/* The clip is ~6MB and is cropped hard at phone aspect ratios, so the poster frame is
+   the DEFAULT and the video is an enhancement that has to earn its download. The
+   <source> carries data-src, not src, so nothing is fetched until every gate passes:
+   wide enough to show the composition, motion allowed, and not on a metered link. */
 const reduce=matchMedia('(prefers-reduced-motion: reduce)');
-const apply=()=>{if(reduce.matches){v.removeAttribute('autoplay');v.pause()}else{v.play().catch(()=>{})}};
-apply();reduce.addEventListener?.('change',apply)})();
+const src=v.querySelector('source[data-src]');
+const conn=navigator.connection;
+const cheapLink=()=>!conn||(!conn.saveData&&!/^(slow-2g|2g|3g)$/.test(conn.effectiveType||''));
+const allowed=()=>innerWidth>=768&&!reduce.matches&&cheapLink();
+const apply=()=>{
+ if(!allowed()){v.pause();return}
+ if(src&&!src.getAttribute('src')){src.setAttribute('src',src.dataset.src);v.load()}
+ v.play().catch(()=>{})};
+apply();reduce.addEventListener?.('change',apply);addEventListener('resize',apply,{passive:true})})();
+/* iOS-safe scroll lock. body{overflow:hidden} is ignored by Safari on iOS, so the page
+   behind an open menu or drawer still rubber-bands. Pin the body at its current offset
+   instead and restore it on release. A class observer drives it so the menu and the
+   drawer share one implementation rather than each rolling their own. */
+(()=>{const body=document.body,root=document.documentElement,KEYS=['menu-open','drawer-open'];
+let locked=false,y=0;
+const apply=()=>{const want=KEYS.some(k=>body.classList.contains(k));if(want===locked)return;
+ if(want){y=scrollY||0;body.style.top=(-y)+'px';body.classList.add('is-scroll-locked');locked=true}
+ else{body.classList.remove('is-scroll-locked');body.style.top='';locked=false;
+  /* restore instantly — html{scroll-behavior:smooth} would otherwise animate the jump */
+  const prev=root.style.scrollBehavior;root.style.scrollBehavior='auto';scrollTo(0,y);root.style.scrollBehavior=prev}};
+new MutationObserver(apply).observe(body,{attributes:true,attributeFilter:['class']});apply()})();

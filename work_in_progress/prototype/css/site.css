@@ -26,8 +26,11 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .dna-band{position:relative;overflow:hidden;margin-top:clamp(88px,10vw,150px)}
 .dna-track{display:flex;width:max-content;transform:translate3d(var(--dna-x,0px),0,0)}
 .dna-half{display:flex;flex:none}
+/* The floor is 21px, not a proportional shrink: below ~20px the band stops reading as
+   a moving statement and starts reading as a stray rule. Mobile keeps roughly half the
+   desktop reduction so the type survives; scroll speed and star rotation are unchanged. */
 .dna-seq{display:inline-flex;align-items:center;white-space:nowrap;
-  font-size:clamp(12px,1.7vw,29px);font-weight:600;letter-spacing:.04em;color:var(--deep)}
+  font-size:clamp(21px,1.7vw,29px);font-weight:600;letter-spacing:.04em;color:var(--deep)}
 .dna-arrow{font-style:normal;margin-inline:clamp(14px,1.6vw,30px);color:rgba(20,22,24,.45)}
 .dna-star{display:inline-block;font-weight:400;color:var(--deep);
   margin-inline:clamp(60px,9vw,170px);transform:rotate(var(--dna-rot,0deg))}
@@ -217,10 +220,16 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .contact-pending-links{display:flex;flex-wrap:wrap;gap:0 40px}
 @media(max-width:767px){.contact-reserved.is-pending{grid-template-columns:1fr auto}.contact-reserved .contact-pending-tag{grid-column:2;justify-self:end}.contact-pending-links{flex-direction:column;gap:0}}
 
-/* Touch target minimum (WCAG 2.2 AA 2.5.8) — invisible hit area, no layout shift. */
+/* Touch target minimum (WCAG 2.2 AA 2.5.8) — invisible hit area, no layout shift.
+   Controls whose hit areas would sit side by side (the KR/EN pill, MENU) grow their
+   real box instead, so the expanders never overlap each other. */
 @media(max-width:1023px){
-  .link,.brand,.footer a{position:relative}
-  .link::after,.brand::after,.footer a::after{content:"";position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:44px}
+  .link,.brand,.footer a,.mobile-links a{position:relative}
+  .link::after,.brand::after,.footer a::after,.mobile-links a::after{content:"";position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:44px}
+  .site-header .menu-trigger{min-width:44px;min-height:44px;padding:8px 4px;text-align:right}
+  .site-header .lang button{min-height:44px;padding:13px 15px}
+  .site-header .lang{padding:2px}
+  .mobile-lang button{min-height:44px}
 }
 
 /* ============================================================
@@ -334,7 +343,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .contact-reserved strong{font-size:var(--fs-sub)}
 .meta,.eyebrow{font-size:12px}
 .status{font-size:12px}
-.sco-evidence figcaption{font-size:10px}
+.sco-evidence figcaption{font-size:11px}
 
 .archive-list li{font-size:15px}
 
@@ -426,7 +435,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .scroll-cue{
   position:absolute;z-index:3;left:50%;bottom:48px;transform:translateX(-50%);
   display:flex;flex-direction:column;align-items:center;gap:12px;
-  color:var(--muted-d);font-size:10px;letter-spacing:.22em;opacity:.6}
+  color:var(--muted-d);font-size:11px;letter-spacing:.22em;opacity:.6}
 .scroll-cue-rail{position:relative;display:block;width:1px;height:52px;background:var(--line-d);overflow:hidden}
 .scroll-cue-rail i{
   position:absolute;left:0;top:0;width:1px;height:16px;background:var(--blue-soft);
@@ -524,7 +533,9 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
   .visual-card-lead .card-link h3{font-size:clamp(28px,4vw,42px)}
   .card-link p{font-size:13px;line-height:1.6}
   .visual-card-lead .card-link p{font-size:14px}
-  .card-eyebrow{font-size:10px;letter-spacing:.12em}
+  /* 11px is the site-wide floor for tracked-out uppercase meta text — the wide
+     letter-spacing thins the strokes, so it reads smaller than its nominal size. */
+  .card-eyebrow{font-size:11px;letter-spacing:.12em}
   .card-arrow{font-size:18px}
 }
 @media(max-width:767px){
@@ -789,7 +800,10 @@ html[lang=en] .integration-ko{display:none}
   font-size:clamp(96px,15vw,260px);font-weight:800;letter-spacing:-.06em;
   line-height:.8;color:rgba(255,255,255,.05)}
 @media(max-width:767px){
-  .hero-bg-type{left:22%;bottom:clamp(96px,18vh,150px);font-size:clamp(84px,26vw,140px)}
+  /* Desktop lets the wordmark run off the right edge on purpose. At phone widths only
+     ~40% of it survived, which reads as a typo rather than a device — so here it is
+     sized to sit fully inside the viewport instead. */
+  .hero-bg-type{left:var(--gutter);bottom:clamp(60px,12vh,110px);font-size:clamp(44px,13.5vw,72px)}
 }
 
 /* ---------- PROJECT DETAIL DRAWER ----------
@@ -852,6 +866,25 @@ body.drawer-open{overflow:hidden}
   font-size:clamp(22px,2.4vw,38px);font-weight:600;letter-spacing:-.025em;
   line-height:1.35;color:rgba(20,22,24,.16)}
 @media(max-width:1023px){
-  .rail-outro{width:auto;height:auto;padding:6px 0 0;
-    font-size:clamp(19px,4.4vw,26px);color:rgba(20,22,24,.28)}
+  /* Stacked, the horizontal "trailing" idea cannot survive — so re-role it into a
+     self-standing closing line under the last card rather than shrinking it into a
+     caption. Bigger and less faint, because at this size .16 alpha reads as a defect. */
+  .rail-outro{width:auto;height:auto;padding:clamp(30px,7vw,46px) 0 0;
+    font-size:clamp(27px,7vw,36px);line-height:1.3;color:rgba(20,22,24,.34)}
 }
+
+/* ---------- MOBILE SAFETY STATES ----------
+   Placed last on purpose: both rules must win over .subpage .reveal-block{position:fixed}. */
+
+/* Height guard (see js/site.js). The reveal block is fixed and bottom-anchored, so
+   content taller than the viewport escapes off the TOP and can never be scrolled to.
+   When JS measures that overflow it drops the block into normal flow — the same
+   fallback prefers-reduced-motion already uses. */
+body.reveal-static .reveal-block{position:static;min-height:0}
+body.reveal-static .reveal-spacer{display:none}
+body.reveal-static .reveal-block:after{display:none}
+
+/* iOS-safe scroll lock. Safari on iOS ignores body{overflow:hidden}, so the page keeps
+   rubber-banding behind an open menu or drawer. JS pins the body at its scroll offset
+   via inline top and restores it on release. */
+body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
