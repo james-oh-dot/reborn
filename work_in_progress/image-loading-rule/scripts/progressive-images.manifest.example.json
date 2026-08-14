@@ -1,0 +1,12 @@
+{
+  "root": "public/assets",
+  "defaults": { "max_width": 1600, "quality": 90 },
+  "preview": { "width": 64, "quality": 45 },
+  "targets": [
+    { "path": "hero/*.jpg", "max_width": 1920 },
+    { "path": "sections/*.jpg", "max_width": 1200 },
+    { "path": "cards/*.jpg", "max_width": 900 },
+    { "path": "people/*.jpg", "max_width": 900 },
+    { "path": "icons/signature.png", "max_width": 500, "quality": 95 }
+  ]
+}

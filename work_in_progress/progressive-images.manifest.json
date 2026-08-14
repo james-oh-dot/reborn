@@ -1,0 +1,17 @@
+{
+  "root": "assets",
+  "defaults": { "max_width": 1200, "quality": 90 },
+  "preview": { "width": 64, "quality": 45 },
+  "targets": [
+    { "path": "Hero/HERO.png", "max_width": 2560 },
+    { "path": "projects/sco-noah/site-inspection-primary.jpg", "max_width": 1920 },
+    { "path": "projects/sco-noah/sco-public-record-secondary.jpeg", "max_width": 1600 },
+    { "path": "evidence/kisa-hyper-vision.png", "max_width": 900 },
+    { "path": "products/7cubic/*.png", "max_width": 1200 },
+    { "path": "projects/fitm/app.png", "max_width": 1200 },
+    { "path": "projects/hana/face-access.png", "max_width": 1200 },
+    { "path": "projects/hongdae/*.png", "max_width": 900 },
+    { "path": "projects/hyundai/curved-screen.png", "max_width": 900 },
+    { "path": "projects/yancheng/*.png", "max_width": 1200 }
+  ]
+}

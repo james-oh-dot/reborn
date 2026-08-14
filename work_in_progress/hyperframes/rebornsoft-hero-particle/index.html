@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        margin: 0;
+        overflow: hidden;
+        background: #050a10;
+      }
+
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #050a10;
+      }
+
+      #hero-scene,
+      #base-frame,
+      #particle-canvas {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+      }
+
+      #hero-scene {
+        overflow: hidden;
+      }
+
+      #base-frame {
+        z-index: 0;
+        display: block;
+        object-fit: fill;
+        user-select: none;
+        pointer-events: none;
+      }
+
+      #particle-canvas {
+        z-index: 1;
+        display: block;
+        opacity: 0.88;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-d322" id="root" data-composition-id="rebornsoft-hero-particle" data-start="0" data-duration="10" data-width="1920" data-height="1080">
+      <div data-hf-id="hf-mt0o" id="hero-scene" class="clip" data-start="0" data-duration="10" data-track-index="0">
+        <img data-hf-id="hf-8n80" id="base-frame" src="assets/HERO_REBORNSOFT_PROTOTYPE_A1_v0.1.png" alt="" crossorigin="anonymous" draggable="false">
+        <canvas data-hf-id="hf-79wd" id="particle-canvas" width="1920" height="1080" aria-hidden="true"></canvas>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+
+      const WIDTH = 1920;
+      const HEIGHT = 1080;
+      const TAU = Math.PI * 2;
+
+      // Screen coordinates are mapped from the photographed 1672×941 source.
+      // The slight quadrilateral preserves the visible display perspective.
+      const SCREEN = {
+        tl: { x: 1001.7, y: 335.2 },
+        tr: { x: 1423.9, y: 335.2 },
+        br: { x: 1422.8, y: 677.8 },
+        bl: { x: 1003.0, y: 677.8 },
+      };
+
+      const screenWidth = SCREEN.tr.x - SCREEN.tl.x;
+      const screenHeight = SCREEN.bl.y - SCREEN.tl.y;
+      const personX = 0.478;
+      const canvas = document.querySelector("#particle-canvas");
+      const ctx = canvas.getContext("2d", { alpha: true });
+
+      function mulberry32(seed) {
+        let value = seed >>> 0;
+        return function next() {
+          value += 0x6d2b79f5;
+          let result = value;
+          result = Math.imul(result ^ (result >>> 15), result | 1);
+          result ^= result + Math.imul(result ^ (result >>> 7), result | 61);
+          return ((result ^ (result >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      const seeded = mulberry32(0x52425346);
+
+      function ridgeAt(u, branch) {
+        const rise = 0.49 + 0.12 * Math.sin(Math.PI * (u * 1.08 - 0.08));
+        const rightLift = 0.34 / (1 + Math.exp(-(u - 0.72) * 15));
+        const base = rise - rightLift;
+        if (branch === 0) return base;
+        if (branch === 1) return base + 0.11 + 0.025 * Math.sin(u * 8.5);
+        return 0.71 - 0.23 * u + 0.045 * Math.sin(u * 10.2 + 1.4);
+      }
+
+      const particles = [];
+      const particleCount = 6200;
+
+      for (let index = 0; index < particleCount; index += 1) {
+        const layer = index % 4;
+        const u = seeded();
+        const fieldParticle = seeded() < 0.34;
+        const branch = Math.floor(seeded() * 3);
+        const ridge = ridgeAt(u, branch);
+        const spread = branch === 2 ? 0.075 : 0.052 + layer * 0.008;
+        const signed = seeded() + seeded() + seeded() - 1.5;
+        const v = fieldParticle
+          ? 0.05 + seeded() * 0.9
+          : ridge + signed * spread * 2.15;
+
+        particles.push({
+          u,
+          v: Math.max(0.018, Math.min(0.982, v)),
+          layer,
+          phase: seeded() * TAU,
+          phaseB: seeded() * TAU,
+          size: 0.42 + seeded() * (layer === 3 ? 1.08 : 0.78),
+          alpha: (fieldParticle ? 0.038 : 0.078) + seeded() * (fieldParticle ? 0.07 : 0.14),
+          cool: seeded(),
+        });
+      }
+
+      function screenPoint(u, v) {
+        const topX = SCREEN.tl.x + (SCREEN.tr.x - SCREEN.tl.x) * u;
+        const topY = SCREEN.tl.y + (SCREEN.tr.y - SCREEN.tl.y) * u;
+        const bottomX = SCREEN.bl.x + (SCREEN.br.x - SCREEN.bl.x) * u;
+        const bottomY = SCREEN.bl.y + (SCREEN.br.y - SCREEN.bl.y) * u;
+        return {
+          x: topX + (bottomX - topX) * v,
+          y: topY + (bottomY - topY) * v,
+        };
+      }
+
+      function addScreenAndPersonMask() {
+        const mask = new Path2D();
+        mask.moveTo(SCREEN.tl.x, SCREEN.tl.y);
+        mask.lineTo(SCREEN.tr.x, SCREEN.tr.y);
+        mask.lineTo(SCREEN.br.x, SCREEN.br.y);
+        mask.lineTo(SCREEN.bl.x, SCREEN.bl.y);
+        mask.closePath();
+
+        // Buffered silhouette of the stationary foreground visitor, limited to the display.
+        mask.moveTo(1193.0, 585.0);
+        mask.bezierCurveTo(1195.0, 574.0, 1205.0, 570.0, 1215.0, 574.0);
+        mask.bezierCurveTo(1224.0, 579.0, 1227.0, 592.0, 1225.0, 607.0);
+        mask.bezierCurveTo(1238.0, 614.0, 1242.0, 632.0, 1241.0, 651.0);
+        mask.lineTo(1234.0, 677.8);
+        mask.lineTo(1179.0, 677.8);
+        mask.bezierCurveTo(1177.0, 657.0, 1179.0, 632.0, 1184.0, 614.0);
+        mask.bezierCurveTo(1188.0, 602.0, 1191.0, 594.0, 1193.0, 585.0);
+        mask.closePath();
+
+        ctx.clip(mask, "evenodd");
+      }
+
+      function renderParticles(progress) {
+        const loop = progress - Math.floor(progress);
+        const phase = loop * TAU;
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+        ctx.save();
+        addScreenAndPersonMask();
+        ctx.globalCompositeOperation = "screen";
+
+        for (const particle of particles) {
+          const layerFactor = 0.72 + particle.layer * 0.16;
+          const cyclicalDrift =
+            Math.sin(phase - 0.42 + particle.layer * 0.1) * (18 + particle.layer * 5.5) +
+            Math.sin(phase * 2 + particle.phaseB) * 3.5;
+
+          let u = particle.u + cyclicalDrift / screenWidth;
+          let v = particle.v;
+
+          // Broad blended deformation: multiple slow fields avoid a legible sine-wave profile.
+          v +=
+            Math.sin(particle.u * 7.4 + phase + particle.phase * 0.12) * 0.026 * layerFactor +
+            Math.sin(particle.u * 15.2 - phase * 2 + particle.phaseB) * 0.009;
+          u += Math.sin(particle.v * 8.8 + phase + particle.phase) * 0.009 * layerFactor;
+
+          // Three restrained gather/stretch regions that cyclically dissolve and reconnect.
+          const regionCenters = [0.22, 0.55, 0.82];
+          for (let region = 0; region < regionCenters.length; region += 1) {
+            const delta = u - regionCenters[region];
+            const influence = Math.exp(-(delta * delta) / 0.012);
+            const gather = Math.sin(phase + region * 2.05) * 0.014;
+            u -= delta * influence * gather;
+            v += influence * Math.sin(phase + particle.phaseB + region) * 0.009;
+          }
+
+          // The person is never animated. Only the on-screen field bends around this anchor.
+          const px = u - personX;
+          const py = (v - 0.72) * 0.82;
+          const distanceSquared = px * px + py * py;
+          const presence = Math.max(0, 1 - distanceSquared / 0.026);
+          if (presence > 0) {
+            const direction = px < 0 ? -1 : 1;
+            const breathing = 0.82 + 0.08 * (1 - Math.cos(phase));
+            u += direction * presence * presence * 0.032 * breathing;
+            v += Math.sin(particle.phaseB + phase) * presence * 0.006;
+          }
+
+          if (u < 0.006 || u > 0.994 || v < 0.01 || v > 0.99) continue;
+
+          const point = screenPoint(u, v);
+          const opacityBreath = 0.82 + 0.18 * Math.cos(phase + particle.phase);
+          const currentPhase = TAU * (u - loop) + Math.sin(v * 6.2) * 0.42;
+          const movingCurrent = 0.82 + 0.28 * (0.5 + 0.5 * Math.cos(currentPhase));
+          const alpha =
+            particle.alpha * opacityBreath * movingCurrent * (0.9 + particle.layer * 0.065);
+          const red = particle.cool > 0.9 ? 215 : particle.cool > 0.45 ? 120 : 49;
+          const green = particle.cool > 0.9 ? 238 : particle.cool > 0.45 ? 185 : 94;
+          const blue = particle.cool > 0.9 ? 255 : particle.cool > 0.45 ? 235 : 135;
+
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(${red}, ${green}, ${blue}, ${alpha.toFixed(4)})`;
+          ctx.arc(point.x, point.y, particle.size, 0, TAU);
+          ctx.fill();
+        }
+
+        ctx.restore();
+      }
+
+      renderParticles(0);
+
+      const timeline = gsap.timeline({ paused: true });
+      const syncCanvasToTimeline = () => renderParticles(timeline.time() / 10);
+      timeline.to(
+        "#particle-canvas",
+        {
+          opacity: 1,
+          duration: 5,
+          ease: "none",
+          onUpdate: syncCanvasToTimeline,
+        },
+        0,
+      );
+      timeline.to(
+        "#particle-canvas",
+        {
+          opacity: 0.88,
+          duration: 5,
+          ease: "none",
+          onUpdate: syncCanvasToTimeline,
+        },
+        5,
+      );
+
+      window.__timelines["rebornsoft-hero-particle"] = timeline;
+    </script>
+  </body>
+</html>
