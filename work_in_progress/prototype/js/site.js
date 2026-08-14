@@ -41,3 +41,47 @@ const MAX=.34;let ticking=false;
 const update=()=>{ticking=false;const h=block.offsetHeight||1;const revealed=Math.max(0,Math.min(h,innerHeight-Math.max(0,main.getBoundingClientRect().bottom)));const p=revealed/h;block.style.setProperty('--reveal-dim',((1-p)*MAX).toFixed(3))};
 const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};
 addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);update()})();
+(()=>{const drawer=document.getElementById('project-drawer');if(!drawer)return;
+const cards=[...document.querySelectorAll('.visual-card[data-project]')];if(!cards.length)return;
+const panel=drawer.querySelector('.drawer-panel'),media=drawer.querySelector('.drawer-media'),
+ elStatus=drawer.querySelector('.drawer-status'),elTitle=drawer.querySelector('.drawer-title'),
+ elSummary=drawer.querySelector('.drawer-summary'),elTags=drawer.querySelector('.drawer-tags'),
+ scroll=drawer.querySelector('.drawer-scroll');
+/* Tags restate wording already published on the card itself — no new claims. */
+const TAGS={
+ yancheng:[['곡면 스크린','CURVED SCREEN'],['시뮬레이션 콘텐츠','SIMULATION CONTENT'],['DELIVERED · 2022','DELIVERED · 2022']],
+ hongdae:[['VR 공간','VR SPACE'],['곡면 스크린','CURVED SCREEN'],['DELIVERED · 2022','DELIVERED · 2022']],
+ fitm:[['AI 동작인식','AI MOTION RECOGNITION'],['공동 개발','CO-DEVELOPMENT'],['CO-DEVELOPED · 2021–2022','CO-DEVELOPED · 2021–2022']],
+ hana:[['얼굴인식','FACE RECOGNITION'],['출입보안','ACCESS SECURITY'],['DEPLOYED · 2019','DEPLOYED · 2019']]};
+const lang=()=>document.documentElement.lang==='en'?'en':'ko';
+const bi=(el,ko,en)=>{el.dataset.ko=ko;el.dataset.en=en;el.textContent=lang()==='en'?en:ko};
+let opener=null;
+const open=card=>{
+ const key=card.dataset.project;
+ const img=card.querySelector('.progressive-image'),
+       eyebrow=card.querySelector('.card-eyebrow'),
+       h=card.querySelector('.card-link h3'),
+       p=card.querySelector('.card-link p');
+ media.replaceChildren();
+ if(img){const c=img.cloneNode(true);c.removeAttribute('data-parallax');c.style.removeProperty('transform');media.appendChild(c)}
+ elStatus.textContent=eyebrow?eyebrow.textContent.trim():'';
+ if(h)bi(elTitle,h.dataset.ko||h.textContent.trim(),h.dataset.en||h.textContent.trim());
+ if(p)bi(elSummary,p.dataset.ko||p.textContent.trim(),p.dataset.en||p.textContent.trim());
+ elTags.replaceChildren();
+ (TAGS[key]||[]).forEach(([ko,en])=>{const s=document.createElement('span');bi(s,ko,en);elTags.appendChild(s)});
+ scroll.scrollTop=0;opener=card;
+ drawer.classList.add('is-open');document.body.classList.add('drawer-open');
+ panel.focus()};
+const close=()=>{if(!drawer.classList.contains('is-open'))return;
+ drawer.classList.remove('is-open');document.body.classList.remove('drawer-open');
+ if(opener){opener.focus();opener=null}};
+cards.forEach(c=>c.addEventListener('click',e=>{e.preventDefault();open(c)}));
+drawer.querySelectorAll('[data-drawer-close]').forEach(b=>b.addEventListener('click',close));
+addEventListener('keydown',e=>{
+ if(e.key==='Escape')return close();
+ if(e.key!=='Tab'||!drawer.classList.contains('is-open'))return;
+ /* keep focus inside the panel while it is open */
+ const f=[...panel.querySelectorAll('button,[href],[tabindex]:not([tabindex="-1"])')].filter(x=>x.offsetParent!==null);
+ if(!f.length)return;const first=f[0],last=f[f.length-1];
+ if(e.shiftKey&&(document.activeElement===first||document.activeElement===panel)){e.preventDefault();last.focus()}
+ else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}})})();
