@@ -649,3 +649,57 @@ main{position:relative;z-index:1;background:var(--ink)}
 .subpage .reveal-block{background:#F9F5EF}
 .subpage .reveal-block .footer{background:#F9F5EF;color:rgba(0,0,0,.62);border-top-color:rgba(0,0,0,.14)}
 .subpage .reveal-block .footer a{color:#000}
+
+/* ---------- SUBPAGE GRID — 12 columns: 3 title / 1 breathing / 8 content ----------
+   Applied over the existing markup rather than rewriting each section: the section
+   head becomes the left column and everything after it becomes the content column.
+   Tablet folds to 8 columns (2 + 6); mobile stacks. */
+@media(min-width:1024px){
+  .subpage main>section:not(.page-hero)>.wrap{
+    display:grid;grid-template-columns:repeat(12,minmax(0,1fr));
+    column-gap:24px;row-gap:clamp(28px,3vw,48px);align-items:start}
+  .subpage main>section:not(.page-hero)>.wrap>*{grid-column:5/13}
+  .subpage main>section:not(.page-hero)>.wrap>.section-head,
+  .subpage main>section:not(.page-hero)>.wrap.grid>.evo-label,
+  .subpage main>section:not(.page-hero)>.wrap.current-grid>:first-child{grid-column:1/4}
+  /* cap-detail carries its own title/media split — remap it to the same rhythm */
+  .subpage main>section:not(.page-hero)>.wrap>.cap-detail{grid-column:1/-1;
+    display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding-block:0;border-top:0}
+  .subpage main>section:not(.page-hero)>.wrap>.cap-detail>:first-child{grid-column:1/4}
+  .subpage main>section:not(.page-hero)>.wrap>.cap-detail>*+*{grid-column:5/13}
+}
+@media(min-width:768px) and (max-width:1023px){
+  .subpage main>section:not(.page-hero)>.wrap{
+    display:grid;grid-template-columns:repeat(8,minmax(0,1fr));
+    column-gap:20px;row-gap:clamp(24px,3vw,40px);align-items:start}
+  .subpage main>section:not(.page-hero)>.wrap>*{grid-column:3/9}
+  .subpage main>section:not(.page-hero)>.wrap>.section-head,
+  .subpage main>section:not(.page-hero)>.wrap.grid>.evo-label,
+  .subpage main>section:not(.page-hero)>.wrap.current-grid>:first-child{grid-column:1/3}
+  .subpage main>section:not(.page-hero)>.wrap>.cap-detail{grid-column:1/-1;
+    display:grid;grid-template-columns:repeat(8,minmax(0,1fr));column-gap:20px;padding-block:0;border-top:0}
+  .subpage main>section:not(.page-hero)>.wrap>.cap-detail>:first-child{grid-column:1/3}
+  .subpage main>section:not(.page-hero)>.wrap>.cap-detail>*+*{grid-column:3/9}
+}
+/* The head is a column now, not a full-width rule above the content. */
+@media(min-width:768px){
+  .subpage main>section:not(.page-hero) .section-head{
+    display:block;border-bottom:0;padding-bottom:0;margin-bottom:0}
+  .subpage main>section:not(.page-hero) .section-head .section-title{margin-top:14px}
+  .subpage main>section:not(.page-hero) .section-head .link{margin-top:26px}
+  .subpage main>section:not(.page-hero)>.wrap.current-grid{gap:0 24px}
+}
+@media(max-width:767px){
+  .subpage main>section:not(.page-hero)>.wrap{display:block}
+  .subpage main>section:not(.page-hero)>.wrap>*+*{margin-top:36px}
+}
+
+/* current-grid carries a more specific legacy 2-column rule — re-map it. */
+@media(min-width:1024px){
+  .subpage main>section:not(.page-hero)>.wrap.current-grid{
+    grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:0 24px!important}
+}
+@media(min-width:768px) and (max-width:1023px){
+  .subpage main>section:not(.page-hero)>.wrap.current-grid{
+    grid-template-columns:repeat(8,minmax(0,1fr))!important;gap:0 20px!important}
+}
