@@ -16,14 +16,17 @@ visuals.forEach((v,i)=>{const off=offsetFor(idx-i);v.style.setProperty('--vis-y'
    pushes the strip left, scrolling up pushes it right. `vel` decays back to the
    resting drift, and x wraps on one half-width so either direction stays seamless. */
 const LOOP_S=19,BOOST=2.6,DECAY=.88,MAXVEL=3200;
-let x=0,loop=half.offsetWidth,lastY=scrollY,vel=0,inView=false,raf=0,last=0;
+const ROT_PER_PX=.2;let x=0,rot=0,loop=half.offsetWidth,lastY=scrollY,vel=0,inView=false,raf=0,last=0;
 new IntersectionObserver(es=>{inView=es[0].isIntersecting;if(inView&&!raf){last=0;raf=requestAnimationFrame(tick)}},{threshold:0}).observe(band);
 addEventListener('resize',()=>{loop=half.offsetWidth},{passive:true});
 addEventListener('scroll',()=>{const y=scrollY,d=y-lastY;lastY=y;vel=Math.max(-MAXVEL,Math.min(MAXVEL,vel-d*BOOST*10))},{passive:true});
 function tick(t){raf=0;if(!inView)return;if(!last)last=t;const dt=Math.min(.05,(t-last)/1000);last=t;
-const drift=-(loop/LOOP_S);x+=(drift+vel)*dt;vel*=Math.pow(DECAY,dt*60);if(Math.abs(vel)<1)vel=0;
+const drift=-(loop/LOOP_S);const step=(drift+vel)*dt;x+=step;vel*=Math.pow(DECAY,dt*60);if(Math.abs(vel)<1)vel=0;
+/* The asterisk turns with the travel: clockwise heading left, anti-clockwise heading right. */
+rot-=step*ROT_PER_PX;
 if(loop>0){while(x<=-loop)x+=loop;while(x>0)x-=loop}
-track.style.setProperty('--dna-x',x.toFixed(1)+'px');raf=requestAnimationFrame(tick)}
+track.style.setProperty('--dna-x',x.toFixed(1)+'px');
+track.style.setProperty('--dna-rot',rot.toFixed(2)+'deg');raf=requestAnimationFrame(tick)}
 })();
 (()=>{const rail=document.querySelector('.work-rail');if(!rail)return;const track=rail.querySelector('.rail-track'),sticky=rail.querySelector('.rail-sticky'),strip=rail.querySelector('.rail-strip'),cards=[...rail.querySelectorAll('.visual-card')];if(!track||!strip||cards.length<2)return;const reduce=matchMedia('(prefers-reduced-motion: reduce)');const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));const pinned=()=>innerWidth>=1024&&!reduce.matches;let ticking=false;
 /* Distance the strip must travel so the LAST card lands where the FIRST began. */

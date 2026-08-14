@@ -28,7 +28,8 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .dna-seq{display:inline-flex;align-items:center;white-space:nowrap;
   font-size:clamp(12px,1.7vw,29px);font-weight:600;letter-spacing:.04em;color:var(--deep)}
 .dna-arrow{font-style:normal;margin-inline:clamp(14px,1.6vw,30px);color:rgba(20,22,24,.45)}
-.dna-star{font-weight:400;color:var(--deep);margin-inline:clamp(60px,9vw,170px)}
+.dna-star{display:inline-block;font-weight:400;color:var(--deep);
+  margin-inline:clamp(60px,9vw,170px);transform:rotate(var(--dna-rot,0deg))}
 
 /* work cards and media */
 .section-head{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:22px;border-bottom:1px solid currentColor;margin-bottom:clamp(52px,6vw,90px)}.section-head small{opacity:.55}.lead-work{display:grid;grid-template-columns:7fr 4fr;gap:clamp(28px,5vw,84px);align-items:end}.media{overflow:hidden;background:#17191b}.media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}.media:hover img{transform:scale(1.015)}.lead-work .media{height:min(62vw,720px)}.work-info h3{font-size:clamp(40px,4.8vw,76px);line-height:1.02;letter-spacing:-.04em;margin:20px 0}.work-info p{color:var(--muted-l);max-width:530px}.secondary-work{display:grid;grid-template-columns:4fr 6fr;gap:clamp(28px,5vw,84px);align-items:center;margin-top:clamp(100px,13vw,190px)}.secondary-work .media{height:min(45vw,560px)}.editorial-cases{display:grid;grid-template-columns:1fr 1fr;margin-top:clamp(100px,12vw,170px);border-top:1px solid var(--line-l)}.editorial-case{padding:44px 7vw 60px 0;border-bottom:1px solid var(--line-l)}.editorial-case:nth-child(even){padding-left:4vw;border-left:1px solid var(--line-l)}.editorial-case h3{font-size:clamp(30px,3vw,48px);margin:18px 0}.editorial-case .thumb{height:230px;margin-bottom:30px}.editorial-case .thumb img{object-fit:contain;background:#e8e7e2}.proof-list{display:grid;grid-template-columns:5fr 7fr;border-top:1px solid var(--line-l)}.proof-feature{padding:50px 5vw 50px 0}.proof-feature img{width:100%;max-height:540px;object-fit:contain;filter:saturate(.35)}.proof-rows{border-left:1px solid var(--line-l)}.proof-row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:24px;padding:30px 0 30px 4vw;border-bottom:1px solid var(--line-l)}.proof-row h3{margin:0;font-size:20px}.proof-row p{margin:8px 0 0;color:var(--muted-l)}
@@ -50,7 +51,6 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 @media(min-width:1024px){body .selected-work-section .lead-work .work-info{transform:translateY(-44px)}}
 
 /* WORK Refinement Pass 01: page-scoped hierarchy and evidence-weight adjustments. */
-.work-page-hero{min-height:58svh;padding-top:128px;padding-bottom:70px}
 .work-page .secondary-work{grid-template-columns:5fr 5fr}
 .work-page .secondary-work .media{height:min(30vw,380px);background:#e8e7e2}
 .work-page .secondary-work .media img{object-fit:contain}
@@ -64,8 +64,8 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .work-engagements .engagement{padding-block:14px}
 .work-technology-proof{padding-block:80px}
 .work-technology-proof .fact{padding-top:26px;padding-bottom:26px}
-@media(max-width:1023px){.work-page-hero{min-height:60svh;padding-top:116px;padding-bottom:68px}.work-page .secondary-work .media{height:min(46vw,380px)}.work-transition{padding-block:76px}.work-systems{padding-block:88px}.work-engagements{padding-block:76px}.work-technology-proof{padding-block:72px}}
-@media(max-width:767px){.work-page-hero{min-height:64svh;padding-top:108px;padding-bottom:58px}.work-page .secondary-work .media{height:54vw}.work-support .section-head{margin-bottom:36px}.work-transition,.work-systems,.work-engagements,.work-technology-proof{padding-block:64px}.work-systems .archive-col .media{height:56vw!important}.work-engagements .engagement{padding-block:12px}.work-technology-proof .fact{padding-block:22px}}
+@media(max-width:1023px){.work-page .secondary-work .media{height:min(46vw,380px)}.work-transition{padding-block:76px}.work-systems{padding-block:88px}.work-engagements{padding-block:76px}.work-technology-proof{padding-block:72px}}
+@media(max-width:767px){.work-page .secondary-work .media{height:54vw}.work-support .section-head{margin-bottom:36px}.work-transition,.work-systems,.work-engagements,.work-technology-proof{padding-block:64px}.work-systems .archive-col .media{height:56vw!important}.work-engagements .engagement{padding-block:12px}.work-technology-proof .fact{padding-block:22px}}
 
 /* WORK Final Visual Pass: approved Yancheng evidence hierarchy only. */
 .work-page .work-duo{grid-template-columns:65fr 35fr}
@@ -102,14 +102,13 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .company-facts .fact{padding-block:26px}
 .cap-detail-core02 .evidence-media{height:min(31vw,400px);margin-top:70px;padding:28px;background:#0d0f11}
 .cap-detail-core02 .evidence-media img{object-fit:contain}
-.contact-hero{min-height:60svh;padding-bottom:clamp(58px,7vw,92px)}
 .contact-endpoint{padding-block:clamp(76px,7vw,112px)}
 .contact-reserved{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,8fr) auto;align-items:center;gap:24px;padding:30px 0;border-top:1px solid var(--line-l);border-bottom:1px solid var(--line-l);color:var(--muted-l)}
 .contact-reserved strong{font-size:clamp(28px,3vw,46px);font-weight:560;color:var(--deep)}
 .contact-profile{padding-block:clamp(64px,6vw,92px)}
 .contact-profile .placeholder{padding:24px}
-@media(max-width:1023px){.contact-hero{min-height:60svh;padding-top:116px;padding-bottom:64px}.cap-detail-core02 .evidence-media{height:min(48vw,380px);margin-top:52px}.company-history,.company-credibility{padding-block:88px}.company-facts{padding-block:72px}}
-@media(max-width:767px){.contact-hero{min-height:63svh;padding-top:108px;padding-bottom:58px}.contact-reserved{grid-template-columns:1fr auto;gap:12px}.contact-reserved .meta{grid-column:1/-1}.cap-detail-core02 .evidence-media{height:auto;aspect-ratio:16/9;padding:14px}.company-history,.company-credibility{padding-block:72px}.company-history .timeline-row{padding-block:18px}.company-facts{padding-block:64px}}
+@media(max-width:1023px){.cap-detail-core02 .evidence-media{height:min(48vw,380px);margin-top:52px}.company-history,.company-credibility{padding-block:88px}.company-facts{padding-block:72px}}
+@media(max-width:767px){.contact-reserved{grid-template-columns:1fr auto;gap:12px}.contact-reserved .meta{grid-column:1/-1}.cap-detail-core02 .evidence-media{height:auto;aspect-ratio:16/9;padding:14px}.company-history,.company-credibility{padding-block:72px}.company-history .timeline-row{padding-block:18px}.company-facts{padding-block:64px}}
 
 /* LIMITED VISUAL AUTHORITY CORRECTION — hierarchy, scale, and deliberate rhythm only. */
 @media(min-width:1024px){
@@ -560,7 +559,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
   width:100vw;margin-left:calc(50% - 50vw);padding-inline:var(--gutter);overflow:hidden}
 .rail-strip{display:flex;gap:clamp(16px,1.6vw,28px);will-change:transform;
   transform:translate3d(var(--rail-x,0px),0,0)}
-.work-rail .visual-card{flex:none;width:calc((min(100vw,var(--wide)) - var(--gutter)*2)/2);height:min(62vh,620px)}
+.work-rail .visual-card{flex:none;width:calc((min(100vw,var(--wide)) - var(--gutter)*2)/2);height:min(41vh,413px)}
 
 @media(max-width:1023px){
   .work-rail{padding-block:var(--space)}
@@ -726,17 +725,23 @@ main{position:relative;z-index:1;background:var(--ink)}
    Each capability is one large line; the fifth is the one that binds them, so it
    inverts into a filled block and carries the project it is currently running in. */
 .integration-stack{list-style:none;margin:clamp(44px,5vw,76px) 0 0;padding:0;
-  border-top:1px solid var(--line-d)}
-.integration-step{display:flex;align-items:baseline;gap:clamp(16px,2.2vw,36px);
+  border-top:1px solid var(--line-d);--int-name:clamp(30px,5vw,72px)}
+.integration-step{display:flex;align-items:flex-start;gap:clamp(16px,2.2vw,36px);
   padding:clamp(18px,2.2vw,30px) 0;border-bottom:1px solid var(--line-d)}
+/* Rows align on the box top; the small labels get an optical nudge so their
+   caps line up with the cap of the large name rather than floating above it. */
 .integration-index{flex:none;font-size:12px;letter-spacing:.14em;
-  font-variant-numeric:tabular-nums;color:var(--muted-d)}
-.integration-name{font-size:clamp(30px,5vw,72px);font-weight:640;letter-spacing:-.035em;
-  line-height:.98;overflow-wrap:normal}
-.integration-ko{margin-left:auto;flex:none;font-size:12px;letter-spacing:.06em;color:var(--muted-d)}
+  font-variant-numeric:tabular-nums;color:var(--muted-d);
+  margin-top:calc(var(--int-name) * .22)}
+.integration-name{font-size:var(--int-name);font-weight:640;letter-spacing:-.035em;
+  line-height:.98;overflow-wrap:normal;
+  /* shrink and wrap the text rather than dropping to a new flex line */
+  flex:0 1 auto;min-width:0}
+.integration-ko{margin-left:auto;flex:none;font-size:12px;letter-spacing:.06em;color:var(--muted-d);
+  margin-top:calc(var(--int-name) * .22)}
 
 .integration-final{margin-top:clamp(20px,2.5vw,34px);border-bottom:0;
-  background:#0b0d0f;color:#f2f1ed;align-items:center;flex-wrap:wrap;
+  background:#0b0d0f;color:#f2f1ed;
   padding:clamp(26px,3vw,42px) clamp(22px,2.6vw,40px)}
 .integration-final .integration-index{color:var(--blue-soft)}
 .integration-final .integration-name{color:#f2f1ed}
@@ -752,3 +757,5 @@ main{position:relative;z-index:1;background:var(--ink)}
 }
 /* The Korean gloss is redundant next to the English name — drop it in EN. */
 html[lang=en] .integration-ko{display:none}
+/* Stacked on phones: labels return to the flow, no nudge needed. */
+@media(max-width:767px){.integration-ko{margin-top:0}}
