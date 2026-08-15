@@ -24,10 +24,10 @@
 .cap-flow-step{position:absolute;left:0;right:0;top:50%;display:block;padding-left:26px;
   transform:translateY(calc(-50% + var(--step-y,0px)));opacity:var(--step-o,0);pointer-events:none;
   will-change:transform}
-.cap-flow-step:before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:2px;background:var(--blue);box-shadow:0 0 12px rgba(93,114,255,.55)}
+.cap-flow-step:before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:2px;background:var(--brand);box-shadow:0 0 12px rgba(215,11,28,.55)}
 
 .cap-flow-step-top{display:flex;align-items:baseline;gap:14px}
-.cap-flow-step-num{font-size:11px;letter-spacing:.1em;color:var(--blue-soft);font-variant-numeric:tabular-nums}
+.cap-flow-step-num{font-size:11px;letter-spacing:.1em;color:var(--muted-d);font-variant-numeric:tabular-nums}
 .cap-flow-step-title{display:block;margin-top:14px;font-size:clamp(28px,2.8vw,44px);font-weight:560;letter-spacing:-.025em;line-height:1.2;color:var(--warm)}
 .cap-flow-step-copy{display:block}
 /* If the scroll driver never runs, the first step still reads normally. */
@@ -45,36 +45,36 @@
 /* Progress rail — which of the three you're on */
 .cap-flow-rail{position:absolute;z-index:3;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px}
 .cap-flow-rail i{display:block;width:2px;height:26px;background:var(--line-d);transition:background .5s var(--ease)}
-.cap-flow-rail i.on{background:var(--blue-soft)}
+.cap-flow-rail i.on{background:var(--brand-soft)}
 
-.cap-flow-visual-caption{position:absolute;z-index:2;left:24px;bottom:22px;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--blue-soft);padding:8px 11px;border:1px solid rgba(169,180,255,.35);background:rgba(9,10,11,.6);backdrop-filter:blur(8px)}
+.cap-flow-visual-caption{position:absolute;z-index:2;left:24px;bottom:22px;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted-d);padding:8px 11px;border:1px solid rgba(255,255,255,.18);background:rgba(9,10,11,.6);backdrop-filter:blur(8px)}
 
 /* 01 perception — bracketed sensing frame */
 .cap-flow-frame{position:absolute;inset:13% 16%;overflow:hidden;background:#141719;box-shadow:0 26px 80px rgba(0,0,0,.5)}
 .cap-flow-frame:before{content:"";position:absolute;inset:-10px;pointer-events:none;opacity:.9;
   background:
-    linear-gradient(var(--blue-soft),var(--blue-soft)) 0 0/16px 1px no-repeat,
-    linear-gradient(var(--blue-soft),var(--blue-soft)) 0 0/1px 16px no-repeat,
-    linear-gradient(var(--blue-soft),var(--blue-soft)) 100% 0/16px 1px no-repeat,
-    linear-gradient(var(--blue-soft),var(--blue-soft)) 100% 0/1px 16px no-repeat,
-    linear-gradient(var(--blue-soft),var(--blue-soft)) 0 100%/16px 1px no-repeat,
-    linear-gradient(var(--blue-soft),var(--blue-soft)) 0 100%/1px 16px no-repeat,
-    linear-gradient(var(--blue-soft),var(--blue-soft)) 100% 100%/16px 1px no-repeat,
-    linear-gradient(var(--blue-soft),var(--blue-soft)) 100% 100%/1px 16px no-repeat}
+    linear-gradient(#f2f1ed,#f2f1ed) 0 0/16px 1px no-repeat,
+    linear-gradient(#f2f1ed,#f2f1ed) 0 0/1px 16px no-repeat,
+    linear-gradient(#f2f1ed,#f2f1ed) 100% 0/16px 1px no-repeat,
+    linear-gradient(#f2f1ed,#f2f1ed) 100% 0/1px 16px no-repeat,
+    linear-gradient(#f2f1ed,#f2f1ed) 0 100%/16px 1px no-repeat,
+    linear-gradient(#f2f1ed,#f2f1ed) 0 100%/1px 16px no-repeat,
+    linear-gradient(#f2f1ed,#f2f1ed) 100% 100%/16px 1px no-repeat,
+    linear-gradient(#f2f1ed,#f2f1ed) 100% 100%/1px 16px no-repeat}
 .cap-flow-frame .progressive-image__preview,.cap-flow-frame .progressive-image__full{object-fit:cover;filter:grayscale(.45) contrast(1.06) brightness(.78)}
 
 /* 02 interaction — response rings, no photo */
 .cap-flow-rings{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.cap-flow-rings i{position:absolute;display:block;border:1px solid rgba(93,114,255,.4);border-radius:50%}
+.cap-flow-rings i{position:absolute;display:block;border:1px solid rgba(255,255,255,.16);border-radius:50%}
 .cap-flow-rings i:nth-child(1){width:120px;height:120px}
-.cap-flow-rings i:nth-child(2){width:220px;height:220px;border-color:rgba(93,114,255,.26)}
-.cap-flow-rings i:nth-child(3){width:340px;height:340px;border-color:rgba(93,114,255,.14)}
+.cap-flow-rings i:nth-child(2){width:220px;height:220px;border-color:rgba(255,255,255,.11)}
+.cap-flow-rings i:nth-child(3){width:340px;height:340px;border-color:rgba(255,255,255,.07)}
 .cap-flow-visual.is-interaction.active .cap-flow-rings i:nth-child(3){animation:cap-flow-pulse 4.5s var(--ease) infinite}
 
 /* 03 environment — framed platform panel with connection nodes */
 .cap-flow-panel{position:absolute;inset:16% 20%;background:#111417;border:1px solid var(--line-d);padding:6px;overflow:hidden}
 .cap-flow-panel .progressive-image__preview,.cap-flow-panel .progressive-image__full{object-fit:cover;filter:grayscale(.35) brightness(.85)}
-.cap-flow-node{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--blue-soft);box-shadow:0 0 0 4px rgba(93,114,255,.16)}
+.cap-flow-node{position:absolute;width:6px;height:6px;border-radius:50%;background:#f2f1ed;box-shadow:0 0 0 4px rgba(255,255,255,.1)}
 .cap-flow-node.n1{top:-3px;left:-3px}
 .cap-flow-node.n2{top:-3px;right:-3px}
 .cap-flow-node.n3{bottom:-3px;left:-3px}
@@ -111,7 +111,7 @@
   .cap-flow-accordion-label .num{font-size:11px;letter-spacing:.1em;font-variant-numeric:tabular-nums}
   .cap-flow-accordion-label .eyebrow{font-size:12px;font-weight:700;letter-spacing:.13em;color:var(--warm)}
   .cap-flow-accordion-item.open .cap-flow-accordion-label .num,
-  .cap-flow-accordion-item.open .cap-flow-accordion-label .eyebrow{color:var(--blue-soft)}
+  .cap-flow-accordion-item.open .cap-flow-accordion-label .eyebrow{color:var(--brand-soft)}
   .cap-flow-accordion-icon{position:relative;flex:none;width:18px;height:18px}
   .cap-flow-accordion-icon:before,.cap-flow-accordion-icon:after{content:"";position:absolute;top:50%;left:50%;background:currentColor;transform:translate(-50%,-50%)}
   .cap-flow-accordion-icon:before{width:12px;height:1px}

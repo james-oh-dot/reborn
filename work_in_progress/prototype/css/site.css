@@ -1,15 +1,15 @@
-:root{--ink:#090a0b;--graphite:#111315;--paper:#f6f5f1;--warm:#f2f1ed;--deep:#141618;--muted-d:rgba(242,241,237,.6);--muted-l:rgba(20,22,24,.66);--line-d:rgba(255,255,255,.14);--line-l:rgba(20,22,24,.14);--blue:#5d72ff;--blue-soft:#a9b4ff;--gutter:clamp(28px,4vw,72px);--space:clamp(200px,20vw,360px);--wide:1760px;--ease:cubic-bezier(.16,1,.3,1);--header-h:80px;--h2:clamp(40px,4.8vw,76px);--sco-measure:900px;--cap-flow-scroll:200vh}
+:root{--ink:#090a0b;--graphite:#111315;--paper:#f6f5f1;--warm:#f2f1ed;--deep:#141618;--muted-d:rgba(242,241,237,.6);--muted-l:rgba(20,22,24,.66);--line-d:rgba(255,255,255,.14);--line-l:rgba(20,22,24,.14);--brand:#D70B1C;--brand-soft:#FF3D4E;--brand-deep:#9E0824;--gutter:clamp(28px,4vw,72px);--space:clamp(200px,20vw,360px);--wide:1760px;--ease:cubic-bezier(.16,1,.3,1);--header-h:80px;--h2:clamp(40px,4.8vw,76px);--sco-measure:900px;--cap-flow-scroll:200vh}
 @media(max-width:1023px){:root{--header-h:68px}}
 
 /* Design Gate A refinement: evidence-led desktop capability visuals and selected-work balance */
 body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}body .selected-work-section .lead-work .media{height:min(55vw,640px)}
 
 /* Design Gate A final punch: state-correct nodes and local desktop balance */
-*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--ink)}html[lang=ko]{word-break:keep-all;overflow-wrap:break-word}body{margin:0;background:var(--ink);color:var(--warm);font-family:Pretendard,Inter,Arial,"Noto Sans KR",sans-serif;-webkit-font-smoothing:antialiased}body.menu-open{overflow:hidden}a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}img{max-width:100%}:focus-visible{outline:2px solid var(--blue-soft);outline-offset:5px}.wrap{width:min(100%,var(--wide));margin:auto;padding-inline:var(--gutter)}.section{padding-block:var(--space)}.dark{background:var(--ink);color:var(--warm)}.graphite{background:var(--graphite);color:var(--warm)}.light{background:var(--paper);color:var(--deep)}.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px}.meta,.eyebrow{font-size:11px;line-height:1.3;letter-spacing:.12em;text-transform:uppercase}.muted-dark{color:var(--muted-d)}.muted-light{color:var(--muted-l)}.display{margin:0;font-size:clamp(52px,7vw,112px);line-height:.94;letter-spacing:-.05em;font-weight:560}.section-title{margin:0;font-size:var(--h2);line-height:1.03;letter-spacing:-.04em;font-weight:560}.body-large{font-size:clamp(19px,1.7vw,25px);line-height:1.6}.copy{font-size:16px;line-height:1.72}.rule{border-top:1px solid currentColor;opacity:.18}.link{display:inline-flex;gap:10px;align-items:center;margin-top:30px;padding-bottom:7px;border-bottom:1px solid currentColor;font-size:11px;font-weight:700;letter-spacing:.1em}.link span{transition:transform .22s}.link:hover span{transform:translateX(4px)}.status{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}.status-progress{color:var(--blue-soft)}.reveal{opacity:0;transform:translateY(36px);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:calc(var(--reveal-i,0) * 55ms)}.reveal.visible{opacity:1;transform:none}
+*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--ink)}html[lang=ko]{word-break:keep-all;overflow-wrap:break-word}body{margin:0;background:var(--ink);color:var(--warm);font-family:Pretendard,Inter,Arial,"Noto Sans KR",sans-serif;-webkit-font-smoothing:antialiased}body.menu-open{overflow:hidden}a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}img{max-width:100%}:focus-visible{outline:2px solid var(--brand-soft);outline-offset:5px}.wrap{width:min(100%,var(--wide));margin:auto;padding-inline:var(--gutter)}.section{padding-block:var(--space)}.dark{background:var(--ink);color:var(--warm)}.graphite{background:var(--graphite);color:var(--warm)}.light{background:var(--paper);color:var(--deep)}.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px}.meta,.eyebrow{font-size:11px;line-height:1.3;letter-spacing:.12em;text-transform:uppercase}.muted-dark{color:var(--muted-d)}.muted-light{color:var(--muted-l)}.display{margin:0;font-size:clamp(52px,7vw,112px);line-height:.94;letter-spacing:-.05em;font-weight:560}.section-title{margin:0;font-size:var(--h2);line-height:1.03;letter-spacing:-.04em;font-weight:560}.body-large{font-size:clamp(19px,1.7vw,25px);line-height:1.6}.copy{font-size:16px;line-height:1.72}.rule{border-top:1px solid currentColor;opacity:.18}.link{display:inline-flex;gap:10px;align-items:center;margin-top:30px;padding-bottom:7px;border-bottom:1px solid currentColor;font-size:11px;font-weight:700;letter-spacing:.1em}.link span{transition:transform .22s}.link:hover span{transform:translateX(4px)}.status{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}.status-progress{color:var(--brand-soft)}.reveal{opacity:0;transform:translateY(36px);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:calc(var(--reveal-i,0) * 55ms)}.reveal.visible{opacity:1;transform:none}
 [data-parallax]{will-change:transform}
 
 /* shared header */
-.site-header{position:fixed;inset:0 0 auto;z-index:1000;height:80px;background:transparent;border-bottom:1px solid rgba(255,255,255,.06);transition:background .3s var(--ease),border-color .3s var(--ease)}.site-header.scrolled,.site-header.solid{background:rgba(8,8,10,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-color:rgba(255,255,255,.08)}.nav{height:100%;display:flex;align-items:center;justify-content:space-between}.brand{font-size:13px;font-weight:760;letter-spacing:.11em}.nav-side,.nav-links,.lang{display:flex;align-items:center}.nav-side{gap:36px}.nav-links{gap:30px}.nav-links a{position:relative;padding:12px 2px;font-size:13px;font-weight:650;letter-spacing:.03em;color:rgba(255,255,255,.8);transition:color .25s var(--ease)}.nav-links a:before{content:"";position:absolute;inset:-10px -6px}.nav-links a:after{content:"";position:absolute;left:0;right:0;bottom:7px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .34s var(--ease)}.nav-links a:hover{color:#fff}.nav-links a:hover:after{transform:scaleX(1);transform-origin:left}.nav-links a.active{color:#fff}.nav-links a.active:after{transform:scaleX(1);background:var(--blue-soft)}.lang{gap:2px;padding:3px;border:1px solid rgba(255,255,255,.16);border-radius:999px}.lang button{border:0;background:transparent;border-radius:999px;padding:8px 15px;cursor:pointer;color:rgba(255,255,255,.48);font-size:11px;font-weight:650;letter-spacing:.04em;transition:background .3s var(--ease),color .3s var(--ease)}.lang button.active{background:rgba(255,255,255,.92);color:#08080a}.nav-panel{display:none}
+.site-header{position:fixed;inset:0 0 auto;z-index:1000;height:80px;background:transparent;border-bottom:1px solid rgba(255,255,255,.06);transition:background .3s var(--ease),border-color .3s var(--ease)}.site-header.scrolled,.site-header.solid{background:rgba(8,8,10,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-color:rgba(255,255,255,.08)}.nav{height:100%;display:flex;align-items:center;justify-content:space-between}.brand{font-size:13px;font-weight:760;letter-spacing:.11em}.nav-side,.nav-links,.lang{display:flex;align-items:center}.nav-side{gap:36px}.nav-links{gap:30px}.nav-links a{position:relative;padding:12px 2px;font-size:13px;font-weight:650;letter-spacing:.03em;color:rgba(255,255,255,.8);transition:color .25s var(--ease)}.nav-links a:before{content:"";position:absolute;inset:-10px -6px}.nav-links a:after{content:"";position:absolute;left:0;right:0;bottom:7px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .34s var(--ease)}.nav-links a:hover{color:#fff}.nav-links a:hover:after{transform:scaleX(1);transform-origin:left}.nav-links a.active{color:#fff}.nav-links a.active:after{transform:scaleX(1);background:var(--brand-soft)}.lang{gap:2px;padding:3px;border:1px solid rgba(255,255,255,.16);border-radius:999px}.lang button{border:0;background:transparent;border-radius:999px;padding:8px 15px;cursor:pointer;color:rgba(255,255,255,.48);font-size:11px;font-weight:650;letter-spacing:.04em;transition:background .3s var(--ease),color .3s var(--ease)}.lang button.active{background:rgba(255,255,255,.92);color:#08080a}.nav-panel{display:none}
 
 /* hero */
 .home-hero{position:relative;min-height:100svh;overflow:hidden;isolation:isolate}.home-hero .progressive-image,.home-hero .hero-video{position:absolute;top:-8%;bottom:-8%;left:0;right:0;height:auto}
@@ -252,7 +252,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .light .link:hover{color:var(--paper);border-color:var(--deep)}
 .dark .link:hover,.graphite .link:hover,.home-hero .link:hover,.page-hero .link:hover{
   color:var(--ink);border-color:var(--warm)}
-.link:focus-visible{outline:2px solid var(--blue-soft);outline-offset:4px}
+.link:focus-visible{outline:2px solid var(--brand-soft);outline-offset:4px}
 .bridge-links{gap:16px}
 .footer a{padding:10px 0;font-weight:650}
 
@@ -274,8 +274,8 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .sco-hero-title{grid-column:1/9;grid-row:2;margin:14px 0 0;font-weight:700;letter-spacing:-.045em;line-height:1;font-size:clamp(50px,6.4vw,100px);color:var(--warm)}
 .sco-hero-desc{grid-column:1/7;grid-row:3;margin:clamp(24px,3vw,40px) 0 0;color:var(--warm)}
 .sco-hero-status-block{grid-column:1/7;grid-row:4;margin-top:20px}
-.sco-status-line{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue-soft)}
-.sco-status-dot{width:6px;height:6px;border-radius:50%;background:var(--blue-soft);box-shadow:0 0 0 4px rgba(93,114,255,.18)}
+.sco-status-line{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand-soft)}
+.sco-status-dot{width:6px;height:6px;border-radius:50%;background:var(--brand-soft);box-shadow:0 0 0 4px rgba(215,11,28,.18)}
 .sco-hero-status-block .sco-disclaimer{margin:8px 0 0;color:var(--muted-d)}
 .sco-hero-cta{grid-column:9/13;grid-row:3/5;align-self:end;justify-self:end;margin-top:0}
 
@@ -404,8 +404,8 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
   -webkit-mask-image:radial-gradient(circle at 76% 46%,#000 0 34%,transparent 72%);
           mask-image:radial-gradient(circle at 76% 46%,#000 0 34%,transparent 72%)}
 .capabilities-page .page-hero:after{
-  border-color:rgba(93,114,255,.34);
-  box-shadow:0 0 0 8vw rgba(93,114,255,.03),0 0 0 18vw rgba(93,114,255,.02)}
+  border-color:rgba(255,255,255,.16);
+  box-shadow:none}
 
 /* WORK — field marks: plotted, measured, delivered */
 .work-page .page-hero:before{
@@ -434,7 +434,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
   color:var(--muted-d);font-size:11px;letter-spacing:.22em;opacity:.6}
 .scroll-cue-rail{position:relative;display:block;width:1px;height:52px;background:var(--line-d);overflow:hidden}
 .scroll-cue-rail i{
-  position:absolute;left:0;top:0;width:1px;height:16px;background:var(--blue-soft);
+  position:absolute;left:0;top:0;width:1px;height:16px;background:var(--warm);
   animation:cue 2.8s var(--ease) infinite}
 @keyframes cue{0%{transform:translateY(-16px)}60%,100%{transform:translateY(50px)}}
 .is-scrolled .scroll-cue{opacity:0;transition:opacity .4s}
@@ -512,7 +512,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
     rgba(9,10,11,.94) 64%,
     rgba(9,10,11,.99) 100%)}
 .card-eyebrow{
-  display:block;color:var(--blue-soft);
+  display:block;color:var(--muted-d);
   font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
 .card-link{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-top:14px}
 .card-link h3{
@@ -524,10 +524,10 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
   color:rgba(242,241,237,.74);max-width:54ch}
 .visual-card-lead .card-link p{font-size:15px;max-width:60ch}
 .card-arrow{
-  flex:none;font-size:22px;line-height:1;color:var(--blue-soft);
+  flex:none;font-size:22px;line-height:1;color:var(--muted-d);
   transition:transform .34s var(--ease)}
 .visual-card:hover .card-arrow{transform:translate(4px,-4px)}
-.visual-card:focus-visible{outline:2px solid var(--blue-soft);outline-offset:3px}
+.visual-card:focus-visible{outline:2px solid var(--brand-soft);outline-offset:3px}
 
 /* Keep the 3-up rhythm on tablet; only collapse to a single column on phones. */
 @media(max-width:1023px){
@@ -612,7 +612,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
   --ink:#F9F5EF;--graphite:#F9F5EF;--paper:#F9F5EF;--deep:#000;--warm:#000;
   --muted-d:rgba(0,0,0,.62);--muted-l:rgba(0,0,0,.62);
   --line-d:rgba(0,0,0,.14);--line-l:rgba(0,0,0,.14);
-  --blue-soft:var(--blue);
+  --brand-soft:var(--brand);
   background:#F9F5EF;color:#000}
 /* Media wells lose their dark fill so contained artwork sits on the same paper. */
 .subpage .reveal-block>section .media,
@@ -624,7 +624,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 /* Photo cards keep their own dark palette — their copy sits on a dark scrim. */
 .subpage .visual-card,.subpage .sco-evidence{
   --ink:#090a0b;--warm:#f2f1ed;--muted-d:rgba(242,241,237,.6);
-  --line-d:rgba(255,255,255,.14);--blue-soft:#a9b4ff;color:#f2f1ed}
+  --line-d:rgba(255,255,255,.14);--brand-soft:#FF3D4E;color:#f2f1ed}
 .subpage .visual-card{background:#090a0b}
 .subpage .sco-evidence{background:#0b0d0f}
 
@@ -765,13 +765,13 @@ main{position:relative;z-index:1;background:var(--ink)}
 .integration-final{margin-top:clamp(20px,2.5vw,34px);border-bottom:0;
   background:#0b0d0f;color:#f2f1ed;
   padding:clamp(26px,3vw,42px) clamp(22px,2.6vw,40px)}
-.integration-final .integration-index{color:var(--blue-soft)}
+.integration-final .integration-index{color:#f2f1ed}
 .integration-final .integration-name{color:#f2f1ed}
 .integration-note{margin-left:auto;display:flex;flex-direction:column;gap:6px;text-align:right;
   margin-top:calc(var(--int-name) * .22)}
 .integration-note strong{font-size:13px;font-weight:650;letter-spacing:.04em;color:#f2f1ed}
 .integration-note em{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--blue-soft)}
+  text-transform:uppercase;color:var(--muted-d)}
 
 /* Wrapping was removed at desktop so the long names stay on their row. At 768-1023 the
    row is only ~525px, which squeezes "INTEGRATION" into 158px against the 238px it needs
@@ -854,7 +854,7 @@ html[lang=en] .integration-ko{display:none}
 .drawer-media{position:relative;height:clamp(220px,32vh,320px);overflow:hidden;background:#0d0f11}
 .drawer-media .progressive-image__preview,.drawer-media .progressive-image__full{object-fit:cover}
 .drawer-body{padding:clamp(26px,3vw,40px) clamp(22px,2.6vw,36px) clamp(40px,5vh,64px)}
-.drawer-status{color:var(--blue-soft);letter-spacing:.14em}
+.drawer-status{color:var(--brand-soft);letter-spacing:.14em}
 .drawer-title{margin:14px 0 0;font-size:clamp(26px,2.4vw,36px);font-weight:600;
   letter-spacing:-.03em;line-height:1.2}
 .drawer-summary{margin:18px 0 0;color:var(--warm);font-size:16px;line-height:1.7}
@@ -971,13 +971,12 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   .sco-head h2{font-size:34px}
 }
 .sco-status-line{display:flex;align-items:center;gap:9px;margin:22px 0 0;
-  font-size:11px;font-weight:700;letter-spacing:.13em;color:var(--blue-soft)}
-/* On the cream subpage surface --blue-soft resolves to #5d72ff, which is only 3.64:1
-   against #F9F5EF — below AA for 11px text. Darken the label (not the dot, which is
-   decorative) so the status still reads as the accent but passes. */
-.subpage .sco-status-line{color:#4a5ce8}
-.sco-status-dot{flex:none;width:7px;height:7px;border-radius:50%;background:var(--blue);
-  box-shadow:0 0 0 4px rgba(93,114,255,.16)}
+  font-size:11px;font-weight:700;letter-spacing:.13em;color:var(--brand-soft)}
+/* On cream, --brand-soft resolves to --brand (#D70B1C), which measures 4.89:1 against
+   #F9F5EF and passes AA on its own -- the darker one-off the blue needed here is gone. */
+.subpage .sco-status-line{color:var(--brand)}
+.sco-status-dot{flex:none;width:7px;height:7px;border-radius:50%;background:var(--brand);
+  box-shadow:0 0 0 4px rgba(215,11,28,.16)}
 .sco-classification{display:flex;flex-direction:column;gap:4px;margin:14px 0 0}
 
 .sco-lead{margin:0;color:var(--warm)}
@@ -1046,7 +1045,7 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .card-media-empty span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;
   color:rgba(242,241,237,.34)}
 
-.drawer-class{margin:10px 0 0;color:var(--blue-soft);letter-spacing:.13em}
+.drawer-class{margin:10px 0 0;color:var(--muted-d);letter-spacing:.13em}
 .drawer-desc{margin-top:22px;display:flex;flex-direction:column;gap:15px}
 .drawer-desc p{margin:0;color:var(--muted-d);font-size:15px;line-height:1.75}
 .drawer-extra:not(:empty){position:relative;height:clamp(180px,26vh,240px);margin-top:26px;
@@ -1312,13 +1311,13 @@ main>section[id]>.wrap{scroll-margin-top:calc(var(--header-h) + clamp(28px,4vh,5
 .nav-name{font-size:clamp(28px,7.4vw,38px);font-weight:600;letter-spacing:-.03em;line-height:1.15}
 .nav-en{font-size:10px;letter-spacing:.14em;color:var(--muted-d);white-space:nowrap}
 /* Which page you are already on — the desktop nav says so, the mobile menu did not. */
-.nav-item.active .nav-num,.nav-item.active .nav-en{color:var(--blue-soft)}
+.nav-item.active .nav-num,.nav-item.active .nav-en{color:var(--brand-soft)}
 /* Marked the way the desktop nav marks it -- an underline on the label -- rather than
    a bar pinned to the screen edge, which read as a stray fragment a full gutter away
    from the row it belonged to. */
 .nav-item.active .nav-name{position:relative;color:#fff}
 .nav-item.active .nav-name:after{content:"";position:absolute;left:0;right:0;bottom:-6px;
-  height:2px;background:var(--blue-soft)}
+  height:2px;background:var(--brand-soft)}
 
 .nav-foot{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
   opacity:0;transition:opacity .4s var(--ease) .3s}
@@ -1355,7 +1354,7 @@ body.menu-open .mt-bar:nth-child(3){transform:translateY(-7px)}
 body.menu-open .mt-bar:nth-child(1) i{transform:rotate(45deg)}
 body.menu-open .mt-bar:nth-child(3) i{transform:rotate(-45deg)}
 body.menu-open .mt-bar:nth-child(2) i{opacity:0}
-.menu-trigger:focus-visible{outline:2px solid var(--blue-soft);outline-offset:4px}
+.menu-trigger:focus-visible{outline:2px solid var(--brand-soft);outline-offset:4px}
 
 /* Nothing competes with the menu while it is open: the mark and the header language
    toggle step aside, and the panel carries its own toggle at the foot. */
@@ -1382,16 +1381,16 @@ body.menu-open .brand,body.menu-open .site-header .lang{opacity:0;visibility:hid
   .nav-item .nav-name{transition:transform .42s var(--ease),color .3s var(--ease)}
   .nav-item .nav-num,.nav-item .nav-en{transition:color .3s var(--ease),transform .42s var(--ease)}
   .nav-item:hover .nav-name{transform:translateX(clamp(8px,1.2vw,22px));color:#fff}
-  .nav-item:hover .nav-num{color:var(--blue-soft)}
+  .nav-item:hover .nav-num{color:var(--brand-soft)}
   .nav-item:hover .nav-en{color:var(--warm);transform:translateX(calc(clamp(8px,1.2vw,22px) * -1))}
 }
 .nav-name{position:relative}
 .nav-item .nav-name:before{content:"";position:absolute;left:0;right:0;bottom:-.06em;height:2px;
-  background:var(--blue-soft);transform:scaleX(0);transform-origin:left center;
+  background:var(--brand-soft);transform:scaleX(0);transform-origin:left center;
   transition:transform .46s var(--ease)}
 .nav-item:hover .nav-name:before,.nav-item:focus-visible .nav-name:before{transform:scaleX(1)}
 .nav-item:active .nav-name{transform:translateX(clamp(8px,1.2vw,22px)) scale(.985)}
-.nav-item:focus-visible{outline:2px solid var(--blue-soft);outline-offset:6px}
+.nav-item:focus-visible{outline:2px solid var(--brand-soft);outline-offset:6px}
 
 @media(prefers-reduced-motion:reduce){
   .mt-bar,.mt-bar i,.nav-item .nav-name,.nav-item .nav-num,.nav-item .nav-en,
@@ -1422,9 +1421,8 @@ body.menu-open .brand,body.menu-open .site-header .lang{opacity:0;visibility:hid
 .reveal-block.is-measuring{min-height:0}
 .reveal-block.is-measuring .closing-block{flex:none}
 
-/* --blue-soft resolves to #5D72FF, which is 3.64:1 on the cream surface at 12px.
-   Same darker accent already used for the SCO status line. */
-.subpage .status-progress{color:#4a5ce8}
+/* Same cream-surface accent as the SCO status line above. */
+.subpage .status-progress{color:var(--brand)}
 /* 2.88:1 at 11px; the label has to be readable even though the tile is a placeholder. */
 .card-media-empty span{color:rgba(242,241,237,.62)}
 
@@ -1436,3 +1434,21 @@ body.menu-open .brand,body.menu-open .site-header .lang{opacity:0;visibility:hid
   color:var(--muted-d);white-space:nowrap;transition:opacity .24s var(--ease)}
 body.menu-open .nav-here{opacity:0;pointer-events:none}
 @media(max-width:767px){.nav-here{display:none}}
+
+/* The one place the brand hits at full strength. Everything above uses red as a small
+   state mark; the primary CTA instead fills with it edge to edge on hover -- a single
+   large red field per screen, which is what makes the mark read as deliberate rather
+   than decorative. Scoped to .link-lg so secondary links keep the neutral sweep, and
+   listed after the context rules so it wins the tie on source order rather than
+   needing !important. */
+.link-lg::before,.closing-block .link::before,
+.light .link-lg::before,.light .closing-block .link::before,
+.dark .link-lg::before,.graphite .link-lg::before,
+.dark .closing-block .link::before,.graphite .closing-block .link::before,
+.home-hero .link-lg::before,.page-hero .link-lg::before{background:var(--brand)}
+.link-lg:hover,.link-lg:focus-visible,
+.closing-block .link:hover,.closing-block .link:focus-visible,
+.light .link-lg:hover,.light .closing-block .link:hover,
+.dark .link-lg:hover,.graphite .link-lg:hover,
+.dark .closing-block .link:hover,.graphite .closing-block .link:hover,
+.home-hero .link-lg:hover,.page-hero .link-lg:hover{color:#fff;border-color:var(--brand)}
