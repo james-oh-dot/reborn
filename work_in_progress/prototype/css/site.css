@@ -1456,3 +1456,53 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
 /* The panel takes focus when the menu opens; it is a container, not a control, so it
    must not paint a ring of its own. The items keep theirs. */
 .nav-panel:focus{outline:none}
+
+/* Brand wash on card activation -------------------------------------------------
+   A full-bleed brand layer over the card, with the image left faintly visible
+   through it. .85 is not arbitrary: our stills run from dark venue photography to
+   white product UI, and white card text over the wash measures 4.60:1 on a pure
+   white image -- the worst case -- against 4.31:1 at .80, which fails AA. Darker
+   images land around 6.7:1.
+
+   The card already carries an ::after scrim, so the wash uses ::before and sits
+   above the image but below .card-copy. The copy's own dark gradient is dropped
+   while the wash is up, since a near-black gradient over red just reads muddy;
+   the text then sits directly on the brand colour, which is what the measurement
+   above assumes. Its muted greys go white for the same reason. */
+.visual-card::before{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:var(--brand);opacity:0;
+  transition:opacity .34s var(--ease)}
+.card-copy{z-index:2}
+.card-copy,.card-eyebrow,.card-arrow,.card-link p{
+  transition:background .34s var(--ease),color .34s var(--ease)}
+
+.visual-card.is-washed::before{opacity:.85}
+.visual-card.is-washed .card-copy{background:none}
+.visual-card.is-washed .card-eyebrow,
+.visual-card.is-washed .card-arrow,
+.visual-card.is-washed .card-link p,
+.visual-card.is-washed .card-link h3{color:#fff}
+
+/* Pointer devices get it on hover. Touch gets it on press: :hover is unreliable
+   there (and sticks after the tap), so the class is driven from pointer events
+   instead -- see js/site.js. Keyboard focus gets it too, so the state is not
+   mouse-only. */
+@media(hover:hover){
+  .visual-card:hover::before{opacity:.85}
+  .visual-card:hover .card-copy{background:none}
+  .visual-card:hover .card-eyebrow,
+  .visual-card:hover .card-arrow,
+  .visual-card:hover .card-link p,
+  .visual-card:hover .card-link h3{color:#fff}
+}
+.visual-card:focus-visible::before{opacity:.85}
+.visual-card:focus-visible .card-copy{background:none}
+.visual-card:focus-visible .card-eyebrow,
+.visual-card:focus-visible .card-arrow,
+.visual-card:focus-visible .card-link p,
+.visual-card:focus-visible .card-link h3{color:#fff}
+
+@media(prefers-reduced-motion:reduce){
+  .visual-card::before,.card-copy,.card-eyebrow,.card-arrow,.card-link p{transition:none}
+}

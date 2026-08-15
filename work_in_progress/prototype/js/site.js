@@ -357,3 +357,18 @@ setTimeout(go,1200)})();
 const reduce=matchMedia('(prefers-reduced-motion: reduce)');
 btns.forEach(b=>b.addEventListener('click',()=>{
  scrollTo({top:0,behavior:reduce.matches?'auto':'smooth'})}))})();
+/* Touch activation for the card brand wash. :hover is not dependable on touch --
+   it either never fires or latches on after the tap and leaves a card washed while
+   the user reads something else -- so the press state is driven explicitly and
+   always released, including when the gesture turns into a scroll (pointercancel)
+   or the finger leaves the card. Pointer devices are handled in CSS. */
+(()=>{const cards=document.querySelectorAll('.visual-card');if(!cards.length)return;
+ if(matchMedia('(hover:hover)').matches)return;
+ const set=(el,on)=>el.classList.toggle('is-washed',on);
+ cards.forEach(c=>{
+  const off=()=>set(c,false);
+  c.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse')set(c,true)},{passive:true});
+  ['pointerup','pointercancel','pointerleave','blur'].forEach(ev=>
+    c.addEventListener(ev,off,{passive:true}));
+  /* The card navigates away; clear on the way out so bfcache does not restore it washed. */
+  addEventListener('pagehide',off)})})();
