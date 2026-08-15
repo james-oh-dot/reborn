@@ -371,13 +371,17 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 /* Capabilities CORE 02 chapter now sits on paper */
 .capabilities-page .cap-band{padding-block:0}
 .on-light .cap-detail{border-top-color:var(--line-l)}
-.on-light .muted-dark,.on-light .body-large,.on-light 
-.on-light .tag,.on-light 
+/* Media placeholders only. Two stray trailing ".on-light " fragments had folded
+   .muted-dark, .body-large and .tag into this list, so eyebrows and a body paragraph
+   were rendering with the image-placeholder swatch behind them. */
 .on-light .evidence-media,.on-light .evidence-media.contain img,
 .on-light .cap-detail-core02 .evidence-media{background:#e9e8e3}
+/* The .on-dark class on this section is inherited from before subpages went to a single
+   cream surface -- it now sits on #F9F5EF, where near-white text measured 1.03:1 and the
+   badge was simply invisible. Ink, not paper. */
 .on-dark .contact-reserved .contact-pending-tag{
-  color:rgba(242,241,237,.82);background:rgba(242,241,237,.1);border-color:var(--line-d)}
-.on-dark .contact-pending-note{color:var(--muted-d)}
+  color:rgba(0,0,0,.72);background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.16)}
+.on-dark .contact-pending-note{color:var(--muted-l)}
 
 /* ---------- 07. HERO IDENTITY PER PAGE + INTERACTION ---------- */
 /* Heroes stay T-E brand visuals per ASSET GOVERNANCE — no project evidence. */
@@ -469,6 +473,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 
 /* WCAG 2.2 SC 2.5.8 — remaining sub-24px targets in the header */
 .brand{display:inline-flex;align-items:center;min-height:26px}
+@media(max-width:1023px){.brand{min-height:44px}}
 /* Header logo. The source art is full-colour (red marks plus a gradient), so it is
    flattened to solid white rather than shipping a second recoloured file — the header
    sits on the dark hero and on the blurred dark bar, and reads white on both.
@@ -1011,7 +1016,9 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 @media(max-width:767px){
   /* Stack the pair; the 16/11 box carries over so both figures keep the same crop and
      the same shape, instead of the old 62vw/52vw pair of mismatched heights. */
-  .sco-evidence-duo{grid-template-columns:1fr;gap:14px;margin-top:36px}
+  /* Stacked, the two framed boxes sat 14px apart and read as two rules with nothing
+     between them. Give them room so each reads as its own plate. */
+  .sco-evidence-duo{grid-template-columns:1fr;gap:34px;margin-top:36px}
   .sco-head h2{margin-top:14px}
   .sco-body{gap:16px}
   .sco-boundary{margin-top:40px}
@@ -1407,9 +1414,16 @@ body.menu-open .brand,body.menu-open .site-header .lang{opacity:0;visibility:hid
   .footer-descriptor{font-size:11px}
   /* Left at 44px: the compaction was to win back height for the closing reveal, and
      there is now 113-147px of slack, so there is no reason to shrink a touch target. */
-  .footer-nav a{min-height:44px}
+  /* min-height alone left the two-character labels 23px wide. */
+  .footer-nav a{min-height:44px;min-width:44px;justify-content:center}
   .footer-totop{min-height:44px}
 }
 /* Applied for a single synchronous measurement by the height guard, never painted. */
 .reveal-block.is-measuring{min-height:0}
 .reveal-block.is-measuring .closing-block{flex:none}
+
+/* --blue-soft resolves to #5D72FF, which is 3.64:1 on the cream surface at 12px.
+   Same darker accent already used for the SCO status line. */
+.subpage .status-progress{color:#4a5ce8}
+/* 2.88:1 at 11px; the label has to be readable even though the tile is a placeholder. */
+.card-media-empty span{color:rgba(242,241,237,.62)}

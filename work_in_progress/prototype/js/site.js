@@ -88,12 +88,32 @@ const guard=()=>{const isStatic=document.body.classList.contains('reveal-static'
     closing section is flex:1, so it always reports about one viewport whether the
     content needs it or not. Relax both for one synchronous read to get the natural
     height, then put them back. */
+ /* Measure in ONE reference frame. The static fallback lays the block out in normal
+    flow, where it is narrower and reports a smaller height than the fixed layout does
+    -- so measuring "as currently rendered" made the two states disagree: fixed said
+    "too tall, go static", static said "fits, go back", and it oscillated. Always read
+    the fixed geometry, which is the layout the decision is actually about. */
  block.classList.add('is-measuring');
+ document.body.classList.remove('reveal-static');
  const need=block.scrollHeight;
+ if(isStatic)document.body.classList.add('reveal-static');
  block.classList.remove('is-measuring');
  if(!isStatic&&need>innerHeight)document.body.classList.add('reveal-static');
  else if(isStatic&&need<=innerHeight-SLACK)document.body.classList.remove('reveal-static')};
-const sync=()=>{guard();spacer.style.height=block.offsetHeight+'px'};sync();addEventListener('resize',sync,{passive:true});addEventListener('orientationchange',sync);addEventListener('load',sync);if(document.fonts?.ready)document.fonts.ready.then(sync)})();
+const sync=()=>{guard();spacer.style.height=block.offsetHeight+'px'};sync();
+/* Resize has to settle before measuring: running guard() synchronously on the event
+   read the OLD viewport, so a rotate from 844 to 667 left reveal-static false and the
+   closing block overflowing a viewport it is pinned behind. Defer a frame, and run
+   twice so the second read sees the settled layout. */
+/* rAF alone is not enough -- it is starved in a backgrounded or throttled tab, which
+   would leave the stale state latched. Pair it with a timer so one of them always
+   lands after the new viewport metrics settle. */
+const resync=()=>{requestAnimationFrame(()=>{sync();requestAnimationFrame(sync)});setTimeout(sync,120);setTimeout(sync,320)};
+addEventListener('resize',resync,{passive:true});addEventListener('orientationchange',resync);
+/* The reliable trigger: ResizeObserver fires once the box has actually changed, so it
+   cannot read pre-settle metrics the way a resize listener can. The listeners above
+   stay as a fallback for engines that fire them first. */
+if('ResizeObserver' in window)new ResizeObserver(sync).observe(document.documentElement);addEventListener('load',sync);if(document.fonts?.ready)document.fonts.ready.then(sync)})();
 (()=>{const block=document.querySelector('.reveal-block'),main=document.querySelector('main');if(!block||!main)return;if(!document.body.classList.contains('subpage'))return;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
 /* Dim the closing block while it is still mostly hidden, easing back to its own
    colour as the last of it is uncovered. */

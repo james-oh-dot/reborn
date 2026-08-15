@@ -47,7 +47,7 @@
 .cap-flow-rail i{display:block;width:2px;height:26px;background:var(--line-d);transition:background .5s var(--ease)}
 .cap-flow-rail i.on{background:var(--blue-soft)}
 
-.cap-flow-visual-caption{position:absolute;z-index:2;left:24px;bottom:22px;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--blue-soft);padding:8px 11px;border:1px solid rgba(169,180,255,.35);background:rgba(9,10,11,.6);backdrop-filter:blur(8px)}
+.cap-flow-visual-caption{position:absolute;z-index:2;left:24px;bottom:22px;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--blue-soft);padding:8px 11px;border:1px solid rgba(169,180,255,.35);background:rgba(9,10,11,.6);backdrop-filter:blur(8px)}
 
 /* 01 perception — bracketed sensing frame */
 .cap-flow-frame{position:absolute;inset:13% 16%;overflow:hidden;background:#141719;box-shadow:0 26px 80px rgba(0,0,0,.5)}
