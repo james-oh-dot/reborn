@@ -52,7 +52,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .contact-list{border-top:1px solid var(--line-l)}.contact-row{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,7fr) minmax(0,2fr);padding:32px 0;border-bottom:1px solid var(--line-l);align-items:center}.contact-row h3{margin:0;font-size:clamp(24px,2.7vw,40px)}.contact-row p{margin:0;color:var(--muted-l)}.placeholder{border:1px solid var(--line-l);padding:34px;color:var(--muted-l);margin-top:50px}.footer{padding:46px 0;background:var(--ink);color:var(--muted-d);border-top:1px solid var(--line-d)}.footer-inner{display:flex;justify-content:space-between;gap:24px}.footer a{color:var(--warm)}
 
 @media(max-width:1023px){.site-header{height:68px}.nav-links{display:none}.menu-trigger{display:block}.mobile-panel{display:flex;position:fixed;inset:0;z-index:999;background:var(--ink);padding:112px var(--gutter) 44px;flex-direction:column;justify-content:space-between;opacity:0;visibility:hidden;transform:translateY(-14px);transition:.42s var(--ease)}.mobile-panel.open{opacity:1;visibility:visible;transform:none}.mobile-links{display:flex;flex-direction:column;gap:16px}.mobile-links a{font-size:clamp(34px,7vw,54px);letter-spacing:-.035em}.mobile-lang{display:flex;gap:18px}.mobile-lang button{border:0;background:none;color:var(--muted-d);padding:12px 0}.mobile-lang button.active{color:#fff}.home-hero{min-height:max(92svh,700px)}.home-hero-inner{min-height:max(92svh,700px)}.hero-copy{max-width:62vw}.lead-work,.secondary-work,.current-grid,.cap-detail{grid-template-columns:1fr}.secondary-work .media{order:-1}.project-info{padding-top:20px}.statement{grid-column:2/12}.page-hero{min-height:65svh}.archive-cols{gap:4vw}.contact-row{grid-template-columns:3fr 7fr}.contact-row .meta{display:none}}
-@media(max-width:767px){:root{--gutter:20px;--space:184px}.grid{display:block}.hero-copy{max-width:100%}.home-hero .progressive-image__preview,.home-hero .progressive-image__full,.home-hero .hero-video{object-position:60% center}.hero-shade{background:linear-gradient(180deg,rgba(9,10,11,.08),rgba(9,10,11,.28) 42%,rgba(9,10,11,.94) 86%,rgba(9,10,11,.99))}.hero-title{font-size:clamp(43px,12vw,58px)}html[lang=en] .hero-title{font-size:clamp(46px,12vw,61px)}.hero-support{font-size:17px}.page-hero{min-height:72svh;padding-top:120px}.display{font-size:clamp(48px,14vw,74px)}.evo-label{margin-bottom:58px}.evo-main .body-large{margin-top:38px}.section-head{align-items:flex-start;gap:20px}.lead-work,.secondary-work{display:block}.lead-work .media,.secondary-work .media{height:72vw;margin-bottom:34px}.editorial-cases{display:block}.editorial-case,.editorial-case:nth-child(even){padding:38px 0;border-left:0}.editorial-case .thumb{height:190px}.proof-list{display:block}.proof-feature{padding-right:0}.proof-rows{border-left:0}.proof-row{grid-template-columns:90px minmax(0,1fr);padding-left:0}.current-grid{display:block}.current-copy{margin-top:50px}.bridge{display:block}.bridge-links{margin-top:50px}.statement{margin:0}.statement p{font-size:37px}.phase,.timeline-row{grid-template-columns:1fr}.phase{gap:12px}.timeline-row{gap:12px}.fact-line{display:block}.fact,.fact+.fact{padding:28px 0;border-left:0}.cap-detail{display:block}.evidence-media{height:72vw}.work-lead{height:auto}.work-duo{display:block}.work-duo img{height:72vw}.project-row{grid-template-columns:1fr;gap:12px}.archive-cols{display:block}.archive-col+ .archive-col{margin-top:70px}.engagement{grid-template-columns:1fr;gap:8px}.contact-row{display:block}.contact-row p{margin-top:10px}.footer-inner{display:block}.footer-inner p{margin-bottom:22px}}
+@media(max-width:767px){:root{--gutter:20px;--space:184px}.grid{display:block}.hero-copy{max-width:100%}.home-hero .progressive-image__preview,.home-hero .progressive-image__full,.home-hero .hero-video{object-position:60% center}.hero-shade{background:linear-gradient(180deg,rgba(9,10,11,.08),rgba(9,10,11,.28) 42%,rgba(9,10,11,.94) 86%,rgba(9,10,11,.99))}.hero-title{font-size:clamp(43px,12vw,58px)}html[lang=en] .hero-title{font-size:clamp(46px,12vw,61px)}.hero-support{font-size:17px}.page-hero{min-height:72svh;padding-top:120px}.display{font-size:clamp(48px,14vw,74px)}.evo-label{margin-bottom:58px}.evo-main .body-large{margin-top:38px}.section-head{align-items:flex-start;gap:20px}.lead-work,.secondary-work{display:block}.lead-work .media,.secondary-work .media{height:72vw;margin-bottom:34px}.editorial-cases{display:block}.editorial-case,.editorial-case:nth-child(even){padding:38px 0;border-left:0}.editorial-case .thumb{height:190px}.proof-list{display:block}.proof-feature{padding-right:0}.proof-rows{border-left:0}.proof-row{grid-template-columns:90px minmax(0,1fr);padding-left:0}.current-grid{display:block}.current-copy{margin-top:50px}.bridge{display:block}.bridge-links{margin-top:50px}.statement{margin:0}.statement p{font-size:37px}.phase,.timeline-row{grid-template-columns:1fr}.phase{gap:12px}.timeline-row{gap:12px}.fact-line{display:block}.fact,.fact+.fact{padding:28px 0;border-left:0}.cap-detail{display:block}.evidence-media{height:72vw}.work-lead{height:auto}.work-duo{display:block}.work-duo img{height:72vw}.project-row{grid-template-columns:1fr;gap:12px}.archive-cols{display:block}.archive-col+ .archive-col{margin-top:70px}.engagement{grid-template-columns:1fr;gap:8px}.contact-row{display:block}.contact-row p{margin-top:10px}.footer-inner{display:block}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}[data-parallax]{transform:none!important}[data-parallax-bg]{background-position:center center!important}}
 
 /* HOME Final Punch Pass: scoped state, lead-work title visibility. */
@@ -1207,4 +1207,36 @@ main>section[id]>.wrap{scroll-margin-top:calc(var(--header-h) + clamp(28px,4vh,5
 @media(max-width:767px){
   .company-summary .proof-row{grid-template-columns:1fr;gap:6px}
   .company-summary .proof-row p{font-size:15px}
+}
+
+/* ---------- HERO SCROLL CUE — must not collide with the CTA ----------
+   The cue is centred while the hero CTA is left-aligned, so on a phone the button's
+   right edge ran into the cue's column: measured 20-205 against 187-243 horizontally
+   and touching exactly at y=774. Reserve the cue's own height in the hero's bottom
+   padding so the button always clears it, rather than nudging one of them sideways. */
+@media(max-width:767px){
+  .home-hero-inner{padding-bottom:clamp(118px,15vh,158px)}
+}
+/* Below the height where the cue itself is hidden, that reserve is dead space. */
+@media(max-width:767px) and (max-height:600px){
+  .home-hero-inner{padding-bottom:clamp(64px,9vh,88px)}
+}
+
+/* ---------- FOOTER — one block on every page ----------
+   Was a per-page line ("REBORN SOFT · CONTACT", "· CAPABILITIES" …) with no copyright.
+   Now identical everywhere: small greyscale mark, standard copyright, one link. */
+.footer-inner{display:flex;justify-content:space-between;align-items:center;gap:20px 24px;flex-wrap:wrap}
+.footer-brand{display:flex;align-items:center;gap:14px;min-width:0}
+.footer-mark{flex:none;display:block;width:auto;height:20px;
+  /* Greyscale, not the brand colours: flattened to white for the dark footer, and to
+     black on the cream subpage footer. The source art is full-colour, so both are a
+     filter on one file rather than two exports. */
+  filter:grayscale(1) brightness(0) invert(1);opacity:.55}
+.subpage .reveal-block .footer .footer-mark{filter:grayscale(1) brightness(0);opacity:.45}
+.footer-copy{margin:0;font-size:12px;letter-spacing:.01em;line-height:1.5}
+.footer-link{font-size:12px;font-weight:650;letter-spacing:.08em;white-space:nowrap}
+
+@media(max-width:767px){
+  .footer-inner{flex-direction:column;align-items:flex-start;gap:18px}
+  .footer-copy{font-size:11px}
 }
