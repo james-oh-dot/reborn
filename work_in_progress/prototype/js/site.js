@@ -7,14 +7,16 @@ document.querySelectorAll('.lang').forEach(g=>{
  const pill=g.querySelector('.lang-pill'),on=g.querySelector('button.active');
  if(!pill||!on)return;
  pill.style.width=on.offsetWidth+'px';
- pill.style.transform='translateX('+on.offsetLeft+'px)'});};document.querySelectorAll('.lang').forEach(g=>{const p=document.createElement('span');p.className='lang-pill';p.setAttribute('aria-hidden','true');g.insertBefore(p,g.firstChild)});let saved='ko';try{saved=localStorage.getItem('rebornsoft_lang')||'ko'}catch{}setLang(saved);addEventListener('resize',()=>setLang(root.lang==='en'?'en':'ko'),{passive:true});document.querySelectorAll('[data-lang]').forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.lang)));requestAnimationFrame(()=>body.classList.add('loaded'));const scrollHeader=()=>{header?.classList.toggle('scrolled',scrollY>48);body.classList.toggle('is-scrolled',scrollY>120)};addEventListener('scroll',scrollHeader,{passive:true});scrollHeader();const trigger=document.querySelector('.menu-trigger'),panel=document.querySelector('.mobile-panel');function closeMenu(){if(!trigger||!panel)return;if(panel.classList.contains('open'))setMenu(false)}document.querySelectorAll('.mobile-item').forEach((el,i)=>el.style.setProperty('--i',i));
+ pill.style.transform='translateX('+on.offsetLeft+'px)'});};document.querySelectorAll('.lang').forEach(g=>{const p=document.createElement('span');p.className='lang-pill';p.setAttribute('aria-hidden','true');g.insertBefore(p,g.firstChild)});let saved='ko';try{saved=localStorage.getItem('rebornsoft_lang')||'ko'}catch{}setLang(saved);addEventListener('resize',()=>setLang(root.lang==='en'?'en':'ko'),{passive:true});document.querySelectorAll('[data-lang]').forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.lang)));requestAnimationFrame(()=>body.classList.add('loaded'));const scrollHeader=()=>{header?.classList.toggle('scrolled',scrollY>48);body.classList.toggle('is-scrolled',scrollY>120)};addEventListener('scroll',scrollHeader,{passive:true});scrollHeader();const trigger=document.querySelector('.menu-trigger'),panel=document.querySelector('.nav-panel');function closeMenu(){if(!trigger||!panel)return;if(panel.classList.contains('open'))setMenu(false)}document.querySelectorAll('.nav-item').forEach((el,i)=>el.style.setProperty('--i',i));
 const setMenu=open=>{
  trigger.setAttribute('aria-expanded',String(open));
  panel.classList.toggle('open',open);
  panel.setAttribute('aria-hidden',String(!open));
  body.classList.toggle('menu-open',open);
- /* The visible label is swapped in CSS off body.menu-open rather than written here,
-    so setLang keeps translating both states and this stays language-agnostic. */
+ /* The icon carries the state visually; this keeps the accessible name in step. */
+ trigger.setAttribute('aria-label',open
+   ?(root.lang==='en'?'Close menu':'메뉴 닫기')
+   :(root.lang==='en'?'Open menu':'메뉴 열기'));
  if(open){const first=panel.querySelector('a,button');first&&first.focus()}
  else trigger.focus()};
 trigger?.addEventListener('click',()=>setMenu(trigger.getAttribute('aria-expanded')!=='true'));
