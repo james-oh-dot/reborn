@@ -813,25 +813,8 @@ html[lang=en] .integration-ko{display:none}
   text-wrap:balance}
 .subpage .page-hero .body-large{margin-top:clamp(26px,3vw,44px)}
 
-/* ---------- HOME HERO — oversized background wordmark ----------
-   Sits above the photograph and below the copy: it should register as texture,
-   not as the headline. Runs from mid-screen out past the right edge, where the
-   hero's own overflow:hidden trims it. */
-.hero-bg-type{
-  position:absolute;z-index:1;left:44%;bottom:clamp(28px,7vh,104px);
-  white-space:nowrap;pointer-events:none;user-select:none;
-  font-size:clamp(96px,15vw,260px);font-weight:800;letter-spacing:-.06em;
-  line-height:.8;color:rgba(255,255,255,.05)}
-@media(max-width:767px){
-  /* Desktop lets the wordmark run off the right edge on purpose. At phone widths only
-     ~40% of it survived, which reads as a typo rather than a device — so here it is
-     sized to sit fully inside the viewport instead. */
-  /* Sized to sit fully inside the viewport, and moved to the open area ABOVE the copy:
-     anchored to the bottom it landed behind the CTA, where the button's border cut
-     straight through the letters. */
-  .hero-bg-type{left:var(--gutter);bottom:auto;top:clamp(120px,20vh,200px);
-    font-size:clamp(44px,13.5vw,72px)}
-}
+
+
 
 /* ---------- PROJECT DETAIL DRAWER ----------
    Desktop: enters from the right. Mobile: rises as a bottom sheet.
