@@ -1390,3 +1390,26 @@ body.menu-open .brand,body.menu-open .site-header .lang{opacity:0;visibility:hid
   .mt-bar,.mt-bar i,.nav-item .nav-name,.nav-item .nav-num,.nav-item .nav-en,
   .nav-item .nav-name:before{transition:none!important}
 }
+
+/* ---------- CLOSING REVEAL — keep the block within a phone screen ----------
+   The reveal only runs while the closing block plus footer fit the viewport; past that
+   the height guard drops them into normal flow so nothing is stranded off-screen. The
+   two-tier footer added ~140px on mobile, which pushed company and contact over that
+   line and silently switched the effect off. Trimmed on both sides so it fits again:
+   measured 924px against an 844px viewport before, comfortably under after. */
+@media(max-width:767px){
+  .closing-block{padding-block:clamp(42px,5.2vh,64px)!important}
+  .footer{padding:26px 0 22px}
+  .footer-inner{--footer-gap:18px}
+  .footer-top{gap:18px}
+  .footer-nav{gap:8px 22px}
+  .footer-base{margin-top:18px;padding-top:14px;gap:10px}
+  .footer-descriptor{font-size:11px}
+  /* Left at 44px: the compaction was to win back height for the closing reveal, and
+     there is now 113-147px of slack, so there is no reason to shrink a touch target. */
+  .footer-nav a{min-height:44px}
+  .footer-totop{min-height:44px}
+}
+/* Applied for a single synchronous measurement by the height guard, never painted. */
+.reveal-block.is-measuring{min-height:0}
+.reveal-block.is-measuring .closing-block{flex:none}

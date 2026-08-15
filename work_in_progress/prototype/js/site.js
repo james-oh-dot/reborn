@@ -84,7 +84,13 @@ const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};ad
    the mobile URL bar from flipping the state on every scroll. */
 const SLACK=24;
 const guard=()=>{const isStatic=document.body.classList.contains('reveal-static');
+ /* Measuring the block as-rendered is useless here: it has min-height:100svh and its
+    closing section is flex:1, so it always reports about one viewport whether the
+    content needs it or not. Relax both for one synchronous read to get the natural
+    height, then put them back. */
+ block.classList.add('is-measuring');
  const need=block.scrollHeight;
+ block.classList.remove('is-measuring');
  if(!isStatic&&need>innerHeight)document.body.classList.add('reveal-static');
  else if(isStatic&&need<=innerHeight-SLACK)document.body.classList.remove('reveal-static')};
 const sync=()=>{guard();spacer.style.height=block.offsetHeight+'px'};sync();addEventListener('resize',sync,{passive:true});addEventListener('orientationchange',sync);addEventListener('load',sync);if(document.fonts?.ready)document.fonts.ready.then(sync)})();
