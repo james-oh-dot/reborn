@@ -31,7 +31,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
    desktop reduction so the type survives; scroll speed and star rotation are unchanged. */
 .dna-seq{display:inline-flex;align-items:center;white-space:nowrap;
   font-size:clamp(21px,1.7vw,29px);font-weight:600;letter-spacing:.04em;color:var(--deep)}
-.dna-arrow{font-style:normal;margin-inline:clamp(14px,1.6vw,30px);color:rgba(20,22,24,.45)}
+.dna-arrow{font-style:normal;margin-inline:clamp(14px,1.6vw,30px);color:rgba(20,22,24,.62)}
 .dna-star{display:inline-block;font-weight:400;color:var(--deep);
   margin-inline:clamp(60px,9vw,170px);transform:rotate(var(--dna-rot,0deg))}
 
@@ -1427,3 +1427,12 @@ body.menu-open .brand,body.menu-open .site-header .lang{opacity:0;visibility:hid
 .subpage .status-progress{color:#4a5ce8}
 /* 2.88:1 at 11px; the label has to be readable even though the tile is a placeholder. */
 .card-media-empty span{color:rgba(242,241,237,.62)}
+
+/* Collapsing the whole nav behind the hamburger left the chrome with no sense of
+   place -- the overlay marks the current page, but only once opened. This is the
+   quiet standing answer to "where am I". Hidden while the menu is open, since the
+   overlay states it far more loudly, and below 768 where the bar has no room. */
+.nav-here{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted-d);white-space:nowrap;transition:opacity .24s var(--ease)}
+body.menu-open .nav-here{opacity:0;pointer-events:none}
+@media(max-width:767px){.nav-here{display:none}}
