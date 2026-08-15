@@ -413,3 +413,42 @@ btns.forEach(b=>b.addEventListener('click',()=>{
    d.firstChild.style.setProperty('--star-rot',(p*180).toFixed(1)+'deg')})};
  addEventListener('scroll',update,{passive:true});
  addEventListener('resize',update,{passive:true});update()})();
+/* Let a CTA confirm before it leaves. Routing on the raw click gave no acknowledgement
+   at all -- the tap landed and the page was simply gone -- so the button now completes
+   its fill and navigates just after. Deliberately short: 200ms reads as confirmation,
+   longer reads as lag.
+
+   The delay is the only thing added. An earlier attempt at hold-then-navigate broke on
+   iOS because it also moved focus and restored scroll inside the tap, which made Safari
+   abandon the pending navigation; nothing here touches either. */
+(()=>{const DELAY=200;
+ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const eligible=a=>{
+  if(!a||!a.getAttribute('href'))return null;
+  if(a.hasAttribute('download'))return null;
+  if(a.target&&a.target!=='_self')return null;
+  let u;try{u=new URL(a.href,location.href)}catch{return null}
+  return u.origin===location.origin?u:null};
+ /* Paint the press on contact rather than waiting for click, so touch gets its
+    acknowledgement at the moment the finger lands. */
+ document.addEventListener('pointerdown',e=>{
+  const a=e.target.closest&&e.target.closest('a.link[href]');
+  if(a&&eligible(a))a.classList.add('is-pressed')},{passive:true});
+ ['pointercancel','pointerleave'].forEach(ev=>
+  document.addEventListener(ev,e=>{
+   const a=e.target.closest&&e.target.closest('a.link[href]');
+   if(a)a.classList.remove('is-pressed')},{passive:true}));
+ document.addEventListener('click',e=>{
+  if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+  const a=e.target.closest&&e.target.closest('a.link[href]');
+  const u=eligible(a);if(!u)return;
+  a.classList.add('is-pressed');
+  /* An in-page jump keeps the default: the glide is its own acknowledgement, and
+     swallowing it here would fight the deep-link handling. */
+  if(u.pathname===location.pathname&&u.hash)return;
+  if(reduce)return;
+  e.preventDefault();
+  setTimeout(()=>{location.href=a.href},DELAY)});
+ /* Coming back from bfcache would otherwise restore the button mid-press. */
+ addEventListener('pageshow',()=>document.querySelectorAll('.link.is-pressed')
+  .forEach(x=>x.classList.remove('is-pressed')))})();

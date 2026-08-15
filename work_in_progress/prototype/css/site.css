@@ -1071,10 +1071,15 @@ main>section[id]>.wrap{scroll-margin-top:calc(var(--header-h) + clamp(28px,4vh,5
    1023px, and clipping the element would cut that hit area back down. inset:0 keeps
    the fill inside the border box on its own. The label flips colour slightly late so
    it changes as the fill passes under it rather than before it arrives. */
-.link{position:relative;
+/* z-index:0 makes the button its own stacking context so the sweep below can sit at
+   -1: behind the label but still in front of the button's own background. Raising the
+   children instead only ever lifted the arrow -- it is a <span>, while the label is a
+   bare text node with no box to give a z-index to, so it stayed under the fill and
+   vanished for the length of every hover and every tap. */
+.link{position:relative;z-index:0;
   transition:color .34s var(--ease) .08s,border-color .34s var(--ease)}
 .link>*{position:relative;z-index:1}
-.link::before{content:"";position:absolute;z-index:0;inset:0;
+.link::before{content:"";position:absolute;z-index:-1;inset:0;
   transform:scaleX(0);transform-origin:left center;
   transition:transform .52s var(--ease);
   background:var(--deep)}
@@ -1545,4 +1550,42 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
 }
 @media(prefers-reduced-motion:reduce){
   .section-star svg{transform:translateY(calc(var(--space) / 2))}
+}
+
+/* CTA press state -----------------------------------------------------------------
+   The fill and the text colour were both bound to :hover alone. Touch matches neither
+   :hover nor :focus-visible reliably, so on a phone the sweep would run -- iOS fakes
+   hover on tap -- while the text kept its resting colour and ended up sitting on top
+   of its own fill, unreadable for the length of the sweep. Every rule that fills now
+   has a matching rule that recolours the text, and .is-pressed drives both from the
+   pointer event so the two can never come apart again.
+
+   The sweep is also cut short here. Half a second is right for a hover that may never
+   be committed; once a tap has happened the button should confirm and get out of the
+   way, so pressing snaps the fill in and js/site.js routes just after. */
+.link.is-pressed{transition:color .12s var(--ease),border-color .12s var(--ease)}
+.link.is-pressed::before{transition:transform .16s var(--ease);transform:scaleX(1)}
+.link:active::before{transform:scaleX(1)}
+
+/* Neutral CTAs: text flips to the surface it is being covered by. */
+.light .link.is-pressed,.light .link:active{color:var(--paper);border-color:var(--deep)}
+.dark .link.is-pressed,.graphite .link.is-pressed,
+.home-hero .link.is-pressed,.page-hero .link.is-pressed,
+.dark .link:active,.graphite .link:active,
+.home-hero .link:active,.page-hero .link:active{color:var(--ink);border-color:var(--warm)}
+
+/* Primary and closing CTAs fill with the brand, so their text goes white -- listed
+   after the neutral rules so it wins on the buttons that carry both. */
+.link-lg.is-pressed,.closing-block .link.is-pressed,
+.link-lg:active,.closing-block .link:active,
+.light .link-lg.is-pressed,.light .closing-block .link.is-pressed,
+.dark .link-lg.is-pressed,.graphite .link-lg.is-pressed,
+.dark .closing-block .link.is-pressed,.graphite .closing-block .link.is-pressed,
+.home-hero .link-lg.is-pressed,.page-hero .link-lg.is-pressed,
+.light .link-lg:active,.light .closing-block .link:active,
+.dark .link-lg:active,.graphite .link-lg:active,
+.home-hero .link-lg:active,.page-hero .link-lg:active{color:#fff;border-color:var(--brand)}
+
+@media(prefers-reduced-motion:reduce){
+  .link.is-pressed::before{transition:none}
 }
