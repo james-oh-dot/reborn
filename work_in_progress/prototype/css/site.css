@@ -1452,3 +1452,7 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
 .dark .link-lg:hover,.graphite .link-lg:hover,
 .dark .closing-block .link:hover,.graphite .closing-block .link:hover,
 .home-hero .link-lg:hover,.page-hero .link-lg:hover{color:#fff;border-color:var(--brand)}
+
+/* The panel takes focus when the menu opens; it is a container, not a control, so it
+   must not paint a ring of its own. The items keep theirs. */
+.nav-panel:focus{outline:none}

@@ -17,7 +17,12 @@ const setMenu=open=>{
  trigger.setAttribute('aria-label',open
    ?(root.lang==='en'?'Close menu':'메뉴 닫기')
    :(root.lang==='en'?'Open menu':'메뉴 열기'));
- if(open){const first=panel.querySelector('a,button');first&&first.focus()}
+ /* Focus the panel, NOT the first link. Focusing a link marked it as :focus-visible --
+    the browser treats programmatic focus after a click as keyboard-ish -- so opening
+    the menu on a phone left a red ring and underline sitting on 회사소개 as though it
+    were selected, competing with the real current-page mark. The panel carries
+    tabindex="-1", so keyboard users still land inside it and Tab reaches the items. */
+ if(open)panel.focus();
  else trigger.focus()};
 trigger?.addEventListener('click',()=>setMenu(trigger.getAttribute('aria-expanded')!=='true'));
 /* Keep Tab inside the open panel; without this focus walks the page behind it. */
@@ -26,7 +31,8 @@ addEventListener('keydown',e=>{
  const f=[...panel.querySelectorAll('a,button')].filter(x=>x.offsetParent!==null);
  if(!f.length)return;const first=f[0],last=f[f.length-1];
  const all=[trigger,...f];
- if(e.shiftKey&&document.activeElement===all[0]){e.preventDefault();last.focus()}
+ /* The panel itself is now the open-state focus holder, so it is the wrap point too. */
+ if(e.shiftKey&&(document.activeElement===all[0]||document.activeElement===panel)){e.preventDefault();last.focus()}
  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();trigger.focus()}});/* Deliberately NOT closing the menu when a link is tapped. closeMenu releases the
    scroll lock, which restores body position and scrolls the page, and calls
    trigger.focus() -- all synchronously inside the tap. Moving the page and the focus
