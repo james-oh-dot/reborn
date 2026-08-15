@@ -1285,8 +1285,12 @@ main>section[id]>.wrap{scroll-margin-top:calc(var(--header-h) + clamp(28px,4vh,5
   padding:calc(var(--header-h) + clamp(28px,5vh,56px)) var(--gutter) clamp(32px,5vh,48px);
   background:var(--ink);
   opacity:0;visibility:hidden;transform:translateY(-10px);
-  transition:opacity .38s var(--ease),transform .38s var(--ease),visibility .38s}
-.nav-panel.open{opacity:1;visibility:visible;transform:none}
+  /* visibility is switched at 0s, not interpolated: on open it must be visible in the
+     same frame or focus() lands on a hidden element and is dropped, which left keyboard
+     users on <body>. On close it waits out the fade before hiding. */
+  transition:opacity .38s var(--ease),transform .38s var(--ease),visibility 0s .38s}
+.nav-panel.open{opacity:1;visibility:visible;transform:none;
+  transition:opacity .38s var(--ease),transform .38s var(--ease),visibility 0s}
 
 .nav-menu{display:flex;flex-direction:column;border-top:1px solid var(--line-d)}
 .nav-item{position:relative;display:grid;
