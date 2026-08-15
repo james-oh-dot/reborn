@@ -291,3 +291,9 @@ let done=false;
 const go=()=>{if(done)return;done=true;setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'start'}),80)};
 if(document.readyState==='complete')go();else addEventListener('load',go,{once:true});
 setTimeout(go,1200)})();
+/* Footer back-to-top. The pages run long -- home is around 7,900px -- and the footer
+   otherwise offers no way back. Honours reduced motion rather than always animating. */
+(()=>{const btns=[...document.querySelectorAll('.footer-totop')];if(!btns.length)return;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+btns.forEach(b=>b.addEventListener('click',()=>{
+ scrollTo({top:0,behavior:reduce.matches?'auto':'smooth'})}))})();
