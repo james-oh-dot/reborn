@@ -32,8 +32,12 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .dna-seq{display:inline-flex;align-items:center;white-space:nowrap;
   font-size:clamp(21px,1.7vw,29px);font-weight:600;letter-spacing:.04em;color:var(--deep)}
 .dna-arrow{font-style:normal;margin-inline:clamp(14px,1.6vw,30px);color:rgba(20,22,24,.62)}
-.dna-star{display:inline-block;font-weight:400;color:var(--deep);
+/* Was the character U+2733. On iOS that glyph has emoji presentation, so the band's
+   star arrived as a green emoji on phones while desktop drew the line asterisk from
+   the text font. Drawn as SVG it is the same mark everywhere and inherits the ink. */
+.dna-star{display:inline-flex;align-items:center;color:var(--deep);
   margin-inline:clamp(60px,9vw,170px);transform:rotate(var(--dna-rot,0deg))}
+.dna-star svg{width:1em;height:1em;display:block}
 
 /* work cards and media */
 .section-head{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:22px;border-bottom:1px solid currentColor;margin-bottom:clamp(52px,6vw,90px)}.section-head small{opacity:.55}.lead-work{display:grid;grid-template-columns:7fr 4fr;gap:clamp(28px,5vw,84px);align-items:end}.media{overflow:hidden;background:#17191b}.media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}.media:hover img{transform:scale(1.015)}.lead-work .media{height:min(62vw,720px)}.work-info h3{font-size:clamp(40px,4.8vw,76px);line-height:1.02;letter-spacing:-.04em;margin:20px 0}.work-info p{color:var(--muted-l);max-width:530px}.secondary-work{display:grid;grid-template-columns:4fr 6fr;gap:clamp(28px,5vw,84px);align-items:center;margin-top:clamp(100px,13vw,190px)}.secondary-work .media{height:min(45vw,560px)}.editorial-cases{display:grid;grid-template-columns:1fr 1fr;margin-top:clamp(100px,12vw,170px);border-top:1px solid var(--line-l)}.editorial-case{padding:44px 7vw 60px 0;border-bottom:1px solid var(--line-l)}.editorial-case:nth-child(even){padding-left:4vw;border-left:1px solid var(--line-l)}.editorial-case h3{font-size:clamp(30px,3vw,48px);margin:18px 0}.editorial-case .thumb{height:230px;margin-bottom:30px}.editorial-case .thumb img{object-fit:contain;background:#e8e7e2}.proof-list{display:grid;grid-template-columns:5fr 7fr;border-top:1px solid var(--line-l)}.proof-feature{padding:50px 5vw 50px 0}.proof-feature img{width:100%;max-height:540px;object-fit:contain;filter:saturate(.35)}.proof-rows{border-left:1px solid var(--line-l)}.proof-row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:24px;padding:30px 0 30px 4vw;border-bottom:1px solid var(--line-l)}.proof-row h3{margin:0;font-size:20px}.proof-row p{margin:8px 0 0;color:var(--muted-l)}
@@ -427,14 +431,20 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
       rgba(255,255,255,.03) 40deg 41deg,transparent 41deg 360deg)}
 .contact-hero:after{border-color:rgba(255,255,255,.09)}
 
-/* Scroll cue — quiet secondary hint, must read weaker than the hero CTA */
+/* Scroll cue. It should still read as secondary to the hero CTA, but it was being
+   dimmed twice -- a muted colour at .6 alpha inside an element also set to opacity .6,
+   compounding to .36 and 3.01:1, which is a hint nobody can see. It is white now, and
+   the single opacity below is the only thing holding it back. */
 .scroll-cue{
   position:absolute;z-index:3;left:50%;bottom:48px;transform:translateX(-50%);
   display:flex;flex-direction:column;align-items:center;gap:12px;
-  color:var(--muted-d);font-size:11px;letter-spacing:.22em;opacity:.6}
-.scroll-cue-rail{position:relative;display:block;width:1px;height:52px;background:var(--line-d);overflow:hidden}
+  color:#fff;font-size:11px;letter-spacing:.22em;opacity:.86}
+/* The track was rgba(255,255,255,.14) -- 1.42:1, effectively invisible, so the moving
+   tick appeared to travel through nothing. */
+.scroll-cue-rail{position:relative;display:block;width:1px;height:52px;
+  background:rgba(255,255,255,.34);overflow:hidden}
 .scroll-cue-rail i{
-  position:absolute;left:0;top:0;width:1px;height:16px;background:var(--warm);
+  position:absolute;left:0;top:0;width:1px;height:16px;background:#fff;
   animation:cue 2.8s var(--ease) infinite}
 @keyframes cue{0%{transform:translateY(-16px)}60%,100%{transform:translateY(50px)}}
 .is-scrolled .scroll-cue{opacity:0;transition:opacity .4s}
@@ -1495,4 +1505,44 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
 
 @media(prefers-reduced-motion:reduce){
   .visual-card::before,.card-copy,.card-eyebrow,.card-arrow,.card-link p{transition:none}
+}
+
+/* The section directly under a subpage hero starts closer than the standard rhythm.
+   That rhythm exists to separate one section from the next, but this one's top edge
+   meets the hero, which already separates with its own bottom padding and a full
+   change of background -- so the gap was being paid for twice, and on a phone all
+   184px of it landed inside the first screen: hero 608, viewport 844, and the 236px
+   left over was empty. Growing the hero would only have hidden it lower down. */
+.subpage main>section.page-hero + section{padding-top:clamp(88px,9vw,168px)!important}
+/* The !important is not decoration: the blanket subpage rule above already carries
+   one, so overriding it needs to match. Specificity does the actual deciding -- this
+   selector is one type deeper than that rule's :not(.page-hero). */
+
+/* Section star ------------------------------------------------------------------
+   A line mark centred in the gap between sections, rotating with scroll position.
+   The generous section rhythm was a deliberate earlier decision, so the gap is not
+   shrunk to fix the emptiness -- it is given something to hold instead.
+
+   Monochrome by choice: at five gaps a page across five pages this would put the
+   brand colour in ~25 decorative places, which is exactly the spread the accent
+   rules exist to prevent. It inherits the surrounding surface's ink so it works on
+   both the cream and the dark sections without a second rule. */
+.section-star{
+  display:flex;justify-content:center;position:relative;
+  height:0;pointer-events:none;user-select:none}
+.section-star svg{
+  width:100px;height:100px;overflow:visible;stroke-width:4;
+  /* Dropped halfway into the section's bottom padding -- the star adds no height of
+     its own, so it lands in the empty run below the content without moving anything.
+     Rotation comes from js/site.js. */
+  transform:translateY(calc(var(--space) / 2)) rotate(var(--star-rot,0deg));
+  color:currentColor;opacity:.42}
+.on-dark .section-star svg,.dark .section-star svg,.graphite .section-star svg{opacity:.38}
+@media(max-width:767px){
+  /* 100px is a quarter of a 390px viewport -- at that size the ornament competes with
+     the headline it is meant to sit quietly between. */
+  .section-star svg{width:72px;height:72px}
+}
+@media(prefers-reduced-motion:reduce){
+  .section-star svg{transform:translateY(calc(var(--space) / 2))}
 }

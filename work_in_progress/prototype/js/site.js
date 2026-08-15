@@ -372,3 +372,44 @@ btns.forEach(b=>b.addEventListener('click',()=>{
     c.addEventListener(ev,off,{passive:true}));
   /* The card navigates away; clear on the way out so bfcache does not restore it washed. */
   addEventListener('pagehide',off)})})();
+/* Section star: a line mark in each gap between sections, turning with scroll.
+   Injected rather than authored into all five pages so the gaps stay in one place,
+   and skipped where a section is pinned/sticky (the rail and the capability flow
+   drive their own scroll choreography and an extra rotating mark inside them reads
+   as a glitch). Rotation is written as a custom property on a rAF tick. */
+(()=>{const main=document.querySelector('main');if(!main)return;
+ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const SKIP='cap-flow work-rail selected-work-section page-hero home-hero';
+ const skip=el=>SKIP.split(' ').some(c=>el.classList.contains(c));
+ const secs=[...main.children].filter(el=>el.tagName==='SECTION');
+ const stars=[];
+ secs.forEach((s,i)=>{
+  const next=secs[i+1];if(!next)return;
+  if(skip(s)||skip(next))return;
+  const d=document.createElement('div');
+  d.className='section-star';d.setAttribute('aria-hidden','true');
+  /* The same mark the EVOLUTION band uses, so the two read as one motif. */
+  d.innerHTML='<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4">'+
+   '<path d="M50 6V94M6 50H94M19 19L81 81M81 19L19 81"/></svg>';
+  /* Appended inside the section above rather than between the two. Sitting on the
+     boundary it straddled two surfaces and, with <main> as its parent, inherited a
+     colour belonging to neither -- a near-white mark on cream. Inside the section it
+     takes that section's own ink, and CSS drops it into the middle of the padding
+     below the content, which is the empty half of the gap. */
+  s.appendChild(d);
+  stars.push(d)});
+ if(!stars.length||reduce)return;
+ /* Written straight from the scroll handler rather than batched through rAF. The
+    batched version latched: the first frame ran, and if a later rAF did not fire the
+    in-flight flag stayed set and every subsequent scroll was dropped, leaving the mark
+    frozen at whatever angle it happened to hold. Four rect reads on a passive listener
+    is cheap enough that the batching bought nothing worth that failure mode. */
+ const update=()=>{const vh=innerHeight;
+  stars.forEach(d=>{const r=d.getBoundingClientRect();
+   if(r.bottom<-200||r.top>vh+200)return;
+   /* Measured across the whole pass -- well above the viewport to well below -- so the
+      turn is steady, not a spin that only happens while the mark is dead centre. */
+   const p=((vh/2)-r.top)/vh;
+   d.firstChild.style.setProperty('--star-rot',(p*180).toFixed(1)+'deg')})};
+ addEventListener('scroll',update,{passive:true});
+ addEventListener('resize',update,{passive:true});update()})();
