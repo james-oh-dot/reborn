@@ -4,15 +4,39 @@
 같은 코드가 페이지에서 실시간으로 돌고, 프레임 단위로 캡처해 영상으로도 뽑힌다.
 
 ```
-index.html          데모 — 팔레트/모션 토글, FPS·품질 티어 표시
-particle-wave.js    엔진 (의존성 없음, ES 모듈)
+index.html                     레퍼런스 재현 데모 — 팔레트/모션 토글, FPS·티어 표시
+variations.html                4가지 곡선 변주를 세로로 나열
+../../prototype/js/particle-wave.js   엔진 (의존성 없음, ES 모듈)
+../../prototype/js/hero-field.js      서브페이지 히어로에 얹는 배선
 ```
 
+엔진이 `prototype/js/`에 있는 이유는 이제 사이트 코드이기 때문이다. 이 폴더의
+데모들은 거기서 가져다 쓴다.
+
 ```js
-import { ParticleWave } from './particle-wave.js';
-const field = new ParticleWave(canvas, { preset: 'gold' });
+import { ParticleWave } from '../../prototype/js/particle-wave.js';
+const field = new ParticleWave(canvas, { variation: 'work', preset: 'brand' });
 field.start();
 ```
+
+## 4가지 곡선 변주
+
+각 메뉴가 정적 SVG 필드로 이미 갖고 있던 정체성을 그대로 다시 쓴 것이다. 새로 만든
+네 개가 아니라, 같은 네 개를 더 높은 밀도로 렌더한 것.
+
+| variation | 곡선 형태 | 뜻 |
+|---|---|---|
+| `company` | 완만한 단일 상승, 시트가 거의 평행 | 누적된 층 |
+| `capabilities` | 활(bow). 78% 지점 정점에서 스택이 6분의 1로 조여짐 | 인식이 한 점에 걸림 |
+| `work` | 마루 4개짜리 진행파 | 현장에 걸쳐 전개 |
+| `contact` | 오른쪽 아래로 가속하며 떨어지는 곡선, 부채가 접힘 | 한 점에서의 만남 |
+
+성격을 만드는 건 세 가지다 — `wave`(크레스트 중심선), `bandScale`(그 위 스택이 벌어지는
+폭), `density`(반짝이가 몰리는 곳). 입자 수와 색은 넷이 공유한다.
+
+**네 곡선 모두 상단대에 산다.** 히어로 카피가 좌하단에 앉기 때문이다. company의 원래
+곡선은 본문을 관통했고 거기서 4.01:1이 나왔다 — 강도를 낮추는 것으로는 못 고치고
+곡선을 들어올려야 했다.
 
 ## 왜 영상이 아니라 캔버스인가
 
@@ -113,9 +137,45 @@ ffmpeg -f image2pipe -c:v mjpeg -framerate 25 -i all.mjpeg \
        -c:v libvpx -b:v 2400k -pix_fmt yuv420p -auto-alt-ref 0 out.webm
 ```
 
-## 접근성
+## 서브페이지 히어로 적용
 
-`prefers-reduced-motion: reduce`면 정지 프레임(t=0.18)만 그리고 rAF를 돌리지 않는다.
-캔버스는 장식이므로 실제 페이지에 얹을 때 `aria-hidden="true"`를 붙일 것.
-히어로 카피를 얹는다면 서브페이지 필드와 같은 기준으로 대비를 측정해야 한다 —
-이 필드는 그쪽보다 훨씬 밝아서 카피 뒤쪽을 반드시 가려야 한다.
+`prototype/js/hero-field.js`가 `.page-hero .hero-field` 안에 캔버스를 넣고,
+`<body data-field="...">`로 변주를 고른다. **정적 SVG 위의 점진적 향상**이다 —
+SVG가 먼저 칠해지고, 캔버스가 실제로 렌더되기 시작하면 크로스페이드로 넘겨받는다.
+JS가 없거나 구형 브라우저거나 reduced-motion이면 SVG가 그대로 남는다.
+
+캔버스가 `.hero-field`의 **자식**이라는 게 핵심이다. 그 요소의 마스크·블렌드·투명도·
+패럴랙스를 전부 그대로 물려받으므로, 정적 필드에 맞춰 튜닝해 둔 것들(특히 카피 컬럼
+게이트)이 수정 없이 적용된다.
+
+정지 조건 세 가지:
+
+- **좁은 화면(<768px)에선 아예 안 띄운다.** 이 구도들은 넓은 프레임용이라 폰 비율에
+  우겨넣으면 구조가 카피가 필요한 띠로 무너진다 — SVG(`--hero-crop`으로 이미 그 크롭에
+  맞춰 아트디렉션됨)보다 측정 가능하게 나쁘다. 배터리를 가장 아껴야 하는 기기이기도 하다.
+- **히어로가 화면 밖이면 멈춘다** (IntersectionObserver). 서브페이지는 전부 길다.
+- **탭이 숨겨지면 멈춘다** (visibilitychange).
+
+## 접근성 / 대비
+
+`prefers-reduced-motion: reduce`면 캔버스를 만들지 않는다. 캔버스는 장식이라
+`.hero-field`가 이미 `aria-hidden="true"`다.
+
+**대비는 반드시 루프 전체에서 재야 한다.** 움직이는 배경이므로 한 프레임만 재면
+최악을 놓친다. 루프를 8등분해 각 지점에서 글리프 줄마다 가장 밝은 배경 픽셀을 찾고
+그중 최악을 취한다. `intensity: 0.28`은 그 측정으로 나온 값이지 눈으로 고른 값이 아니다.
+
+현재 최악값 (1600×900, 8지점 × 4페이지):
+
+| 요소 | 최악 | 어디 | 기준 |
+|---|---|---|---|
+| `.display` | 6.72:1 | desktop work | 3:1 |
+| `.body-large` | 5.48:1 | desktop company | 4.5:1 |
+| `.eyebrow` | 5.98:1 | mobile contact (SVG) | 4.5:1 |
+
+곡선·강도·마스크를 건드렸으면 다시 잴 것.
+
+> 참고로 이 측정 자체가 버그를 하나 잡았다. `intensity` getter가 자기 자신을 반환하도록
+> 잘못 치환돼 무한 재귀에 빠졌는데, 서브페이지는 `intensity: 0.28`을 넘기므로 `??`가
+> 단락 평가되어 정상 동작했고 오버라이드를 안 넘기는 데모 페이지에서만 터졌다.
+> 값을 넘기는 경로만 확인했다면 못 잡았을 버그다.

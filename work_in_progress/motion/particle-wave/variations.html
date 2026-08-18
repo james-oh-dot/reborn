@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Particle Wave — 4 curve variations</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%224%22 fill=%22%23f6cd6a%22/%3E%3C/svg%3E">
+<style>
+  :root{--ink:#08080a;--warm:#f2f1ed;--muted:rgba(242,241,237,.6);--line:rgba(255,255,255,.14)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ink);color:var(--warm);
+    font-family:Pretendard,Inter,-apple-system,"Noto Sans KR",sans-serif;-webkit-font-smoothing:antialiased}
+  .bar{display:flex;flex-wrap:wrap;gap:10px 28px;align-items:center;
+    padding:20px clamp(20px,3vw,48px);border-bottom:1px solid var(--line);position:sticky;top:0;
+    background:rgba(8,8,10,.92);backdrop-filter:blur(12px);z-index:10}
+  .group{display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px}
+  button{font:inherit;border:0;background:transparent;color:rgba(255,255,255,.5);cursor:pointer;
+    border-radius:999px;padding:8px 15px;font-size:12px;font-weight:650;letter-spacing:.04em;transition:.25s}
+  button[aria-pressed="true"]{background:rgba(255,255,255,.92);color:#08080a}
+  label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .cell{position:relative;border-bottom:1px solid var(--line);background:#000}
+  .cell canvas{display:block;width:100%;height:46svh;min-height:300px}
+  .tag{position:absolute;left:clamp(20px,3vw,48px);top:22px;z-index:2;pointer-events:none}
+  .tag b{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#fff;font-weight:700}
+  .tag span{display:block;margin-top:7px;font-size:12px;color:var(--muted);max-width:44ch;line-height:1.6}
+  .copy{position:absolute;left:clamp(20px,3vw,48px);bottom:clamp(24px,4vh,52px);z-index:2;pointer-events:none;
+    font-size:clamp(26px,3.2vw,46px);line-height:1.06;letter-spacing:-.04em;font-weight:560;max-width:52%}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <label>Palette</label>
+  <div class="group" id="palette">
+    <button data-preset="brand" aria-pressed="true">BRAND</button>
+    <button data-preset="gold" aria-pressed="false">GOLD</button>
+  </div>
+  <label>Motion</label>
+  <div class="group" id="motion">
+    <button data-motion="play" aria-pressed="true">PLAY</button>
+    <button data-motion="pause" aria-pressed="false">PAUSE</button>
+  </div>
+  <label id="stat">—</label>
+</div>
+
+<div id="cells"></div>
+
+<script type="module">
+import { ParticleWave, VARIATIONS } from '../../prototype/js/particle-wave.js';
+
+const COPY = {
+  company: ['COMPANY · STRATA', '거의 평평한 시트가 층으로 쌓인다. 크레스트를 세우지 않는다 — 누적된 시간.', '인식에서 공간 경험으로'],
+  capabilities: ['CAPABILITIES · FOCUS', '스택이 76% 지점에서 5분의 1로 조여진다 — 인식이 한 점에 걸리는 순간.', '사람을 인식하고<br>환경이 반응하는 기술'],
+  work: ['WORK · SPREAD', '실제로 진행하는 파동. 일정 간격의 네 개 마루 — 현장에 걸쳐 전개된 이력.', '실제 환경에서 검증된<br>기술 적용 사례'],
+  contact: ['CONTACT · CONVERGE', '왼쪽에서 넓게 퍼진 부채가 오른쪽 아래 한 점으로 접힌다 — 만남.', '새로운 인터랙티브<br>프로젝트를 함께'],
+};
+
+const fields = [];
+const host = document.getElementById('cells');
+
+for (const name of Object.keys(VARIATIONS)) {
+  const [tag, note, headline] = COPY[name];
+  const cell = document.createElement('div');
+  cell.className = 'cell';
+  cell.innerHTML = `<canvas></canvas>
+    <div class="tag"><b>${tag}</b><span>${note}</span></div>
+    <div class="copy">${headline}</div>`;
+  host.appendChild(cell);
+  const field = new ParticleWave(cell.querySelector('canvas'), { variation: name, preset: 'brand' });
+  field.start();
+  fields.push(field);
+}
+
+const press = (scope, attr, value) =>
+  scope.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset[attr] === value)));
+
+document.getElementById('palette').addEventListener('click', (e) => {
+  const name = e.target.closest('button')?.dataset.preset;
+  if (!name) return;
+  fields.forEach((f) => f.setPreset(name));
+  press(document.getElementById('palette'), 'preset', name);
+});
+
+document.getElementById('motion').addEventListener('click', (e) => {
+  const mode = e.target.closest('button')?.dataset.motion;
+  if (!mode) return;
+  fields.forEach((f) => (mode === 'play' ? f.start() : f.stop()));
+  press(document.getElementById('motion'), 'motion', mode);
+});
+
+/* Four fields on one page is the worst case this engine will ever meet, so the readout
+   reports the whole page rather than any single field. */
+const stat = document.getElementById('stat');
+let frames = 0, since = performance.now();
+const sample = () => {
+  frames += 1;
+  const now = performance.now();
+  if (now - since >= 500) {
+    stat.textContent = `${Math.round((frames * 1000) / (now - since))} FPS · 4 fields · tiers ${fields.map((f) => f.tier[0].toUpperCase()).join('')}`;
+    frames = 0; since = now;
+  }
+  requestAnimationFrame(sample);
+};
+requestAnimationFrame(sample);
+
+window.__fields = fields;
+</script>
+</body>
+</html>
