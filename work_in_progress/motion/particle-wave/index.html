@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Particle Wave — motion study</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%224%22 fill=%22%23f6cd6a%22/%3E%3C/svg%3E">
+<style>
+  :root{--ink:#08080a;--warm:#f2f1ed;--muted:rgba(242,241,237,.6);--line:rgba(255,255,255,.14)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ink);color:var(--warm);
+    font-family:Pretendard,Inter,-apple-system,"Noto Sans KR",sans-serif;-webkit-font-smoothing:antialiased}
+  .stage{position:relative;width:100%;height:72svh;min-height:420px;overflow:hidden;background:#000}
+  canvas{display:block;width:100%;height:100%}
+  .copy{position:absolute;left:clamp(24px,4vw,72px);bottom:clamp(32px,6vh,72px);z-index:2;max-width:min(52vw,760px);pointer-events:none}
+  .eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:22px}
+  h1{margin:0;font-size:clamp(38px,5vw,76px);line-height:1.0;letter-spacing:-.04em;font-weight:560}
+  .bar{display:flex;flex-wrap:wrap;gap:10px 28px;align-items:center;
+    padding:20px clamp(24px,4vw,72px);border-bottom:1px solid var(--line)}
+  .group{display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px}
+  button{font:inherit;border:0;background:transparent;color:rgba(255,255,255,.5);cursor:pointer;
+    border-radius:999px;padding:8px 16px;font-size:12px;font-weight:650;letter-spacing:.04em;
+    transition:background .25s,color .25s}
+  button[aria-pressed="true"]{background:rgba(255,255,255,.92);color:#08080a}
+  label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .note{padding:24px clamp(24px,4vw,72px) 64px;max-width:760px;font-size:14px;line-height:1.75;color:var(--muted)}
+  .note code{color:var(--warm);font-size:13px}
+  @media(max-width:767px){.copy{max-width:none;right:clamp(24px,4vw,72px)}}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <label>Palette</label>
+  <div class="group" id="palette">
+    <button data-preset="gold" aria-pressed="true">GOLD</button>
+    <button data-preset="brand" aria-pressed="false">BRAND</button>
+  </div>
+  <label>Motion</label>
+  <div class="group" id="motion">
+    <button data-motion="play" aria-pressed="true">PLAY</button>
+    <button data-motion="pause" aria-pressed="false">PAUSE</button>
+  </div>
+  <label id="fps">—</label>
+</div>
+
+<div class="stage">
+  <canvas id="field"></canvas>
+  <div class="copy">
+    <div class="eyebrow">MOTION STUDY / PARTICLE WAVE</div>
+    <h1>사람을 인식하고<br>공간이 반응하는 기술</h1>
+  </div>
+</div>
+
+<p class="note">
+  12초 루프이고 모든 움직임이 그 주기의 정수배라, 마지막 프레임과 첫 프레임이 정확히 이어집니다 —
+  실시간 재생과 영상 추출에 같은 코드를 씁니다. 헤드라인은 실제 히어로에 얹었을 때 가독성을
+  보기 위한 것입니다. <code>BRAND</code>는 같은 필드를 브랜드 레드로, 사이트 히어로가 앉는
+  강도(0.62)로 낮춘 프리셋입니다.
+</p>
+
+<script type="module">
+import { ParticleWave } from './particle-wave.js';
+
+const canvas = document.getElementById('field');
+const field = new ParticleWave(canvas, { preset: 'gold' });
+field.onTier = (tier) => { readout.dataset.tier = tier; };
+field.start();
+
+const press = (scope, attr, value) => {
+  scope.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset[attr] === value)));
+};
+
+const palette = document.getElementById('palette');
+palette.addEventListener('click', (e) => {
+  const name = e.target.closest('button')?.dataset.preset;
+  if (!name) return;
+  field.setPreset(name);
+  press(palette, 'preset', name);
+});
+
+const motion = document.getElementById('motion');
+motion.addEventListener('click', (e) => {
+  const mode = e.target.closest('button')?.dataset.motion;
+  if (!mode) return;
+  if (mode === 'play') field.start(); else field.stop();
+  press(motion, 'motion', mode);
+});
+
+/* Frame cost is the thing to watch here — the whole approach is only worth it if it
+   holds up on a mid-range laptop, so the number stays on screen rather than in a note. */
+const readout = document.getElementById('fps');
+let frames = 0, since = performance.now();
+const sample = () => {
+  frames += 1;
+  const now = performance.now();
+  if (now - since >= 500) {
+    readout.textContent =
+      `${Math.round((frames * 1000) / (now - since))} FPS · ${field.tier.toUpperCase()} · ` +
+      `${(field.baked.length / 1000).toFixed(1)}k baked + ${field.grain.length} live`;
+    frames = 0; since = now;
+  }
+  requestAnimationFrame(sample);
+};
+requestAnimationFrame(sample);
+
+/* Exposed so the capture script can step frames deterministically. */
+window.__field = field;
+</script>
+</body>
+</html>
