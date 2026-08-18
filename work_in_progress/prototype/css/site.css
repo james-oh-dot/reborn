@@ -13,7 +13,21 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 
 /* hero */
 .home-hero{position:relative;min-height:100svh;overflow:hidden;isolation:isolate}.home-hero .progressive-image,.home-hero .hero-video{position:absolute;top:-8%;bottom:-8%;left:0;right:0;height:auto}
-.home-hero .hero-video{width:100%;height:116%;object-fit:cover;object-position:center;pointer-events:none}.home-hero .progressive-image__preview,.home-hero .progressive-image__full{object-fit:cover;object-position:center}.hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,10,11,.84),rgba(9,10,11,.48) 40%,rgba(9,10,11,.08) 70%,rgba(9,10,11,.18))}.home-hero-inner{position:relative;z-index:2;min-height:100svh;display:flex;align-items:flex-end;padding-bottom:clamp(72px,9vh,112px)}.hero-copy{max-width:min(48vw,820px)}.hero-copy .eyebrow{color:rgba(242,241,237,.68);margin-bottom:24px}.hero-title{margin:0;font-weight:560;letter-spacing:-.04em;line-height:1.02;font-size:clamp(52px,6.1vw,92px)}html[lang=en] .hero-title{font-size:clamp(58px,6.8vw,108px);line-height:.95}.hero-support{max-width:640px;color:rgba(242,241,237,.78);margin:28px 0 0;font-size:clamp(18px,1.5vw,23px);line-height:1.55}.hero-copy>*{opacity:0;transform:translateY(28px);transition:.8s var(--ease)}.loaded .hero-copy>*{opacity:1;transform:none}.loaded .hero-copy>*:nth-child(2){transition-delay:.12s}.loaded .hero-copy>*:nth-child(3){transition-delay:.24s}.loaded .hero-copy>*:nth-child(4){transition-delay:.36s}
+.home-hero .hero-video{width:100%;height:116%;object-fit:cover;object-position:center;pointer-events:none}.home-hero .progressive-image__preview,.home-hero .progressive-image__full{object-fit:cover;object-position:center}.hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,10,11,.84),rgba(9,10,11,.48) 40%,rgba(9,10,11,.08) 70%,rgba(9,10,11,.18))}.home-hero-inner{position:relative;z-index:2;min-height:100svh;display:flex;align-items:flex-end;padding-bottom:clamp(72px,9vh,112px)}.hero-copy{max-width:min(48vw,820px)}.hero-copy .eyebrow{color:rgba(242,241,237,.68);margin-bottom:24px}.hero-title{margin:0;font-weight:560;letter-spacing:-.04em;line-height:1.02;font-size:clamp(52px,6.1vw,92px)}html[lang=en] .hero-title{font-size:clamp(58px,6.8vw,108px);line-height:.95}.hero-support{max-width:640px;color:rgba(242,241,237,.78);margin:28px 0 0;font-size:clamp(18px,1.5vw,23px);line-height:1.55}
+/* The entrance runs as an animation, not a transition, because the fourth child of this
+   block is the hero CTA and it needs `transition` for its own hover. As a transition the
+   stagger's transition-delay:.36s stayed on the element for the life of the page and
+   silently applied to the hover too: the label's colour change arrived 360ms late, long
+   after the fill had covered it, and the CTA read as blank for that whole window. An
+   animation states the entrance without touching a property the hover depends on. */
+.hero-copy>*{opacity:0;transform:translateY(28px)}
+.loaded .hero-copy>*{animation:hero-copy-in .8s var(--ease) forwards}
+.loaded .hero-copy>*:nth-child(2){animation-delay:.12s}
+.loaded .hero-copy>*:nth-child(3){animation-delay:.24s}
+.loaded .hero-copy>*:nth-child(4){animation-delay:.36s}
+@keyframes hero-copy-in{to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.hero-copy>*{opacity:1;transform:none}.loaded .hero-copy>*{animation:none}}
+
 .page-hero{min-height:72svh;padding-top:160px;display:flex;align-items:flex-end;padding-bottom:clamp(72px,10vw,140px);position:relative;overflow:hidden}.page-hero .wrap{position:relative;z-index:1}.page-hero .eyebrow{color:var(--muted-d);margin-bottom:28px}.page-hero .display{max-width:1200px}.page-hero .body-large{max-width:720px;color:var(--muted-d);margin:36px 0 0}
 
 /* home evolution + capabilities */
@@ -1511,7 +1525,9 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
 .light .link-lg:hover,.light .closing-block .link:hover,
 .dark .link-lg:hover,.graphite .link-lg:hover,
 .dark .closing-block .link:hover,.graphite .closing-block .link:hover,
-.home-hero .link-lg:hover,.page-hero .link-lg:hover{color:#fff;border-color:var(--brand)}
+.home-hero .link-lg:hover,.page-hero .link-lg:hover{border-color:var(--brand)}
+/* The `color:#fff` that used to be on this rule is gone: see section 12.1 — forcing the
+   label to white is what made it cross the fill's luminance and disappear mid-sweep. */
 
 /* The panel takes focus when the menu opens; it is a container, not a control, so it
    must not paint a ring of its own. The items keep theirs. */
@@ -1732,4 +1748,121 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
 }
 @media(prefers-reduced-motion:reduce){
   .toast{transition:opacity .01s}
+}
+
+/* ---------- 12. HOVER STATES THAT ARE ACTUALLY VISIBLE ----------
+   Three defects, all of which only appear while the pointer is on the control, which is
+   why none of them showed up in a static review.
+
+   1. The fill and the label were racing, and the label lost. --ease is
+      cubic-bezier(.16,1,.3,1), heavily front-loaded: the .52s sweep already covers 86% of
+      the button by 150ms, while the label's colour sat behind a .08s delay and did not
+      visibly move until ~250ms. For that quarter second the label was still its rest colour
+      sitting on a fill of that same colour — measured at 1.0:1 on the home hero CTA, which
+      is not "hard to read", it is gone. The label now tracks the sweep: no meaningful delay,
+      short enough to finish just after the fill passes under it, slow enough that it never
+      arrives before the fill does.
+
+   2. Text links reached for var(--ink) to mean "dark text". That stopped being true when
+      subpage sections started redefining the palette tokens — inside them --ink IS the paper
+      (#F9F5EF), so `color:var(--ink)` on hover set the label to precisely the background it
+      was sitting on. Capabilities' evidence links measured 1.00:1 on hover. --brand-soft is
+      the safe token for this job because it is a foreground colour on every surface here:
+      5.71:1 on the dark sections, and 4.89:1 on the subpage paper where it resolves to the
+      full brand.
+
+   3. The footer links and the back-to-top button had no hover state at all. */
+
+/* --- 12.1 the fill, and why the label no longer changes colour ------------------- */
+/* The first attempt here retimed the label against the sweep. It cannot work, and the
+   measurement is what showed why. The fill's edge crosses a given glyph instantly; the
+   label's colour changes globally over time. Whenever the label has to travel from a dark
+   rest colour to a light hover one, it passes through the fill's own luminance somewhere in
+   the middle — and at that instant every glyph already covered by the fill is the same
+   brightness as the fill. Measured as the share of the label under 3:1, the worst frame hid
+   70% of it on the subpage surface and 100% on the light sections, at 20-40ms. No delay or
+   duration moves that; the two ends of the button want opposite timings.
+
+   So the label stops moving. Each surface fills with the brand tone its existing label
+   already reads against, and the label keeps the colour it had at rest:
+
+     dark surfaces   light label  ->  --brand      (deep red)    4.7:1
+     light + paper   dark label   ->  --brand-lit  (bright red)  6.0:1
+
+   Worst frame is now 0% of the label under 3:1 on all three surfaces. The state change is
+   carried by the fill and the border, which is plenty — it was never the label's job. */
+:root{--brand-lit:#FF3D4E}
+/* Text links have no fill, so the whole state change is the accent colour, and it has to
+   clear 4.5:1 against whatever it sits on. The brand has two tones for exactly this: the lit
+   one carries on dark ground (5.71:1), the deep one on paper (4.89:1). Getting it backwards
+   is a real failure, not a subtlety — the bright tone on the subpage footer's cream measured
+   3.21:1. Declared per surface rather than derived from --brand-soft, which the subpage
+   sections redefine out from under any rule that trusts it. */
+:root,.dark,.graphite,.home-hero,.page-hero,.footer{--link-accent:var(--brand-lit)}
+.light,.on-light,
+.subpage main>section:not(.page-hero),.subpage .reveal-block>section,
+.subpage .reveal-block .footer{--link-accent:var(--brand)}
+
+.link{--cta-fill:var(--brand);--cta-label:var(--warm);
+  transition:border-color .3s var(--ease)}
+.light .link{--cta-fill:var(--brand-lit);--cta-label:var(--deep)}
+/* Subpage sections repaint to one cream surface and invert the palette tokens inside
+   themselves, so --brand-soft resolves to the deep brand there. --brand-lit is declared on
+   :root and left alone, which is the whole reason it exists as a separate token. */
+.subpage main>section:not(.page-hero) .link,
+.subpage .reveal-block>section .link{--cta-fill:var(--brand-lit);--cta-label:#000}
+/* The doubled class is deliberate. The context rules further up are written as
+   `.dark .link::before` and `.light .link:hover`, so a plain `.link` here loses to them on
+   specificity no matter how late it appears. `.link.link` matches exactly the same elements
+   at one class higher, which is enough to take the tie on source order without !important
+   and without restating every context selector. */
+.link.link::before{background:var(--cta-fill)}
+.link.link:hover,.link.link:focus-visible,.link.link.is-pressed,.link.link:active{
+  color:var(--cta-label);border-color:var(--cta-fill)}
+.link.link.is-pressed{transition:border-color .12s var(--ease)}
+
+/* --- 12.2 the hero CTA -------------------------------------------------------------- */
+/* Requested as brand, and it already is under the rule above: the hero is a dark surface, so
+   it takes the deep brand with its light label sitting at 4.7:1 on top. Listed separately
+   only to beat the older .home-hero/.page-hero colour rules on source order. */
+.home-hero .link,.page-hero .link{--cta-fill:var(--brand);--cta-label:var(--warm)}
+
+/* --- 12.3 underline text links --------------------------------------------------- */
+/* No fill to carry the change, so colour and rule have to carry it between them. The second
+   line comes from a box-shadow rather than a thicker border so the text does not shift. */
+.cap-evidence a,.section-relate a{
+  transition:color .22s var(--ease),border-color .22s var(--ease),box-shadow .22s var(--ease)}
+.cap-evidence a:hover,.cap-evidence a:focus-visible,
+.on-light .cap-evidence a:hover,.on-light .cap-evidence a:focus-visible,
+.section-relate a:hover,.section-relate a:focus-visible,
+.dark .section-relate a:hover,.graphite .section-relate a:hover,
+.on-light .section-relate a:hover{
+  color:var(--link-accent);border-color:var(--link-accent);
+  box-shadow:0 2px 0 -1px var(--link-accent)}
+
+/* --- 12.4 the footer's own text buttons ------------------------------------------ */
+/* ::after is already the invisible 44px touch target, so the rule goes on ::before. It wipes
+   in from the left and out to the right, the same direction language as the nav. */
+.footer-nav a,.footer-totop{
+  position:relative;cursor:pointer;transition:color .22s var(--ease)}
+.footer-totop{border:0;background:transparent;padding:10px 0;font-weight:650;letter-spacing:.02em}
+.footer-nav a::before,.footer-totop::before{
+  content:"";position:absolute;left:0;right:0;bottom:6px;height:1px;background:currentColor;
+  transform:scaleX(0);transform-origin:right center;transition:transform .3s var(--ease)}
+.footer-nav a:hover,.footer-nav a:focus-visible,
+.footer-totop:hover,.footer-totop:focus-visible{color:var(--link-accent)}
+.footer-nav a:hover::before,.footer-nav a:focus-visible::before,
+.footer-totop:hover::before,.footer-totop:focus-visible::before{
+  transform:scaleX(1);transform-origin:left center}
+
+/* Touch has no hover to give feedback with, so the press state stands in for it. Without
+   this a tap on a phone shows nothing at all between the touch and the navigation. */
+@media(hover:none){
+  .footer-nav a:active,.footer-totop:active{color:var(--link-accent)}
+  .footer-nav a:active::before,.footer-totop:active::before{transform:scaleX(1);transform-origin:left center}
+  .cap-evidence a:active,.section-relate a:active{
+    color:var(--link-accent);border-color:var(--link-accent);box-shadow:0 2px 0 -1px var(--link-accent)}
+}
+@media(prefers-reduced-motion:reduce){
+  .footer-nav a::before,.footer-totop::before{transition:none}
 }
