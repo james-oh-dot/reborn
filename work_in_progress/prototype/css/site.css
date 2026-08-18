@@ -1052,8 +1052,8 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   overflow:hidden;background:#0d0f11;border:1px solid var(--line-d)}
 .drawer-extra .progressive-image__preview,.drawer-extra .progressive-image__full{object-fit:cover}
 
-/* Hongdae spatial-record chapter: taller hero, stacked extras. Other drawers unchanged. */
-.drawer.is-hongdae .drawer-media{height:min(48vh,440px)}
+/* Spatial-record drawers (Hongdae, Hyundai): taller hero, stacked extras. */
+.drawer.is-spatial .drawer-media{height:min(48vh,440px)}
 .drawer-shot,.drawer-still{position:relative;margin:0;height:100%;overflow:hidden;background:#0d0f11}
 .drawer-shot video{display:block;width:100%;height:100%;object-fit:cover;background:#0d0f11}
 .drawer-still .progressive-image{position:absolute;inset:0}
@@ -1075,7 +1075,7 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .drawer-extra.drawer-extra-stack .drawer-shot{
   height:clamp(180px,26vh,240px);border:1px solid var(--line-d)}
 @media(max-width:767px){
-  .drawer.is-hongdae .drawer-media{height:min(36vh,280px)}
+  .drawer.is-spatial .drawer-media{height:min(36vh,280px)}
   .drawer-play.is-auto{opacity:1}
 }
 @media(prefers-reduced-motion:reduce){

@@ -244,9 +244,10 @@ const DETAIL={
    not: the Yancheng simulator mid-installation. Hongdae extras moved to MEDIA. */
 const EXTRA={
  yancheng:['projects/yancheng/installation','옌청 자동차 테마파크 레이싱 시뮬레이터 설치 현장','Racing simulator being installed at Yancheng Automotive Theme Park']};
-/* Hongdae-only spatial record. Previous card stills remain on disk
-   (interactive-screen, vr-screen); restore site from
-   backup/pre-hongdae-media-20260818. */
+/* Spatial-record drawers. Previous card stills remain on disk
+   (Hongdae: interactive-screen, vr-screen; Hyundai: curved-screen).
+   Restore from backup/pre-hongdae-media-20260818 or
+   backup/pre-hyundai-media-20260818. */
 const MEDIA={
  hongdae:{
   heroVideo:{src:'../assets/projects/hongdae/screen-visual-loop.mp4',
@@ -255,6 +256,14 @@ const MEDIA={
   still:['projects/hongdae/screen-bay','곡면 스크린이 적용된 체험 베이','A curved-screen experience bay'],
   demandVideo:{src:'../assets/projects/hongdae/screen-visual-on-demand.mp4',
    poster:'../assets/projects/hongdae/screen-visual-on-demand.poster.webp',
+   cap:['같은 스크린의 다른 비주얼','Another visual on the same screen']}},
+ hyundai:{
+  heroVideo:{src:'../assets/projects/hyundai/screen-visual-loop.mp4',
+   poster:'../assets/projects/hyundai/screen-visual-loop.poster.webp',
+   cap:['SCREEN VISUAL · SPATIAL RECORD','SCREEN VISUAL · SPATIAL RECORD']},
+  still:['projects/hyundai/presentation-hall','곡면 스크린이 적용된 발표 공간','A curved-screen presentation space'],
+  demandVideo:{src:'../assets/projects/hyundai/screen-visual-on-demand.mp4',
+   poster:'../assets/projects/hyundai/screen-visual-on-demand.poster.webp',
    cap:['같은 스크린의 다른 비주얼','Another visual on the same screen']}}};
 const lang=()=>document.documentElement.lang==='en'?'en':'ko';
 const bi=(el,ko,en)=>{el.dataset.ko=ko;el.dataset.en=en;el.textContent=lang()==='en'?en:ko};
@@ -303,8 +312,8 @@ const open=card=>{
        p=card.querySelector('.card-link p');
  stopDrawerVideos();
  media.replaceChildren();
- drawer.classList.toggle('is-hongdae',key==='hongdae');
- elExtra.classList.toggle('drawer-extra-stack',key==='hongdae');
+ drawer.classList.toggle('is-spatial',!!MEDIA[key]);
+ elExtra.classList.toggle('drawer-extra-stack',!!MEDIA[key]);
  const pack=MEDIA[key];
  if(pack&&pack.heroVideo){
   const fig=videoFigure(pack.heroVideo,'loop');media.appendChild(fig);
@@ -345,7 +354,7 @@ const open=card=>{
  panel.focus()};
 const close=()=>{if(!drawer.classList.contains('is-open'))return;
  stopDrawerVideos();
- drawer.classList.remove('is-open','is-hongdae');document.body.classList.remove('drawer-open');
+ drawer.classList.remove('is-open','is-spatial','is-hongdae');document.body.classList.remove('drawer-open');
  elExtra.classList.remove('drawer-extra-stack');
  if(opener){opener.focus();opener=null}};
 cards.forEach(c=>c.addEventListener('click',e=>{e.preventDefault();open(c)}));

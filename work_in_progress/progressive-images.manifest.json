@@ -15,6 +15,9 @@
     { "path": "projects/hongdae/screen-bay.jpg", "max_width": 1600 },
     { "path": "projects/hongdae/*.poster.jpg", "max_width": 1280 },
     { "path": "projects/hyundai/curved-screen.png", "max_width": 900 },
+    { "path": "projects/hyundai/presentation-curve.jpg", "max_width": 1600 },
+    { "path": "projects/hyundai/presentation-hall.jpg", "max_width": 1600 },
+    { "path": "projects/hyundai/*.poster.jpg", "max_width": 1280 },
     { "path": "projects/yancheng/*.png", "max_width": 1200 }
   ]
 }
