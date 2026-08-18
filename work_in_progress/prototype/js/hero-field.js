@@ -24,10 +24,15 @@ if (host && variation) {
   const field = new ParticleWave(canvas, {
     variation,
     preset: 'brand',
-    /* Both set by the contrast measurement in motion/particle-wave/README.md, not by eye.
-       The crest is damped separately because it, not the glitter, is what lands on glyphs:
-       every failure measured has been a near-white core pixel. Holding it back is what lets
-       the field run at 0.46 rather than the 0.28 it managed when the two moved together. */
+    /* intensity comes from the contrast measurement in motion/particle-wave/README.md, not
+       from eye. What actually buys it is the masking in site.css, not this number.
+
+       coreScale does far less than its name suggests, and the honest version is worth
+       recording. It was added on the theory that the bright crest was what landed on glyphs
+       and blew the contrast. Measurement said otherwise: sweeping it from 0.35 to 0.55 moved
+       the worst-case ratio by under 0.01, because the limiting pixel is the glitter mass, not
+       the crest. It stays at 0.45 purely because a slightly restrained crest sits better next
+       to a bright field. Do not reach for it to fix a contrast failure. */
     intensity: 0.58,
     coreScale: 0.45,
     maxDpr: 1.5,
