@@ -478,7 +478,9 @@ btns.forEach(b=>b.addEventListener('click',()=>{
    as a glitch). Rotation is written as a custom property on a rAF tick. */
 (()=>{const main=document.querySelector('main');if(!main)return;
  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
- const SKIP='cap-flow work-rail selected-work-section page-hero home-hero';
+ /* work-rail is the pinned one; selected-work-section alone was too broad and was
+    also skipping the plain card grid on the work page, which wants the mark. */
+ const SKIP='cap-flow work-rail page-hero home-hero';
  const skip=el=>SKIP.split(' ').some(c=>el.classList.contains(c));
  const secs=[...main.children].filter(el=>el.tagName==='SECTION');
  const stars=[];
@@ -551,3 +553,45 @@ btns.forEach(b=>b.addEventListener('click',()=>{
  /* Coming back from bfcache would otherwise restore the button mid-press. */
  addEventListener('pageshow',()=>document.querySelectorAll('.link.is-pressed')
   .forEach(x=>x.classList.remove('is-pressed')))})();
+/* Pending-project rows: a toast naming the row being pointed at. The same status is
+   already printed above the list in .pending-note, so this is reinforcement only --
+   the toast is aria-hidden and nothing here is the sole route to the information.
+   The rows are not links and take no focus: making eleven inert rows tabbable would
+   hand keyboard users a run of stops that lead nowhere. */
+(()=>{const rows=[...document.querySelectorAll('.pending-row')];if(!rows.length)return;
+ const root=document.documentElement;
+ const el=document.createElement('div');
+ el.className='toast';el.setAttribute('aria-hidden','true');
+ el.innerHTML='<i></i><span></span>';
+ document.body.appendChild(el);
+ const label=el.querySelector('span');
+ let hideTimer=null,current=null;
+ const COPY={ko:['<b>','</b> · 상세 내용을 준비하고 있습니다.'],
+              en:['<b>','</b> · a detailed record is being prepared.']};
+ const show=row=>{
+  if(current===row)return;current=row;
+  const n=row.querySelector('.pending-name');
+  const lang=root.lang==='en'?'en':'ko';
+  const name=(lang==='en'?n.dataset.en:n.dataset.ko)||n.textContent;
+  const [a,b]=COPY[lang];
+  label.innerHTML=a+name.replace(/&/g,'&amp;').replace(/</g,'&lt;')+b;
+  el.classList.add('is-shown');
+  clearTimeout(hideTimer);hideTimer=setTimeout(hide,2600)};
+ const hide=()=>{el.classList.remove('is-shown');current=null;clearTimeout(hideTimer)};
+ rows.forEach(row=>{
+  row.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')show(row)});
+  row.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse')hide()});
+  /* Touch has no hover to lean on, so the tap itself is the trigger and the row
+     holds a pressed tint for as long as the toast is up. */
+  row.addEventListener('pointerdown',e=>{
+   if(e.pointerType==='mouse')return;
+   rows.forEach(r=>r.classList.remove('is-touched'));
+   row.classList.add('is-touched');show(row);
+   clearTimeout(hideTimer);
+   hideTimer=setTimeout(()=>{row.classList.remove('is-touched');hide()},2600)},{passive:true})});
+ /* A scroll or a tap elsewhere means the pointer has moved on. */
+ addEventListener('scroll',()=>{if(current)hide()},{passive:true});
+ document.addEventListener('pointerdown',e=>{
+  if(!e.target.closest('.pending-row')){rows.forEach(r=>r.classList.remove('is-touched'));hide()}},{passive:true});
+ /* Language can flip while a toast is up. */
+ document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',hide))})();

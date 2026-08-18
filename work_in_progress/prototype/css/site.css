@@ -1626,3 +1626,92 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
 @media(prefers-reduced-motion:reduce){
   .link.is-pressed::before{transition:none}
 }
+
+/* Pending project index ----------------------------------------------------------
+   The projects that have no written record yet. They sit under the card grid as a
+   deliberate second tier rather than as empty cards: a card promises an image and a
+   story, and eleven hollow ones would read as a broken page. An index row promises
+   only a name, which is all we can honestly show, so nothing looks unfinished.
+
+   When a project's copy and imagery arrive it graduates upward -- its row is deleted
+   and a .visual-card takes its place in the grid above. Nothing here is load-bearing
+   for that move. */
+.pending-block{
+  margin-top:clamp(64px,7vw,110px);
+  padding-top:clamp(34px,3.6vw,56px);
+  border-top:1px solid var(--line-l)}
+.pending-head{
+  display:flex;justify-content:space-between;align-items:baseline;
+  gap:clamp(16px,3vw,48px);margin-bottom:clamp(20px,2.4vw,34px)}
+/* Stated once, in the open, so the status does not depend on hovering anything --
+   keyboard and screen-reader users get it without the toast. */
+.pending-note{margin:0;font-size:13px;line-height:1.6;color:var(--muted-l)}
+
+.pending-list{list-style:none;margin:0;padding:0}
+.pending-row{
+  display:grid;grid-template-columns:auto 1fr;align-items:center;
+  gap:clamp(16px,2.2vw,38px);
+  padding-block:clamp(15px,1.7vw,21px);
+  border-top:1px solid var(--line-l);
+  min-height:44px;                    /* WCAG 2.5.8, same floor as the project bar */
+  cursor:default;
+  transition:background .3s var(--ease)}
+.pending-row:last-child{border-bottom:1px solid var(--line-l)}
+.pending-idx{
+  font-size:11px;letter-spacing:.12em;color:var(--muted-l);
+  font-variant-numeric:tabular-nums;
+  transition:color .3s var(--ease)}
+.pending-name{
+  font-size:clamp(16px,1.5vw,21px);font-weight:600;letter-spacing:-.02em;
+  transition:transform .34s var(--ease)}
+
+/* Hover borrows the row treatment already used by the archive and engagement lists,
+   so this reads as part of the same family. The index takes the brand because it is
+   marking state -- which row you are on -- and that is what the accent is for. */
+@media(hover:hover){
+  .pending-row:hover{background:rgba(20,22,24,.03)}
+  .pending-row:hover .pending-idx{color:var(--brand)}
+  .pending-row:hover .pending-name{transform:translateX(clamp(5px,.7vw,10px))}
+}
+.pending-row.is-touched{background:rgba(20,22,24,.05)}
+.pending-row.is-touched .pending-idx{color:var(--brand)}
+
+@media(max-width:767px){
+  .pending-head{flex-direction:column;align-items:flex-start;gap:8px}
+  .pending-row{gap:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  .pending-row,.pending-idx,.pending-name{transition:none}
+}
+
+/* Toast ---------------------------------------------------------------------------
+   Reinforcement, not the only channel: .pending-note already states the same thing
+   permanently, so this is aria-hidden and never announced twice. Bottom-left on a
+   desktop -- the bottom-left corner is taken by the work-in-progress badge, and two
+   pills stacked in one corner read as an error state. Centred on a phone, lifted
+   clear of that badge vertically instead. */
+.toast{
+  position:fixed;z-index:900;
+  right:var(--gutter);bottom:26px;
+  display:flex;align-items:center;gap:10px;
+  max-width:min(420px,calc(100vw - var(--gutter) * 2));
+  padding:12px 18px;border-radius:999px;
+  background:rgba(9,10,11,.94);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  color:#f2f1ed;font-size:12px;line-height:1.45;letter-spacing:.01em;
+  box-shadow:0 10px 34px rgba(0,0,0,.30);
+  opacity:0;transform:translateY(10px);pointer-events:none;
+  transition:opacity .26s var(--ease),transform .26s var(--ease)}
+.toast.is-shown{opacity:1;transform:none}
+.toast b{font-weight:650;color:#fff}
+.toast i{
+  flex:none;width:5px;height:5px;border-radius:50%;
+  background:var(--brand-soft);font-style:normal}
+@media(max-width:767px){
+  .toast{left:50%;right:auto;bottom:76px;transform:translate(-50%,10px);
+    max-width:calc(100vw - 32px)}
+  .toast.is-shown{transform:translate(-50%,0)}
+}
+@media(prefers-reduced-motion:reduce){
+  .toast{transition:opacity .01s}
+}
