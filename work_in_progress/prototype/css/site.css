@@ -388,6 +388,16 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 
 /* Capabilities CORE 02 chapter now sits on paper */
 .capabilities-page .cap-band{padding-block:0}
+
+/* Products & systems inventory — moved from Work. Same archive list as before,
+   scoped here so Work no longer hosts a capability catalogue. */
+.cap-systems .archive-list li{padding-block:14px}
+.cap-systems .archive-visual{height:240px;margin-top:26px}
+@media(max-width:767px){
+  .cap-systems .archive-cols{display:block}
+  .cap-systems .archive-col+.archive-col{margin-top:48px}
+  .cap-systems .archive-visual{height:56vw}
+}
 .on-light .cap-detail{border-top-color:var(--line-l)}
 /* Media placeholders only. Two stray trailing ".on-light " fragments had folded
    .muted-dark, .body-large and .tag into this list, so eyebrows and a body paragraph
@@ -576,9 +586,12 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
   display:block;color:var(--muted-d);
   font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
 .card-series{
-  display:block;color:var(--muted-d);
-  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
-.card-series+.card-eyebrow{margin-top:6px}
+  position:absolute;z-index:3;top:0;left:0;
+  display:inline-block;margin:0;border-radius:0;
+  padding:8px 11px;
+  background:var(--brand);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  line-height:1.2;pointer-events:none}
 .card-en-name{
   display:block;margin:8px 0 0;
   font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
@@ -912,7 +925,12 @@ html[lang=en] .integration-ko{display:none}
 .drawer-media .progressive-image__preview,.drawer-media .progressive-image__full{object-fit:cover}
 .drawer-body{padding:clamp(26px,3vw,40px) clamp(22px,2.6vw,36px) clamp(40px,5vh,64px)}
 .drawer-status{color:var(--brand-soft);letter-spacing:.14em}
-.drawer-series{margin:8px 0 0;color:var(--muted-d);letter-spacing:.14em}
+.drawer-series{
+  display:inline-block;margin:10px 0 0;border-radius:0;
+  padding:7px 10px;
+  background:var(--brand);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  line-height:1.2}
 .drawer-en-name{margin:8px 0 0;color:var(--muted-d);letter-spacing:.12em;line-height:1.45}
 html[lang=en] .drawer-en-name{display:none}
 .drawer-title{margin:14px 0 0;font-size:clamp(26px,2.4vw,36px);font-weight:600;
@@ -1578,13 +1596,12 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
   background:var(--brand);opacity:0;
   transition:opacity .34s var(--ease)}
 .card-copy{z-index:2}
-.card-copy,.card-eyebrow,.card-series,.card-en-name,.card-arrow,.card-link p{
+.card-copy,.card-eyebrow,.card-en-name,.card-arrow,.card-link p{
   transition:background .34s var(--ease),color .34s var(--ease)}
 
 .visual-card.is-washed::before{opacity:.85}
 .visual-card.is-washed .card-copy{background:none}
 .visual-card.is-washed .card-eyebrow,
-.visual-card.is-washed .card-series,
 .visual-card.is-washed .card-en-name,
 .visual-card.is-washed .card-arrow,
 .visual-card.is-washed .card-link p,
@@ -1598,7 +1615,6 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
   .visual-card:hover::before{opacity:.85}
   .visual-card:hover .card-copy{background:none}
   .visual-card:hover .card-eyebrow,
-  .visual-card:hover .card-series,
   .visual-card:hover .card-en-name,
   .visual-card:hover .card-arrow,
   .visual-card:hover .card-link p,
@@ -1607,14 +1623,13 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
 .visual-card:focus-visible::before{opacity:.85}
 .visual-card:focus-visible .card-copy{background:none}
 .visual-card:focus-visible .card-eyebrow,
-.visual-card:focus-visible .card-series,
 .visual-card:focus-visible .card-en-name,
 .visual-card:focus-visible .card-arrow,
 .visual-card:focus-visible .card-link p,
 .visual-card:focus-visible .card-link h3{color:#fff}
 
 @media(prefers-reduced-motion:reduce){
-  .visual-card::before,.card-copy,.card-eyebrow,.card-series,.card-en-name,.card-arrow,.card-link p{transition:none}
+  .visual-card::before,.card-copy,.card-eyebrow,.card-en-name,.card-arrow,.card-link p{transition:none}
 }
 
 /* The section directly under a subpage hero starts closer than the standard rhythm.
