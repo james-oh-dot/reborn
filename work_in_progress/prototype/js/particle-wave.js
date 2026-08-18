@@ -97,6 +97,70 @@ export const TIERS = {
   low: { dprCap: 1, grains: 8000, particles: 520, bokeh: 26, columns: 72 },
 };
 
+/* -------------------------------------------------------------------- curves */
+
+/** Gaussian falloff, the shape every density envelope here is built from. */
+const bump = (x, width) => Math.exp(-((x * x) / (width * width)));
+
+/**
+ * Four curves, one per menu. They are not decoration picked at random: each restates the
+ * identity that page already carried as a static SVG field, so a visitor moving through
+ * the site meets the same four ideas rendered at a higher fidelity rather than a new set.
+ *
+ *   company       strata    near-level sheets stacking, no single crest leading
+ *   capabilities  focus     the stack pinching hard at 76% -- recognition locking on
+ *   work          spread    a genuinely travelling wave, marked at measured intervals
+ *   contact       converge  a fan collapsing onto one point at the lower right
+ *
+ * `wave` is the crest's centre line, `bandScale` how wide the stack opens along it, and
+ * `density` where the glitter is allowed to gather. Those three carry the character; the
+ * particle counts and colours are shared.
+ */
+export const VARIATIONS = {
+  company: {
+    seed: 0x434f4d50,
+    wave: [[0, 0.48], [0.3, 0.405], [0.6, 0.325], [0.85, 0.26], [1, 0.22]],
+    bands: [-0.13, -0.104, -0.079, -0.056, -0.034, -0.012, 0.01, 0.034, 0.06, 0.088, 0.12],
+    /* Barely any pinch: strata that taper would stop reading as strata. */
+    bandScale: (u) => 0.9 + 0.1 * Math.sin(u * 2.2 + 0.4),
+    density: (u, offset) => clamp(0.16 + bump(u - 0.12, 0.4) * 0.4 + smoothstep(0.45, 1, u) * 0.42 + bump(offset, 0.11) * 0.5, 0, 1),
+    shelf: null,
+  },
+
+  capabilities: {
+    seed: 0x43415041,
+    wave: [[0, 0.62], [0.24, 0.49], [0.46, 0.38], [0.64, 0.315], [0.78, 0.295], [0.9, 0.315], [1, 0.36]],
+    bands: [-0.2, -0.157, -0.118, -0.083, -0.05, -0.018, 0.014, 0.05, 0.09, 0.136, 0.19],
+    /* The lens. Wide at both edges, squeezed to a fifth at the focus. */
+    bandScale: (u) => 0.16 + 1 * (1 - bump(u - 0.78, 0.3)),
+    density: (u, offset) => clamp(0.1 + bump(u - 0.76, 0.3) * 0.72 + bump(offset, 0.085) * 0.62 + smoothstep(0, 0.5, u) * 0.16, 0, 1),
+    shelf: null,
+  },
+
+  work: {
+    seed: 0x574f524b,
+    wave: [[0, 0.5], [0.16, 0.28], [0.33, 0.48], [0.5, 0.26], [0.67, 0.46], [0.84, 0.24], [1, 0.34]],
+    bands: [-0.15, -0.118, -0.088, -0.06, -0.034, -0.01, 0.015, 0.042, 0.072, 0.106, 0.145],
+    /* Four measured swells rather than one -- the field is spread across sites. */
+    bandScale: (u) => 0.55 + 0.3 * Math.sin(u * Math.PI * 4 - 0.6) + 0.18 * Math.sin(u * 2.1),
+    density: (u, offset) =>
+      clamp(0.14 + bump(offset, 0.1) * 0.56 +
+        [0.15, 0.39, 0.63, 0.87].reduce((sum, mark) => sum + bump(u - mark, 0.11) * 0.42, 0), 0, 1),
+    shelf: null,
+  },
+
+  contact: {
+    seed: 0x434f4e54,
+    wave: [[0, 0.2], [0.22, 0.26], [0.44, 0.4], [0.64, 0.57], [0.82, 0.71], [1, 0.8]],
+    bands: [-0.26, -0.204, -0.155, -0.111, -0.072, -0.036, 0.002, 0.042, 0.086, 0.136, 0.194],
+    /* The fan: everything wide at the left edge, collapsing to nothing at the meeting
+       point, which is the same 88% the page's old conic lines converged on. */
+    bandScale: (u) => 0.06 + 1.15 * Math.pow(1 - smoothstep(0, 0.9, u), 1.25),
+    density: (u, offset) => clamp(0.12 + smoothstep(0.1, 0.92, u) * 0.66 + bump(offset, 0.12) * 0.5, 0, 1),
+    shelf: null,
+  },
+};
+
 const DEFAULTS = {
   preset: 'gold',
   seed: 0x7a1d3f09,
@@ -106,7 +170,22 @@ const DEFAULTS = {
   /** Frame-to-frame milliseconds the field is allowed to run at before it steps down.
    *  22ms is roughly 45fps -- below vsync but not yet visibly stuttering. */
   budgetMs: 22,
+  /** Overrides the preset's own intensity. A field carrying hero copy needs far less than
+   *  the same field shown on its own. */
+  intensity: null,
+  /** Clamps device pixel ratio below whatever the tier allows. A soft glitter texture gains
+   *  almost nothing from a 2x buffer and pays the full fill cost for it. */
+  maxDpr: Infinity,
   bokeh: 62,
+  swell: 0.016,
+  bandScale: (u) => 0.42 + 0.58 * (1 - smoothstep(0.18, 0.82, u) * 0.72) + Math.sin(u * 3.4) * 0.12,
+  /* Where the glitter is allowed to gather. The reference is not evenly sprinkled: it packs
+     into a wedge at the upper left and a long run along the right, and leaves the middle
+     comparatively open. Flat density is the single thing that most makes this kind of image
+     read as a filter rather than as material. */
+  density: (u, offset) =>
+    clamp(0.1 + Math.exp(-Math.pow((u - 0.06) / 0.34, 2)) * 0.62 + smoothstep(0.4, 0.98, u) * 0.66 +
+      Math.exp(-Math.pow(offset / 0.1, 2)) * 0.72 + smoothstep(-0.02, 0.16, offset) * 0.3, 0, 1),
   /* Ribbons per side of the crest. Each is a filled band, not a stroke — the reference
      reads as sheets of material catching light, which a stroke cannot do. */
   bands: [-0.115, -0.074, -0.042, -0.016, 0, 0.03, 0.068, 0.112, 0.163],
@@ -119,7 +198,8 @@ const DEFAULTS = {
 export class ParticleWave {
   constructor(canvas, options = {}) {
     this.canvas = canvas;
-    this.opts = { ...DEFAULTS, ...options };
+    const variation = options.variation ? VARIATIONS[options.variation] : null;
+    this.opts = { ...DEFAULTS, ...variation, ...options };
     this.ctx = canvas.getContext('2d', { alpha: false });
     this.preset = PRESETS[this.opts.preset] || PRESETS.gold;
     this.tier = this.opts.quality === 'auto' ? 'high' : this.opts.quality;
@@ -143,19 +223,11 @@ export class ParticleWave {
     if (typeof addEventListener === 'function') addEventListener('resize', this.onResize);
   }
 
-  /* ------------------------------------------------------------------ setup */
-
-  /** Where the field is allowed to be dense. The reference is not evenly sprinkled: it
-   *  packs into a wedge at the upper left and a long run along the right, and leaves the
-   *  middle comparatively open. Flat density is the single thing that most makes this
-   *  kind of image read as a filter rather than as material. */
-  static density(u, offset) {
-    const wedge = Math.exp(-Math.pow((u - 0.06) / 0.34, 2)) * 0.62;
-    const run = smoothstep(0.4, 0.98, u) * 0.66;
-    const spine = Math.exp(-Math.pow(offset / 0.1, 2)) * 0.72;
-    const below = smoothstep(-0.02, 0.16, offset) * 0.3;
-    return clamp(0.1 + wedge + run + spine + below, 0, 1);
+  get strength() {
+    return this.opts.intensity ?? this.preset.intensity;
   }
+
+  /* ------------------------------------------------------------------ setup */
 
   build() {
     const random = mulberry32(this.opts.seed);
@@ -182,7 +254,7 @@ export class ParticleWave {
          is what turned the first grain pass into nine stripes instead of a volume. */
       const offset = this.lo + random() * this.span;
       const u = random();
-      if (random() > ParticleWave.density(u, offset)) continue;
+      if (random() > this.opts.density(u, offset)) continue;
       const speck = {
         u,
         band: offset,
@@ -250,7 +322,7 @@ export class ParticleWave {
 
   resize() {
     const rect = this.canvas.getBoundingClientRect();
-    const dpr = Math.min(this.limits.dprCap, (typeof devicePixelRatio === 'number' ? devicePixelRatio : 1) || 1);
+    const dpr = Math.min(this.limits.dprCap, this.opts.maxDpr, (typeof devicePixelRatio === 'number' ? devicePixelRatio : 1) || 1);
     const width = Math.max(1, Math.round((rect.width || this.canvas.width) * dpr));
     const height = Math.max(1, Math.round((rect.height || this.canvas.height) * dpr));
     if (width === this.width && height === this.height && dpr === this.dpr) return;
@@ -296,16 +368,17 @@ export class ParticleWave {
   waveAt(u, t) {
     return (
       splineAt(this.opts.wave, u) +
-      Math.sin(u * 4.1 + t * TAU) * 0.016 +
-      Math.sin(u * 9.3 - t * TAU * 2) * 0.007 +
-      Math.sin(u * 15.7 + t * TAU * 3 + 1.2) * 0.003
+      Math.sin(u * 4.1 + t * TAU) * this.opts.swell +
+      Math.sin(u * 9.3 - t * TAU * 2) * this.opts.swell * 0.44 +
+      Math.sin(u * 15.7 + t * TAU * 3 + 1.2) * this.opts.swell * 0.19
     );
   }
 
-  /** Ribbons pinch where the crest is brightest and open out toward the edges, which is
-   *  what gives the sheets their twist instead of leaving them as parallel copies. */
+  /** How wide the ribbon stack opens at each point along the curve. Pinching it somewhere
+   *  is what gives the sheets their twist instead of leaving them as parallel copies, and
+   *  where it pinches is most of what separates one variation from the next. */
   bandScale(u) {
-    return 0.42 + 0.58 * (1 - smoothstep(0.18, 0.82, u) * 0.72) + Math.sin(u * 3.4) * 0.12;
+    return this.opts.bandScale(u);
   }
 
   ribbonPath(ctx, band, t, thickness) {
@@ -373,7 +446,7 @@ export class ParticleWave {
     const sw = this.stripW / cols;
 
     ctx.globalCompositeOperation = 'lighter';
-    ctx.globalAlpha = this.preset.intensity;
+    ctx.globalAlpha = this.strength;
     for (let i = 0; i < cols; i += 1) {
       const u0 = i / cols;
       const u1 = (i + 1) / cols;
@@ -417,6 +490,7 @@ export class ParticleWave {
   }
 
   paintShelf(t) {
+    if (!this.opts.shelf) return;
     const { ctx, width: W, height: H } = this;
     const lift = Math.sin(t * TAU) * 0.004;
     ctx.globalCompositeOperation = 'source-over';
@@ -441,7 +515,7 @@ export class ParticleWave {
 
     ctx.globalCompositeOperation = 'lighter';
     const glow = ctx.createLinearGradient(0, 0.74 * H, 0, 0.96 * H);
-    glow.addColorStop(0, this.fade(this.preset.particles[1], 0.2 * this.preset.intensity));
+    glow.addColorStop(0, this.fade(this.preset.particles[1], 0.2 * this.strength));
     glow.addColorStop(1, this.fade(this.preset.particles[0], 0));
     ctx.fillStyle = glow;
     ctx.fill();
@@ -456,8 +530,8 @@ export class ParticleWave {
     }
     const rim = ctx.createLinearGradient(0, 0, W, 0);
     rim.addColorStop(0, this.fade(this.preset.particles[2], 0));
-    rim.addColorStop(0.34, this.fade(this.preset.particles[3], 0.3 * this.preset.intensity));
-    rim.addColorStop(0.66, this.fade(this.preset.particles[3], 0.22 * this.preset.intensity));
+    rim.addColorStop(0.34, this.fade(this.preset.particles[3], 0.3 * this.strength));
+    rim.addColorStop(0.66, this.fade(this.preset.particles[3], 0.22 * this.strength));
     rim.addColorStop(1, this.fade(this.preset.particles[2], 0));
     ctx.strokeStyle = rim;
     ctx.lineWidth = 1.4 * this.scale;
@@ -466,7 +540,7 @@ export class ParticleWave {
 
   paintRibbons(t) {
     const { ctx, width: W } = this;
-    const strength = this.preset.intensity;
+    const strength = this.strength;
     ctx.globalCompositeOperation = 'lighter';
 
     this.opts.bands.forEach((band, index) => {
@@ -490,7 +564,7 @@ export class ParticleWave {
 
   paintCore(t) {
     const { ctx, width: W, height: H } = this;
-    const strength = this.preset.intensity;
+    const strength = this.strength;
     ctx.globalCompositeOperation = 'lighter';
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
@@ -557,7 +631,7 @@ export class ParticleWave {
    *  globalAlpha per particle: no sprite, no arc, no per-particle fillStyle string. */
   paintGrain(t) {
     const { ctx, width: W, height: H } = this;
-    const strength = this.preset.intensity;
+    const strength = this.strength;
     const colours = this.preset.particles;
     ctx.globalCompositeOperation = 'lighter';
     let current = -1;
@@ -585,7 +659,7 @@ export class ParticleWave {
 
   paintDots(t) {
     const { ctx, width: W, height: H } = this;
-    const strength = this.preset.intensity;
+    const strength = this.strength;
     const colours = this.preset.particles;
     ctx.globalCompositeOperation = 'lighter';
 
@@ -625,7 +699,7 @@ export class ParticleWave {
       const x = (mote.x + Math.sin(t * TAU + mote.phase) * mote.driftX * mote.depth) * W;
       const y = (mote.y + Math.cos(t * TAU + mote.phase) * mote.driftY * mote.depth) * H;
       const r = mote.r * this.scale * 2.4;
-      ctx.globalAlpha = clamp(mote.alpha * (0.6 + 0.4 * Math.sin(t * TAU + mote.phase)) * this.preset.intensity, 0, 1);
+      ctx.globalAlpha = clamp(mote.alpha * (0.6 + 0.4 * Math.sin(t * TAU + mote.phase)) * this.strength, 0, 1);
       ctx.drawImage(sprite.canvas, x - r, y - r, r * 2, r * 2);
     }
     ctx.globalAlpha = 1;
@@ -642,11 +716,11 @@ export class ParticleWave {
       const x = u * W;
       const y = (this.waveAt(u, t) + flare.band * this.bandScale(u)) * H;
       const r = flare.size * this.scale * 9;
-      ctx.globalAlpha = clamp(pulse * 0.55 * this.preset.intensity, 0, 1);
+      ctx.globalAlpha = clamp(pulse * 0.55 * this.strength, 0, 1);
       ctx.drawImage(sprite.canvas, x - r, y - r, r * 2, r * 2);
 
       /* The cross flare is what sells a highlight as a point of light rather than a blob. */
-      ctx.strokeStyle = this.fade(this.preset.core, pulse * 0.3 * this.preset.intensity);
+      ctx.strokeStyle = this.fade(this.preset.core, pulse * 0.3 * this.strength);
       ctx.lineWidth = 1 * this.scale;
       ctx.beginPath();
       ctx.moveTo(x - r * 1.7, y); ctx.lineTo(x + r * 1.7, y);
