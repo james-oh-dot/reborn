@@ -1,14 +1,14 @@
 /**
  * Wires the particle wave into a subpage hero.
  *
- * Progressive enhancement over the static SVG that already sits in `.hero-field`: the SVG
- * paints on first byte and stays put if this module never runs, and the canvas crossfades
- * over it once it is actually rendering. No JS, an old browser, or reduced motion all land
- * on the SVG rather than on an empty hero.
+ * This is the hero's only background layer — the static SVG fields and the per-page CSS
+ * patterns it used to sit on top of are gone. That removes the fallback the old markup
+ * leaned on, so the failure modes matter more than they did: a browser without ES modules
+ * or without canvas gets a plain dark hero, which is the same ground the copy already sits
+ * on and reads as deliberate rather than broken.
  *
- * The canvas is a child of `.hero-field`, so it inherits that element's mask, blend mode,
- * opacity and scroll parallax for free — everything the static field was already tuned for
- * applies unchanged, including the gate that keeps the copy column legible.
+ * The canvas is a child of `.hero-field`, so it inherits that element's mask, blend mode
+ * and scroll parallax — including the gate that keeps the copy column legible.
  */
 
 import { ParticleWave } from './particle-wave.js';
@@ -16,19 +16,7 @@ import { ParticleWave } from './particle-wave.js';
 const host = document.querySelector('.page-hero .hero-field');
 const variation = document.body.dataset.field;
 
-/* Reduced motion keeps the SVG. The engine can render a still frame, but a still canvas is
-   strictly more work than the picture already on screen for an identical result. */
-const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-/* So does anything narrow. These compositions are drawn for a wide frame, and squeezed into
-   a phone-shaped hero the structure collapses into the band the copy needs -- measurably
-   worse than the SVG, which is already art-directed for that crop by --hero-crop. Phones are
-   also where a 60fps canvas costs the most battery for the least gain. */
-const wide = matchMedia('(min-width: 768px)');
-
-const mount = () => {
-  if (!host || !variation || still || !wide.matches || host.dataset.mounted) return;
-  host.dataset.mounted = '1';
+if (host && variation) {
   const canvas = document.createElement('canvas');
   canvas.className = 'hero-field-canvas';
   host.appendChild(canvas);
@@ -36,17 +24,21 @@ const mount = () => {
   const field = new ParticleWave(canvas, {
     variation,
     preset: 'brand',
-    /* Well under the preset's own 0.62. This one carries a headline, and the number is
-       set by the contrast measurement in README.md, not by eye. */
-    intensity: 0.28,
+    /* Both set by the contrast measurement in motion/particle-wave/README.md, not by eye.
+       The crest is damped separately because it, not the glitter, is what lands on glyphs:
+       every failure measured has been a near-white core pixel. Holding it back is what lets
+       the field run at 0.46 rather than the 0.28 it managed when the two moved together. */
+    intensity: 0.58,
+    coreScale: 0.45,
     maxDpr: 1.5,
     loopSeconds: 18,
   });
 
-  /* Hand over only once there is something to hand over to — swapping on construction
-     shows a black box for a frame or two on a slow first paint. */
+  /* Reduced motion still gets the picture, just not the movement. The engine detects the
+     preference itself and paints a single frame instead of starting the loop; with nothing
+     underneath any more, drawing nothing would leave an empty hero rather than a calm one. */
   requestAnimationFrame(() => {
-    field.frame(0);
+    field.frame(field.still ? 0.18 : 0);
     requestAnimationFrame(() => host.classList.add('is-live'));
   });
 
@@ -68,8 +60,4 @@ const mount = () => {
 
   /* Handed to the page so contrast measurement can step the loop deterministically. */
   canvas.__pw = field;
-};
-
-mount();
-/* A rotate or a resized window can cross the threshold after load. */
-wide.addEventListener('change', mount);
+}

@@ -173,6 +173,11 @@ const DEFAULTS = {
   /** Overrides the preset's own intensity. A field carrying hero copy needs far less than
    *  the same field shown on its own. */
   intensity: null,
+  /** Scales the crest independently of everything else. Every contrast failure this field
+   *  has produced came from the bright core line landing on a glyph, never from the glitter:
+   *  the crest is a handful of near-white pixels while the grain is thousands of dim ones.
+   *  Damping it lets the field as a whole run far brighter for the same worst-case pixel. */
+  coreScale: 1,
   /** Clamps device pixel ratio below whatever the tier allows. A soft glitter texture gains
    *  almost nothing from a 2x buffer and pays the full fill cost for it. */
   maxDpr: Infinity,
@@ -564,7 +569,7 @@ export class ParticleWave {
 
   paintCore(t) {
     const { ctx, width: W, height: H } = this;
-    const strength = this.strength;
+    const strength = this.strength * this.opts.coreScale;
     ctx.globalCompositeOperation = 'lighter';
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
