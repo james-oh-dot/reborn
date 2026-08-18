@@ -5,3 +5,7 @@ tmp/
 .env
 .env.local
 .claude/settings.local.json
+
+# Camera originals for Hongdae media. Web derivatives live beside this folder.
+# Restore the previous site from branch backup/pre-hongdae-media-20260818.
+work_in_progress/assets/projects/hongdae/_raw/

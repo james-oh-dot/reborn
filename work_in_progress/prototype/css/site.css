@@ -1051,6 +1051,36 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .drawer-extra:not(:empty){position:relative;height:clamp(180px,26vh,240px);margin-top:26px;
   overflow:hidden;background:#0d0f11;border:1px solid var(--line-d)}
 .drawer-extra .progressive-image__preview,.drawer-extra .progressive-image__full{object-fit:cover}
+
+/* Hongdae spatial-record chapter: taller hero, stacked extras. Other drawers unchanged. */
+.drawer.is-hongdae .drawer-media{height:min(48vh,440px)}
+.drawer-shot,.drawer-still{position:relative;margin:0;height:100%;overflow:hidden;background:#0d0f11}
+.drawer-shot video{display:block;width:100%;height:100%;object-fit:cover;background:#0d0f11}
+.drawer-still .progressive-image{position:absolute;inset:0}
+.drawer-play{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);
+  min-width:56px;height:56px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.4);
+  background:rgba(9,10,11,.58);color:#fff;cursor:pointer;
+  font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  backdrop-filter:blur(8px);transition:background .3s var(--ease),border-color .3s var(--ease),opacity .3s var(--ease)}
+.drawer-play:hover,.drawer-play:focus-visible{background:var(--brand);border-color:var(--brand)}
+.drawer-play.is-auto{opacity:0}
+.drawer-shot:hover .drawer-play.is-auto,.drawer-shot:focus-within .drawer-play.is-auto{opacity:1}
+.drawer-shot figcaption,.drawer-still figcaption{position:absolute;z-index:2;left:12px;bottom:10px;
+  padding:7px 9px;max-width:calc(100% - 24px);
+  background:rgba(9,10,11,.78);color:rgba(242,241,237,.8);
+  font-size:9px;letter-spacing:.12em;text-transform:uppercase;backdrop-filter:blur(8px)}
+.drawer-extra.drawer-extra-stack{height:auto;overflow:visible;border:0;background:transparent;
+  display:flex;flex-direction:column;gap:18px}
+.drawer-extra.drawer-extra-stack .drawer-still,
+.drawer-extra.drawer-extra-stack .drawer-shot{
+  height:clamp(180px,26vh,240px);border:1px solid var(--line-d)}
+@media(max-width:767px){
+  .drawer.is-hongdae .drawer-media{height:min(36vh,280px)}
+  .drawer-play.is-auto{opacity:1}
+}
+@media(prefers-reduced-motion:reduce){
+  .drawer-play.is-auto{opacity:1}
+}
 /* Scope limits read as a qualification, not as another body paragraph. */
 .drawer-boundary:not(:empty){margin-top:26px}
 .drawer-limit{margin:0 0 12px;font-size:13px;line-height:1.7;color:rgba(242,241,237,.44)}

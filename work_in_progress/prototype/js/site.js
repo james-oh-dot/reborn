@@ -241,12 +241,59 @@ const DETAIL={
           'Cityfield Theme Park is therefore presented as CONTRACTED · 2022 rather than as a completed project, and only the Digital Twin, VR/AR and simulator supply and installation scope evidenced in the contract is disclosed.']],
   keys:['Digital Twin','VR/AR','Simulator','Experience Systems','Technology Integration','Digital City','Contracted Project']}};
 /* A second, unused-on-page image where one exists and adds something the card shot does
-   not: the Yancheng simulator mid-installation, the Hongdae screen in use. */
+   not: the Yancheng simulator mid-installation. Hongdae extras moved to MEDIA. */
 const EXTRA={
- yancheng:['projects/yancheng/installation','옌청 자동차 테마파크 레이싱 시뮬레이터 설치 현장','Racing simulator being installed at Yancheng Automotive Theme Park'],
- hongdae:['projects/hongdae/vr-screen','홍대 VR 경험 공간 곡면 스크린 이용 장면','A visitor using the curved screen at the Hongdae VR experience space']};
+ yancheng:['projects/yancheng/installation','옌청 자동차 테마파크 레이싱 시뮬레이터 설치 현장','Racing simulator being installed at Yancheng Automotive Theme Park']};
+/* Hongdae-only spatial record. Previous card stills remain on disk
+   (interactive-screen, vr-screen); restore site from
+   backup/pre-hongdae-media-20260818. */
+const MEDIA={
+ hongdae:{
+  heroVideo:{src:'../assets/projects/hongdae/screen-visual-loop.mp4',
+   poster:'../assets/projects/hongdae/screen-visual-loop.poster.webp',
+   cap:['SCREEN VISUAL · SPATIAL RECORD','SCREEN VISUAL · SPATIAL RECORD']},
+  still:['projects/hongdae/screen-bay','곡면 스크린이 적용된 체험 베이','A curved-screen experience bay'],
+  demandVideo:{src:'../assets/projects/hongdae/screen-visual-on-demand.mp4',
+   poster:'../assets/projects/hongdae/screen-visual-on-demand.poster.webp',
+   cap:['같은 스크린의 다른 비주얼','Another visual on the same screen']}}};
 const lang=()=>document.documentElement.lang==='en'?'en':'ko';
 const bi=(el,ko,en)=>{el.dataset.ko=ko;el.dataset.en=en;el.textContent=lang()==='en'?en:ko};
+const reduceMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const stopDrawerVideos=()=>drawer.querySelectorAll('video').forEach(v=>{v.pause();try{v.currentTime=0}catch{}});
+const armProgressive=img=>{
+ const box=img.closest('[data-progressive]');
+ const go=()=>box?.classList.add('is-ready');
+ if(img.complete&&img.naturalWidth>0)go();else img.addEventListener('load',go,{once:true})};
+const stillFigure=(base,ako,aen)=>{
+ const fig=document.createElement('figure');fig.className='drawer-still';
+ const w=document.createElement('span');w.className='progressive-image';w.setAttribute('data-progressive','');
+ const mk=(cls,src,alt)=>{const im=document.createElement('img');im.className=cls;im.src=src;im.alt=alt;
+  im.draggable=false;im.loading='eager';im.decoding='async';return im};
+ const pv=mk('progressive-image__preview','../assets/'+base+'.preview.webp','');pv.setAttribute('aria-hidden','true');
+ const full=mk('progressive-image__full','../assets/'+base+'.webp',lang()==='en'?aen:ako);
+ full.dataset.altKo=ako;full.dataset.altEn=aen;armProgressive(full);
+ w.append(pv,full);fig.appendChild(w);
+ const cap=document.createElement('figcaption');bi(cap,ako,aen);fig.appendChild(cap);
+ return fig};
+const videoFigure=(spec,kind)=>{
+ const fig=document.createElement('figure');fig.className='drawer-shot is-'+kind;
+ const v=document.createElement('video');
+ v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.preload=kind==='loop'?'auto':'metadata';
+ v.poster=spec.poster;if(kind==='loop')v.loop=true;
+ const source=document.createElement('source');source.src=spec.src;source.type='video/mp4';v.appendChild(source);
+ const btn=document.createElement('button');btn.type='button';btn.className='drawer-play';
+ const setBtn=(playing)=>{bi(btn,playing?'일시정지':'재생',playing?'Pause':'Play');
+  btn.setAttribute('aria-label',lang()==='en'?(playing?'Pause':'Play'):(playing?'일시정지':'재생'));
+  btn.classList.toggle('is-playing',playing)};
+ setBtn(false);
+ const canAuto=()=>kind==='loop'&&innerWidth>=768&&!reduceMotion();
+ btn.addEventListener('click',()=>{if(v.paused)v.play().catch(()=>{});else v.pause()});
+ v.addEventListener('play',()=>{setBtn(true);if(canAuto())btn.classList.add('is-auto')});
+ v.addEventListener('pause',()=>{setBtn(false);btn.classList.remove('is-auto')});
+ const cap=document.createElement('figcaption');bi(cap,spec.cap[0],spec.cap[1]);
+ fig.append(v,btn,cap);
+ fig._tryAuto=()=>{if(canAuto())v.play().catch(()=>{})};
+ return fig};
 let opener=null;
 const open=card=>{
  const key=card.dataset.project;
@@ -254,8 +301,15 @@ const open=card=>{
        eyebrow=card.querySelector('.card-eyebrow'),
        h=card.querySelector('.card-link h3'),
        p=card.querySelector('.card-link p');
+ stopDrawerVideos();
  media.replaceChildren();
- if(img){const c=img.cloneNode(true);c.removeAttribute('data-parallax');c.style.removeProperty('transform');media.appendChild(c)}
+ drawer.classList.toggle('is-hongdae',key==='hongdae');
+ elExtra.classList.toggle('drawer-extra-stack',key==='hongdae');
+ const pack=MEDIA[key];
+ if(pack&&pack.heroVideo){
+  const fig=videoFigure(pack.heroVideo,'loop');media.appendChild(fig);
+  requestAnimationFrame(()=>fig._tryAuto())}
+ else if(img){const c=img.cloneNode(true);c.removeAttribute('data-parallax');c.style.removeProperty('transform');media.appendChild(c)}
  else{/* cards with no archive image carry a placeholder — carry it through, don't leave an empty box */
   const ph=card.querySelector('.card-media-empty');if(ph)media.appendChild(ph.cloneNode(true))}
  const d=DETAIL[key];
@@ -270,15 +324,19 @@ const open=card=>{
  fill(elDesc,d&&d.body);
  fill(elBound,d&&d.bound,'drawer-limit');
  elExtra.replaceChildren();
- const ex=EXTRA[key];
- if(ex){const [base,ako,aen]=ex;
-  const w=document.createElement('span');w.className='progressive-image';w.setAttribute('data-progressive','');
-  const mk=(cls,src,alt)=>{const im=document.createElement('img');im.className=cls;im.src=src;im.alt=alt;
-   im.draggable=false;im.loading='eager';im.decoding='async';return im};
-  const pv=mk('progressive-image__preview','../assets/'+base+'.preview.webp','');pv.setAttribute('aria-hidden','true');
-  const full=mk('progressive-image__full','../assets/'+base+'.webp',lang()==='en'?aen:ako);
-  full.dataset.altKo=ako;full.dataset.altEn=aen;
-  w.append(pv,full);elExtra.appendChild(w)}
+ if(pack){
+  if(pack.still)elExtra.appendChild(stillFigure(pack.still[0],pack.still[1],pack.still[2]));
+  if(pack.demandVideo)elExtra.appendChild(videoFigure(pack.demandVideo,'demand'))}
+ else{
+  const ex=EXTRA[key];
+  if(ex){const [base,ako,aen]=ex;
+   const w=document.createElement('span');w.className='progressive-image';w.setAttribute('data-progressive','');
+   const mk=(cls,src,alt)=>{const im=document.createElement('img');im.className=cls;im.src=src;im.alt=alt;
+    im.draggable=false;im.loading='eager';im.decoding='async';return im};
+   const pv=mk('progressive-image__preview','../assets/'+base+'.preview.webp','');pv.setAttribute('aria-hidden','true');
+   const full=mk('progressive-image__full','../assets/'+base+'.webp',lang()==='en'?aen:ako);
+   full.dataset.altKo=ako;full.dataset.altEn=aen;armProgressive(full);
+   w.append(pv,full);elExtra.appendChild(w)}}
  elTags.replaceChildren();
  ((d&&d.keys)||[]).forEach(t=>{const s=document.createElement('span');s.textContent=t;elTags.appendChild(s)});
  elNote.hidden=!(d&&d.keys&&d.keys.length);
@@ -286,7 +344,9 @@ const open=card=>{
  drawer.classList.add('is-open');document.body.classList.add('drawer-open');
  panel.focus()};
 const close=()=>{if(!drawer.classList.contains('is-open'))return;
- drawer.classList.remove('is-open');document.body.classList.remove('drawer-open');
+ stopDrawerVideos();
+ drawer.classList.remove('is-open','is-hongdae');document.body.classList.remove('drawer-open');
+ elExtra.classList.remove('drawer-extra-stack');
  if(opener){opener.focus();opener=null}};
 cards.forEach(c=>c.addEventListener('click',e=>{e.preventDefault();open(c)}));
 /* Arriving from a capability link: ?project=<key> opens that card's drawer once the
