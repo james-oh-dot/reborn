@@ -304,8 +304,28 @@ const videoFigure=(spec,kind)=>{
  btn.addEventListener('click',()=>{if(v.paused)v.play().catch(()=>{});else v.pause()});
  v.addEventListener('play',()=>{setBtn(true);if(canAuto())btn.classList.add('is-auto')});
  v.addEventListener('pause',()=>{setBtn(false);btn.classList.remove('is-auto')});
+ const bar=document.createElement('div');bar.className='drawer-progress';
+ bar.setAttribute('role','slider');bar.setAttribute('aria-valuemin','0');bar.setAttribute('aria-valuemax','100');
+ bar.setAttribute('aria-valuenow','0');
+ bar.setAttribute('aria-label',lang()==='en'?'Playback position':'재생 위치');
+ const fill=document.createElement('i');fill.className='drawer-progress-fill';fill.setAttribute('aria-hidden','true');
+ bar.appendChild(fill);
+ const paint=()=>{
+  const d=v.duration,t=v.currentTime;
+  const p=(d&&isFinite(d)&&d>0)?Math.min(1,Math.max(0,t/d)):0;
+  fill.style.transform='scaleX('+p+')';
+  bar.setAttribute('aria-valuenow',String(Math.round(p*100)))};
+ const seek=e=>{
+  const r=bar.getBoundingClientRect(),d=v.duration;
+  if(!d||!isFinite(d)||d<=0)return;
+  const x=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));
+  v.currentTime=x*d;paint()};
+ bar.addEventListener('pointerdown',e=>{bar.setPointerCapture(e.pointerId);seek(e)});
+ bar.addEventListener('pointermove',e=>{if(e.buttons)seek(e)});
+ v.addEventListener('timeupdate',paint);v.addEventListener('seeked',paint);
+ v.addEventListener('loadedmetadata',paint);v.addEventListener('ended',paint);
  const cap=document.createElement('figcaption');bi(cap,spec.cap[0],spec.cap[1]);
- fig.append(v,btn,cap);
+ fig.append(v,btn,bar,cap);
  fig._tryAuto=()=>{if(canAuto())v.play().catch(()=>{})};
  return fig};
 let opener=null;

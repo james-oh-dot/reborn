@@ -1066,10 +1066,16 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .drawer-play:hover,.drawer-play:focus-visible{background:var(--brand);border-color:var(--brand)}
 .drawer-play.is-auto{opacity:0}
 .drawer-shot:hover .drawer-play.is-auto,.drawer-shot:focus-within .drawer-play.is-auto{opacity:1}
+.drawer-progress{position:absolute;z-index:3;left:0;right:0;bottom:0;height:14px;cursor:pointer}
+.drawer-progress:before{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:rgba(255,255,255,.22)}
+.drawer-progress-fill{position:absolute;left:0;bottom:0;height:2px;width:100%;
+  transform:scaleX(0);transform-origin:left center;background:#fff;pointer-events:none}
 .drawer-shot figcaption,.drawer-still figcaption{position:absolute;z-index:2;left:12px;bottom:10px;
   padding:7px 9px;max-width:calc(100% - 24px);
   background:rgba(9,10,11,.78);color:rgba(242,241,237,.8);
   font-size:9px;letter-spacing:.12em;text-transform:uppercase;backdrop-filter:blur(8px)}
+.drawer-shot figcaption{bottom:16px}
 .drawer-extra.drawer-extra-stack{height:auto;overflow:visible;border:0;background:transparent;
   display:flex;flex-direction:column;gap:18px}
 .drawer-extra.drawer-extra-stack .drawer-still,
