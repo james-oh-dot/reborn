@@ -155,6 +155,15 @@ const DETAIL={
   bound:[],
   keys:['Curved Display','Racing Simulation','Media Content','Simulator','Physical Experience','Spatial Media']},
 
+ 'handan-ktv':{cls:['CONTINUED COLLABORATION','CONTINUED COLLABORATION'],
+  lead:['옌청 프로젝트 이후 중국 한단의 실내테마공원 프로젝트로 협업이 이어졌습니다.',
+        'After the Yancheng project, collaboration continued on an indoor theme-park project in Handan, China.'],
+  body:[['리본소프트는 이 프로젝트를 통해 중국 내 실내 Experience Project의 협업 범위를 이어갔습니다.',
+         'Through this project Rebornsoft continued the range of its indoor experience-project collaboration in China.']],
+  bound:[['현재 공개 상태는 STATUS TO VERIFY입니다. 전체 실내테마공원의 구축 완료, 전체 콘텐츠 제작, 또는 확정된 수행 연도를 의미하지 않습니다.',
+          'The disclosed status is STATUS TO VERIFY. It does not indicate completion of the whole indoor theme park, production of all content, or a confirmed year of delivery.']],
+  keys:['Indoor Theme Park','Experience Project','Spatial Media','Continued Collaboration','Panorama','Physical Experience']},
+
  hana:{cls:['Intelligent Interaction / Enterprise Security','Intelligent Interaction / Enterprise Security'],
   lead:['리본소프트는 2019년 자체 개발한 얼굴인식 기술을 하나은행 출입보안 환경에 적용했습니다.',
         'In 2019 Rebornsoft applied its own facial-recognition technology to a Hana Bank access-security environment.'],
@@ -247,7 +256,8 @@ const EXTRA={
 /* Spatial-record drawers. Previous card stills remain on disk
    (Hongdae: interactive-screen, vr-screen; Hyundai: curved-screen).
    Restore from backup/pre-hongdae-media-20260818,
-   backup/pre-hyundai-media-20260818, or backup/pre-fitm-media-20260818. */
+   backup/pre-hyundai-media-20260818, backup/pre-fitm-media-20260818,
+   or backup/pre-handan-media-20260818. */
 const MEDIA={
  hongdae:{
   heroVideo:{src:'../assets/projects/hongdae/screen-visual-loop.mp4',
@@ -269,7 +279,12 @@ const MEDIA={
   heroVideo:{src:'../assets/projects/fitm/product-loop.mp4',
    poster:'../assets/projects/fitm/product-loop.poster.webp',
    cap:['MOTION RECOGNITION · PRODUCT RECORD','MOTION RECOGNITION · PRODUCT RECORD']},
-  still:['projects/fitm/motion-measure','카메라 영상으로 동작을 인식하는 측정 화면','Measurement on camera using motion recognition']}};
+  still:['projects/fitm/motion-measure','카메라 영상으로 동작을 인식하는 측정 화면','Measurement on camera using motion recognition']},
+ 'handan-ktv':{
+  heroVideo:{src:'../assets/projects/ktv/screen-visual-loop.mp4',
+   poster:'../assets/projects/ktv/screen-visual-loop.poster.webp',
+   cap:['INDOOR EXPERIENCE · SPATIAL RECORD','INDOOR EXPERIENCE · SPATIAL RECORD']},
+  still:['projects/ktv/panorama-entry','360도 파노라마가 적용된 실내 체험 공간','An indoor experience space with a 360° panorama']}};
 const lang=()=>document.documentElement.lang==='en'?'en':'ko';
 const bi=(el,ko,en)=>{el.dataset.ko=ko;el.dataset.en=en;el.textContent=lang()==='en'?en:ko};
 const reduceMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
