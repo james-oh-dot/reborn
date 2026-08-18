@@ -694,15 +694,13 @@ html[lang=en] .card-en-name{display:none}
    dark/graphite/light rhythm. Rather than overriding each rule, the palette
    tokens are redefined inside those sections so existing rules resolve to
    light-surface values on their own. */
-.subpage main>section:not(.page-hero),
-.subpage .reveal-block>section{
+.subpage main>section:not(.page-hero){
   --ink:#F9F5EF;--graphite:#F9F5EF;--paper:#F9F5EF;--deep:#000;--warm:#000;
   --muted-d:rgba(0,0,0,.62);--muted-l:rgba(0,0,0,.62);
   --line-d:rgba(0,0,0,.14);--line-l:rgba(0,0,0,.14);
   --brand-soft:var(--brand);
   background:#F9F5EF;color:#000}
 /* Media wells lose their dark fill so contained artwork sits on the same paper. */
-.subpage .reveal-block>section .media,
 .subpage main>section:not(.page-hero) .media,
 .subpage main>section:not(.page-hero) .evidence-media,
 .subpage main>section:not(.page-hero) .evidence-media.contain img,
@@ -752,10 +750,7 @@ main{position:relative;z-index:1;background:var(--ink)}
 }
 
 /* The closing block lives outside <main>, so it carries its own surface. */
-.reveal-block{background:var(--graphite)}
-.subpage .reveal-block{background:#F9F5EF}
-.subpage .reveal-block .footer{background:#F9F5EF;color:rgba(0,0,0,.62);border-top-color:rgba(0,0,0,.14)}
-.subpage .reveal-block .footer a{color:#000}
+.reveal-block{background:var(--graphite);color:var(--warm)}
 
 /* ---------- SUBPAGE GRID — 12 columns: 3 title / 1 breathing / 8 content ----------
    Applied over the existing markup rather than rewriting each section: the section
@@ -811,7 +806,7 @@ main{position:relative;z-index:1;background:var(--ink)}
     grid-template-columns:repeat(8,minmax(0,1fr))!important;gap:0 20px!important}
 }
 
-/* The closing block arrives a shade darker and settles to its true colour
+/* The closing block arrives a shade darker and settles to graphite
    as it finishes opening. Driven from scroll in site.js. */
 .subpage .reveal-block{position:fixed}
 .subpage .reveal-block:after{content:"";position:absolute;inset:0;pointer-events:none;
@@ -1364,10 +1359,8 @@ main>section[id]>.wrap{scroll-margin-top:calc(var(--header-h) + clamp(28px,4vh,5
 
 .footer-brand{display:flex;align-items:center;gap:14px;min-width:0}
 .footer-mark{flex:none;display:block;width:auto;height:26px;
-  /* Greyscale, not the brand colours: flattened to white for the dark footer and to
-     black on the cream subpage footer. One file, two filters, no second export. */
+  /* Greyscale, flattened to white on the dark closing surface. */
   filter:grayscale(1) brightness(0) invert(1);opacity:.6}
-.subpage .reveal-block .footer .footer-mark{filter:grayscale(1) brightness(0);opacity:.5}
 .footer-descriptor{margin:0;font-size:12px;letter-spacing:.06em;line-height:1.4;opacity:.8}
 
 .footer-nav{display:flex;flex-wrap:wrap;gap:10px 28px}
@@ -1379,7 +1372,6 @@ main>section[id]>.wrap{scroll-margin-top:calc(var(--header-h) + clamp(28px,4vh,5
 .footer-base{display:flex;justify-content:space-between;align-items:center;gap:14px 28px;flex-wrap:wrap;
   margin-top:clamp(34px,3.4vw,48px);padding-top:clamp(20px,2vw,26px);
   border-top:1px solid var(--line-d)}
-.subpage .reveal-block .footer .footer-base{border-top-color:rgba(0,0,0,.14)}
 .footer-copy{margin:0;font-size:12px;letter-spacing:.01em;line-height:1.5;opacity:.85}
 .footer-totop{border:0;background:none;padding:0;cursor:pointer;
   font-size:12px;font-weight:650;letter-spacing:.08em;white-space:nowrap;
@@ -1856,10 +1848,9 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
    is a real failure, not a subtlety — the bright tone on the subpage footer's cream measured
    3.21:1. Declared per surface rather than derived from --brand-soft, which the subpage
    sections redefine out from under any rule that trusts it. */
-:root,.dark,.graphite,.home-hero,.page-hero,.footer{--link-accent:var(--brand-lit)}
+:root,.dark,.graphite,.home-hero,.page-hero,.footer,.reveal-block{--link-accent:var(--brand-lit)}
 .light,.on-light,
-.subpage main>section:not(.page-hero),.subpage .reveal-block>section,
-.subpage .reveal-block .footer{--link-accent:var(--brand)}
+.subpage main>section:not(.page-hero){--link-accent:var(--brand)}
 
 .link{--cta-fill:var(--brand);--cta-label:var(--warm);
   transition:border-color .3s var(--ease)}
@@ -1867,8 +1858,8 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
 /* Subpage sections repaint to one cream surface and invert the palette tokens inside
    themselves, so --brand-soft resolves to the deep brand there. --brand-lit is declared on
    :root and left alone, which is the whole reason it exists as a separate token. */
-.subpage main>section:not(.page-hero) .link,
-.subpage .reveal-block>section .link{--cta-fill:var(--brand-lit);--cta-label:#000}
+.subpage main>section:not(.page-hero) .link{--cta-fill:var(--brand-lit);--cta-label:#000}
+.reveal-block .link{--cta-fill:var(--brand);--cta-label:var(--warm)}
 /* The doubled class is deliberate. The context rules further up are written as
    `.dark .link::before` and `.light .link:hover`, so a plain `.link` here loses to them on
    specificity no matter how late it appears. `.link.link` matches exactly the same elements
