@@ -42,7 +42,7 @@ addEventListener('keydown',e=>{
 /* Leaving the lock on during unload would restore fixed/offset body from bfcache, so
    it is cleared on the way out -- without the scroll restore, which is what hurt. */
 addEventListener('pagehide',()=>{body.classList.remove('menu-open','is-scroll-locked');body.style.top=''});addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});const AUTO_REVEAL='h1,h2,h3,p,.link,.status,.tag,.card-eyebrow,li,.engagement,.proof-row,.timeline-row,.phase,.contact-row,.fact,.evo-label,.section-head';document.querySelectorAll('main').forEach(m=>{m.querySelectorAll(AUTO_REVEAL).forEach(el=>{if(el.closest('.hero-copy,.cap-flow-step,.cap-flow-accordion-item'))return;const owner=el.closest('.reveal');if(owner&&owner!==el)return;el.classList.add('reveal')})});const revealGroups=new Map();document.querySelectorAll('.reveal').forEach(el=>{const p=el.parentElement,i=revealGroups.get(p)||0;el.style.setProperty('--reveal-i',String(Math.min(i,8)));revealGroups.set(p,i+1)});const obs=new IntersectionObserver(es=>es.forEach(e=>{e.target.classList.toggle('visible',e.isIntersecting)}),{threshold:.15,rootMargin:'0px 0px -8%'});document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));const mobileSteps=[...document.querySelectorAll('.cap-flow-accordion-item')];mobileSteps.forEach(item=>{const trigger=item.querySelector('.cap-flow-accordion-trigger');trigger?.addEventListener('click',()=>{const open=!item.classList.contains('open');mobileSteps.forEach(x=>{x.classList.remove('open');x.querySelector('.cap-flow-accordion-trigger')?.setAttribute('aria-expanded','false')});if(open){item.classList.add('open');trigger.setAttribute('aria-expanded','true')}})})})();
-(()=>{document.querySelectorAll('.progressive-image__full').forEach(img=>{const box=img.closest('[data-progressive]');const reveal=()=>box?.classList.add('is-ready');if(img.complete&&img.naturalWidth>0)reveal();else img.addEventListener('load',reveal,{once:true})})})();
+(()=>{document.querySelectorAll('.progressive-image__full').forEach(img=>{const go=()=>img.closest('[data-progressive]')?.classList.add('is-ready');if(img.complete&&img.naturalWidth>0)go();else{img.addEventListener('load',go,{once:true});img.addEventListener('error',go,{once:true})}})})();
 (()=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const layers=[...document.querySelectorAll('[data-parallax]')],bgLayers=[...document.querySelectorAll('[data-parallax-bg]')];if(!layers.length&&!bgLayers.length)return;const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));let ticking=false;const update=()=>{const vh=innerHeight;layers.forEach(el=>{const speed=parseFloat(el.dataset.parallax)||.2,max=parseFloat(el.dataset.parallaxMax)||40,host=el.parentElement,r=host.getBoundingClientRect();if(r.bottom<0||r.top>vh){return}const center=r.top+r.height/2,delta=clamp((center-vh/2)*speed,-max,max);el.style.transform=`translate3d(0, ${delta.toFixed(1)}px, 0)`});bgLayers.forEach(el=>{const speed=parseFloat(el.dataset.parallaxBg)||.15,max=parseFloat(el.dataset.parallaxMax)||30,r=el.getBoundingClientRect();if(r.bottom<0||r.top>vh){return}const center=r.top+r.height/2,delta=clamp((center-vh/2)*speed,-max,max);el.style.backgroundPosition=`center calc(50% + ${delta.toFixed(1)}px)`});ticking=false};const onScroll=()=>{if(!ticking){requestAnimationFrame(update);ticking=true}};addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);update()})();
 (()=>{const flow=document.querySelector('.cap-flow');if(!flow)return;const track=flow.querySelector('.cap-flow-track'),steps=[...flow.querySelectorAll('.cap-flow-step')],visuals=[...flow.querySelectorAll('.cap-flow-visual')],rail=[...flow.querySelectorAll('.cap-flow-rail i')];if(!track||steps.length<2)return;const N=steps.length,LAST=N-1;const reduce=matchMedia('(prefers-reduced-motion: reduce)');const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));const pinned=()=>innerWidth>=1024&&!reduce.matches;let ticking=false;const clear=()=>{steps.forEach(s=>{s.style.removeProperty('--step-y');s.style.removeProperty('--step-o')});visuals.forEach(v=>{v.style.removeProperty('--vis-y');v.style.removeProperty('--vis-o')})};const update=()=>{ticking=false;if(!pinned()){clear();return}const sticky=flow.querySelector('.cap-flow-sticky');const stickyH=sticky.offsetHeight;const travel=track.offsetHeight-stickyH;if(travel<=0)return;const top=track.getBoundingClientRect().top;const headerH=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))||80;const p=clamp((headerH-top)/travel,0,1);const idx=p*LAST;
 const slotH=steps[0].parentElement.clientHeight||420,HOLD=.2,RAMP=.5-HOLD;
@@ -269,10 +269,11 @@ const lang=()=>document.documentElement.lang==='en'?'en':'ko';
 const bi=(el,ko,en)=>{el.dataset.ko=ko;el.dataset.en=en;el.textContent=lang()==='en'?en:ko};
 const reduceMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 const stopDrawerVideos=()=>drawer.querySelectorAll('video').forEach(v=>{v.pause();try{v.currentTime=0}catch{}});
-const armProgressive=img=>{
- const box=img.closest('[data-progressive]');
- const go=()=>box?.classList.add('is-ready');
- if(img.complete&&img.naturalWidth>0)go();else img.addEventListener('load',go,{once:true})};
+const armProgressive=(img,box)=>{
+ const host=()=>box||img.closest('[data-progressive]');
+ const go=()=>host()?.classList.add('is-ready');
+ if(img.complete&&img.naturalWidth>0)go();
+ else{img.addEventListener('load',go,{once:true});img.addEventListener('error',go,{once:true})}};
 const stillFigure=(base,ako,aen)=>{
  const fig=document.createElement('figure');fig.className='drawer-still';
  const w=document.createElement('span');w.className='progressive-image';w.setAttribute('data-progressive','');
@@ -280,10 +281,13 @@ const stillFigure=(base,ako,aen)=>{
   im.draggable=false;im.loading='eager';im.decoding='async';return im};
  const pv=mk('progressive-image__preview','../assets/'+base+'.preview.webp','');pv.setAttribute('aria-hidden','true');
  const full=mk('progressive-image__full','../assets/'+base+'.webp',lang()==='en'?aen:ako);
- full.dataset.altKo=ako;full.dataset.altEn=aen;armProgressive(full);
+ full.dataset.altKo=ako;full.dataset.altEn=aen;
  w.append(pv,full);fig.appendChild(w);
+ armProgressive(full,w);
  const cap=document.createElement('figcaption');bi(cap,ako,aen);fig.appendChild(cap);
  return fig};
+const ICO_PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.2v13.6L19.2 12 8 5.2z"/></svg>';
+const ICO_PAUSE='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>';
 const videoFigure=(spec,kind)=>{
  const fig=document.createElement('figure');fig.className='drawer-shot is-'+kind;
  const v=document.createElement('video');
@@ -291,7 +295,8 @@ const videoFigure=(spec,kind)=>{
  v.poster=spec.poster;if(kind==='loop')v.loop=true;
  const source=document.createElement('source');source.src=spec.src;source.type='video/mp4';v.appendChild(source);
  const btn=document.createElement('button');btn.type='button';btn.className='drawer-play';
- const setBtn=(playing)=>{bi(btn,playing?'일시정지':'재생',playing?'Pause':'Play');
+ const setBtn=(playing)=>{
+  btn.innerHTML=playing?ICO_PAUSE:ICO_PLAY;
   btn.setAttribute('aria-label',lang()==='en'?(playing?'Pause':'Play'):(playing?'일시정지':'재생'));
   btn.classList.toggle('is-playing',playing)};
  setBtn(false);
@@ -344,8 +349,8 @@ const open=card=>{
     im.draggable=false;im.loading='eager';im.decoding='async';return im};
    const pv=mk('progressive-image__preview','../assets/'+base+'.preview.webp','');pv.setAttribute('aria-hidden','true');
    const full=mk('progressive-image__full','../assets/'+base+'.webp',lang()==='en'?aen:ako);
-   full.dataset.altKo=ako;full.dataset.altEn=aen;armProgressive(full);
-   w.append(pv,full);elExtra.appendChild(w)}}
+   full.dataset.altKo=ako;full.dataset.altEn=aen;
+   w.append(pv,full);elExtra.appendChild(w);armProgressive(full,w)}}
  elTags.replaceChildren();
  ((d&&d.keys)||[]).forEach(t=>{const s=document.createElement('span');s.textContent=t;elTags.appendChild(s)});
  elNote.hidden=!(d&&d.keys&&d.keys.length);
