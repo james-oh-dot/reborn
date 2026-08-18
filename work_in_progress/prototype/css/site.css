@@ -1699,7 +1699,8 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
    The projects that have no written record yet. They sit under the card grid as a
    deliberate second tier rather than as empty cards: a card promises an image and a
    story, and eleven hollow ones would read as a broken page. An index row promises
-   only a name, which is all we can honestly show, so nothing looks unfinished.
+   name, status and a one-line scope -- not a story -- so the row still reads as an
+   index rather than as an unfinished card.
 
    When a project's copy and imagery arrive it graduates upward -- its row is deleted
    and a .visual-card takes its place in the grid above. Nothing here is load-bearing
@@ -1711,17 +1712,19 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
 .pending-head{
   display:flex;justify-content:space-between;align-items:baseline;
   gap:clamp(16px,3vw,48px);margin-bottom:clamp(20px,2.4vw,34px)}
-/* Stated once, in the open, so the status does not depend on hovering anything --
-   keyboard and screen-reader users get it without the toast. */
 .pending-note{margin:0;font-size:13px;line-height:1.6;color:var(--muted-l)}
 
 .pending-list{list-style:none;margin:0;padding:0}
+.pending-year{
+  padding:clamp(28px,2.8vw,40px) 0 8px;
+  font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--muted-l)}
+.pending-year:first-child{padding-top:4px}
 .pending-row{
-  display:grid;grid-template-columns:auto 1fr;align-items:center;
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:baseline;
   gap:clamp(16px,2.2vw,38px);
   padding-block:clamp(15px,1.7vw,21px);
   border-top:1px solid var(--line-l);
-  min-height:44px;                    /* WCAG 2.5.8, same floor as the project bar */
+  min-height:44px;
   cursor:default;
   transition:background .3s var(--ease)}
 .pending-row:last-child{border-bottom:1px solid var(--line-l)}
@@ -1729,9 +1732,14 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
   font-size:11px;letter-spacing:.12em;color:var(--muted-l);
   font-variant-numeric:tabular-nums;
   transition:color .3s var(--ease)}
+.pending-body{display:flex;flex-direction:column;gap:5px;min-width:0}
 .pending-name{
   font-size:clamp(16px,1.5vw,21px);font-weight:600;letter-spacing:-.02em;
   transition:transform .34s var(--ease)}
+.pending-scope{font-size:14px;line-height:1.5;color:var(--muted-l)}
+.pending-status{
+  font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted-l);white-space:nowrap}
 
 /* Hover borrows the row treatment already used by the archive and engagement lists,
    so this reads as part of the same family. The index takes the brand because it is
@@ -1746,7 +1754,8 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
 
 @media(max-width:767px){
   .pending-head{flex-direction:column;align-items:flex-start;gap:8px}
-  .pending-row{gap:14px}
+  .pending-row{grid-template-columns:auto minmax(0,1fr);gap:6px 14px}
+  .pending-status{grid-column:2;justify-self:start;white-space:normal}
 }
 @media(prefers-reduced-motion:reduce){
   .pending-row,.pending-idx,.pending-name{transition:none}

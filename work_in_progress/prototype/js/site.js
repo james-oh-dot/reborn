@@ -573,12 +573,10 @@ btns.forEach(b=>b.addEventListener('click',()=>{
  /* Coming back from bfcache would otherwise restore the button mid-press. */
  addEventListener('pageshow',()=>document.querySelectorAll('.link.is-pressed')
   .forEach(x=>x.classList.remove('is-pressed')))})();
-/* Pending-project rows: a toast naming the row being pointed at. The same status is
-   already printed above the list in .pending-note, so this is reinforcement only --
-   the toast is aria-hidden and nothing here is the sole route to the information.
-   The rows are not links and take no focus: making eleven inert rows tabbable would
-   hand keyboard users a run of stops that lead nowhere. */
-(()=>{const rows=[...document.querySelectorAll('.pending-row')];if(!rows.length)return;
+/* Pending-project rows: a toast naming the row being pointed at. Rows that already
+   print a status on the line do not need it -- the toast was written for name-only
+   index rows whose only extra information was "a record is being prepared". */
+(()=>{const rows=[...document.querySelectorAll('.pending-row')].filter(r=>!r.querySelector('.pending-status'));if(!rows.length)return;
  const root=document.documentElement;
  const el=document.createElement('div');
  el.className='toast';el.setAttribute('aria-hidden','true');
