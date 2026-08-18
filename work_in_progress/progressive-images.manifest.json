@@ -9,6 +9,8 @@
     { "path": "evidence/kisa-hyper-vision.png", "max_width": 900 },
     { "path": "products/7cubic/*.png", "max_width": 1200 },
     { "path": "projects/fitm/app.png", "max_width": 1200 },
+    { "path": "projects/fitm/motion-measure.jpg", "max_width": 1600 },
+    { "path": "projects/fitm/*.poster.jpg", "max_width": 1280 },
     { "path": "projects/hana/face-access.png", "max_width": 1200 },
     { "path": "projects/hongdae/*.png", "max_width": 900 },
     { "path": "projects/hongdae/hmd-curve.jpg", "max_width": 1600 },

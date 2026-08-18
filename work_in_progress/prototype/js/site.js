@@ -246,8 +246,8 @@ const EXTRA={
  yancheng:['projects/yancheng/installation','옌청 자동차 테마파크 레이싱 시뮬레이터 설치 현장','Racing simulator being installed at Yancheng Automotive Theme Park']};
 /* Spatial-record drawers. Previous card stills remain on disk
    (Hongdae: interactive-screen, vr-screen; Hyundai: curved-screen).
-   Restore from backup/pre-hongdae-media-20260818 or
-   backup/pre-hyundai-media-20260818. */
+   Restore from backup/pre-hongdae-media-20260818,
+   backup/pre-hyundai-media-20260818, or backup/pre-fitm-media-20260818. */
 const MEDIA={
  hongdae:{
   heroVideo:{src:'../assets/projects/hongdae/screen-visual-loop.mp4',
@@ -264,7 +264,12 @@ const MEDIA={
   still:['projects/hyundai/presentation-hall','곡면 스크린이 적용된 발표 공간','A curved-screen presentation space'],
   demandVideo:{src:'../assets/projects/hyundai/screen-visual-on-demand.mp4',
    poster:'../assets/projects/hyundai/screen-visual-on-demand.poster.webp',
-   cap:['같은 스크린의 다른 비주얼','Another visual on the same screen']}}};
+   cap:['같은 스크린의 다른 비주얼','Another visual on the same screen']}},
+ fitm:{
+  heroVideo:{src:'../assets/projects/fitm/product-loop.mp4',
+   poster:'../assets/projects/fitm/product-loop.poster.webp',
+   cap:['MOTION RECOGNITION · PRODUCT RECORD','MOTION RECOGNITION · PRODUCT RECORD']},
+  still:['projects/fitm/motion-measure','카메라 영상으로 동작을 인식하는 측정 화면','Measurement on camera using motion recognition']}};
 const lang=()=>document.documentElement.lang==='en'?'en':'ko';
 const bi=(el,ko,en)=>{el.dataset.ko=ko;el.dataset.en=en;el.textContent=lang()==='en'?en:ko};
 const reduceMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;

@@ -9,5 +9,7 @@ tmp/
 # Camera originals for project media. Web derivatives live beside these folders.
 # Restore Hongdae from backup/pre-hongdae-media-20260818
 # Restore Hyundai from backup/pre-hyundai-media-20260818
+# Restore FIT-M from backup/pre-fitm-media-20260818
 work_in_progress/assets/projects/hongdae/_raw/
 work_in_progress/assets/projects/hyundai/_raw/
+work_in_progress/assets/projects/fitm/_raw/
