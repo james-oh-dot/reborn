@@ -575,6 +575,15 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .card-eyebrow{
   display:block;color:var(--muted-d);
   font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.card-series{
+  display:block;color:var(--muted-d);
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.card-series+.card-eyebrow{margin-top:6px}
+.card-en-name{
+  display:block;margin:8px 0 0;
+  font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(242,241,237,.62);line-height:1.45;max-width:46ch}
+html[lang=en] .card-en-name{display:none}
 .card-link{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-top:14px}
 .card-link h3{
   margin:0;font-weight:700;line-height:1.06;letter-spacing:-.035em;
@@ -903,6 +912,9 @@ html[lang=en] .integration-ko{display:none}
 .drawer-media .progressive-image__preview,.drawer-media .progressive-image__full{object-fit:cover}
 .drawer-body{padding:clamp(26px,3vw,40px) clamp(22px,2.6vw,36px) clamp(40px,5vh,64px)}
 .drawer-status{color:var(--brand-soft);letter-spacing:.14em}
+.drawer-series{margin:8px 0 0;color:var(--muted-d);letter-spacing:.14em}
+.drawer-en-name{margin:8px 0 0;color:var(--muted-d);letter-spacing:.12em;line-height:1.45}
+html[lang=en] .drawer-en-name{display:none}
 .drawer-title{margin:14px 0 0;font-size:clamp(26px,2.4vw,36px);font-weight:600;
   letter-spacing:-.03em;line-height:1.2}
 .drawer-summary{margin:18px 0 0;color:var(--warm);font-size:16px;line-height:1.7}
@@ -1566,12 +1578,14 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
   background:var(--brand);opacity:0;
   transition:opacity .34s var(--ease)}
 .card-copy{z-index:2}
-.card-copy,.card-eyebrow,.card-arrow,.card-link p{
+.card-copy,.card-eyebrow,.card-series,.card-en-name,.card-arrow,.card-link p{
   transition:background .34s var(--ease),color .34s var(--ease)}
 
 .visual-card.is-washed::before{opacity:.85}
 .visual-card.is-washed .card-copy{background:none}
 .visual-card.is-washed .card-eyebrow,
+.visual-card.is-washed .card-series,
+.visual-card.is-washed .card-en-name,
 .visual-card.is-washed .card-arrow,
 .visual-card.is-washed .card-link p,
 .visual-card.is-washed .card-link h3{color:#fff}
@@ -1584,6 +1598,8 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
   .visual-card:hover::before{opacity:.85}
   .visual-card:hover .card-copy{background:none}
   .visual-card:hover .card-eyebrow,
+  .visual-card:hover .card-series,
+  .visual-card:hover .card-en-name,
   .visual-card:hover .card-arrow,
   .visual-card:hover .card-link p,
   .visual-card:hover .card-link h3{color:#fff}
@@ -1591,12 +1607,14 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
 .visual-card:focus-visible::before{opacity:.85}
 .visual-card:focus-visible .card-copy{background:none}
 .visual-card:focus-visible .card-eyebrow,
+.visual-card:focus-visible .card-series,
+.visual-card:focus-visible .card-en-name,
 .visual-card:focus-visible .card-arrow,
 .visual-card:focus-visible .card-link p,
 .visual-card:focus-visible .card-link h3{color:#fff}
 
 @media(prefers-reduced-motion:reduce){
-  .visual-card::before,.card-copy,.card-eyebrow,.card-arrow,.card-link p{transition:none}
+  .visual-card::before,.card-copy,.card-eyebrow,.card-series,.card-en-name,.card-arrow,.card-link p{transition:none}
 }
 
 /* The section directly under a subpage hero starts closer than the standard rhythm.

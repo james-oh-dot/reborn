@@ -139,6 +139,8 @@ const panel=drawer.querySelector('.drawer-panel'),media=drawer.querySelector('.d
  elExtra=drawer.querySelector('.drawer-extra'),elBound=drawer.querySelector('.drawer-boundary'),
  elNote=drawer.querySelector('.drawer-note'),
  scroll=drawer.querySelector('.drawer-scroll');
+const elSeries=document.createElement('p');elSeries.className='drawer-series meta';elSeries.hidden=true;elStatus.after(elSeries);
+const elEnName=document.createElement('p');elEnName.className='drawer-en-name meta';elEnName.hidden=true;elTitle.after(elEnName);
 /* Project detail copy. Every claim, status and boundary sentence here is transcribed
    from the approved write-up, which matches EVIDENCE_LEDGER_v2.1 section 6 claim
    boundaries; `bound` paragraphs are the scope limits and render demoted. */
@@ -368,7 +370,10 @@ const open=card=>{
   const ph=card.querySelector('.card-media-empty');if(ph)media.appendChild(ph.cloneNode(true))}
  const d=DETAIL[key];
  elStatus.textContent=eyebrow?eyebrow.textContent.trim():'';
+ const series=card.querySelector('.card-series'),enName=card.querySelector('.card-en-name');
+ elSeries.hidden=!series;elSeries.textContent=series?series.textContent.trim():'';
  if(h)bi(elTitle,h.dataset.ko||h.textContent.trim(),h.dataset.en||h.textContent.trim());
+ elEnName.hidden=!enName;elEnName.textContent=enName?enName.textContent.trim():'';
  /* Detail copy wins over the card blurb when it exists; the card stays the fallback. */
  if(d)bi(elClass,d.cls[0],d.cls[1]); elClass.hidden=!d;
  if(d)bi(elSummary,d.lead[0],d.lead[1]);
