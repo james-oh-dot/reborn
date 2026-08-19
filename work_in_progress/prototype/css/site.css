@@ -55,7 +55,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 
 /* work cards and media */
 .section-head{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:22px;border-bottom:1px solid currentColor;margin-bottom:clamp(52px,6vw,90px)}.section-head small{opacity:.55}.lead-work{display:grid;grid-template-columns:7fr 4fr;gap:clamp(28px,5vw,84px);align-items:end}.media{overflow:hidden;background:#17191b}.media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}.media:hover img{transform:scale(1.015)}.lead-work .media{height:min(62vw,720px)}.work-info h3{font-size:clamp(40px,4.8vw,76px);line-height:1.02;letter-spacing:-.04em;margin:20px 0}.work-info p{color:var(--muted-l);max-width:530px}.secondary-work{display:grid;grid-template-columns:4fr 6fr;gap:clamp(28px,5vw,84px);align-items:center;margin-top:clamp(100px,13vw,190px)}.secondary-work .media{height:min(45vw,560px)}.editorial-cases{display:grid;grid-template-columns:1fr 1fr;margin-top:clamp(100px,12vw,170px);border-top:1px solid var(--line-l)}.editorial-case{padding:44px 7vw 60px 0;border-bottom:1px solid var(--line-l)}.editorial-case:nth-child(even){padding-left:4vw;border-left:1px solid var(--line-l)}.editorial-case h3{font-size:clamp(30px,3vw,48px);margin:18px 0}.editorial-case .thumb{height:230px;margin-bottom:30px}.editorial-case .thumb img{object-fit:contain;background:#e8e7e2}.proof-list{display:grid;grid-template-columns:5fr 7fr;border-top:1px solid var(--line-l)}.proof-feature{padding:50px 5vw 50px 0}.proof-feature img{width:100%;object-fit:contain;filter:saturate(.35)}.proof-rows{border-left:1px solid var(--line-l)}.proof-row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:24px;padding:30px 0 30px 4vw;border-bottom:1px solid var(--line-l)}.proof-row h3{margin:0;font-size:20px}.proof-row p{margin:8px 0 0;color:var(--muted-l)}
-.current{position:relative;overflow:hidden}.current:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(8.33% - 1px),rgba(255,255,255,.04) calc(8.33% - 1px) 8.33%);opacity:.6}.current .wrap{position:relative}.current-grid{display:grid;grid-template-columns:4fr 7fr;gap:8.33vw;align-items:end}.current h2{font-size:var(--h2);line-height:1.02;letter-spacing:-.045em;margin:18px 0 0}.current-copy{color:var(--muted-d)}
+.current{position:relative;overflow:visible}.current:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(8.33% - 1px),rgba(255,255,255,.04) calc(8.33% - 1px) 8.33%);opacity:.6}.current .wrap{position:relative}.current-grid{display:grid;grid-template-columns:4fr 7fr;gap:8.33vw;align-items:end}.current h2{font-size:var(--h2);line-height:1.02;letter-spacing:-.045em;margin:18px 0 0}.current-copy{color:var(--muted-d)}
 .bridge{display:grid;grid-template-columns:8fr 4fr;align-items:end;gap:40px}.bridge .section-title{max-width:980px}.bridge-links{display:flex;flex-direction:column;align-items:flex-start}
 
 /* long-form pages */
@@ -306,7 +306,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .bridge-links{gap:14px}
 
 /* ---------- CLOSING BRIDGE — graphite landing, converging lines toward the CTAs ---------- */
-.bridge-close{position:relative;overflow:hidden;padding-block:calc(var(--space) * 1.15)}
+.bridge-close{position:relative;overflow:visible;padding-block:calc(var(--space) * 1.15)}
 .bridge-close:before{content:"";position:absolute;inset:0;pointer-events:none;
   background:conic-gradient(from 208deg at 84% 92%,
     transparent 0 6deg,rgba(255,255,255,.05) 6deg 7deg,transparent 7deg 15deg,
@@ -1090,10 +1090,11 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 }
 
 /* NOT sticky. The rail sits beside a much taller narrative and pinning it would be the
-   obvious move, but this section is .current, which sets overflow:hidden for its
-   decorative column overlay. That makes .current the sticky scroll container, so
-   position:sticky degrades to a plain downward offset by `top` (measured: the head
-   dropped 288px -> 404px, breaking its top alignment with the lead). Left in flow. */
+   obvious move, but an earlier overflow:hidden on .current (for the column overlay)
+   made the section a sticky scroll container, so position:sticky degraded to a plain
+   downward offset by `top` (measured: the head dropped 288px -> 404px). Overflow is
+   visible again now that the overlay no longer needs clipping, and the rail stays in
+   flow so the old sticky bug cannot return. */
 
 /* ---------- PROJECT CARD / DRAWER DETAIL ---------- */
 /* Cityfield has no project image in the archive, so the card carries a labelled
@@ -1628,12 +1629,16 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
    Monochrome by choice: at five gaps a page across five pages this would put the
    brand colour in ~25 decorative places, which is exactly the spread the accent
    rules exist to prevent. It inherits the surrounding surface's ink so it works on
-   both the cream and the dark sections without a second rule. */
+   both the cream and the dark sections without a second rule.
+
+   z-index:2 is required: the mark is centred on the seam, so half of it lives in
+   the next section's padding. Without a stacking context above that sibling, the
+   next section's background paints over the lower arms and the star reads as cut. */
 .section-star{
-  display:flex;justify-content:center;position:relative;
-  height:0;pointer-events:none;user-select:none}
+  display:flex;justify-content:center;position:relative;z-index:2;
+  height:0;overflow:visible;pointer-events:none;user-select:none}
 .section-star svg{
-  width:100px;height:100px;overflow:visible;stroke-width:4;
+  width:100px;height:100px;overflow:visible;stroke-width:4;stroke-linecap:round;
   /* The star adds no height of its own, so it lands in the empty run between two
      sections without moving anything. How far down is measured in js/site.js and
      written here as --star-drop: the gap is the two sections' facing paddings, and

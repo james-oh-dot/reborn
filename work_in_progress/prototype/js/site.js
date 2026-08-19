@@ -586,7 +586,7 @@ btns.forEach(b=>b.addEventListener('click',()=>{
   const d=document.createElement('div');
   d.className='section-star';d.setAttribute('aria-hidden','true');
   /* The same mark the EVOLUTION band uses, so the two read as one motif. */
-  d.innerHTML='<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4">'+
+  d.innerHTML='<svg viewBox="-8 -8 116 116" overflow="visible" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round">'+
    '<path d="M50 6V94M6 50H94M19 19L81 81M81 19L19 81"/></svg>';
   /* Appended inside the section above rather than between the two. Sitting on the
      boundary it straddled two surfaces and, with <main> as its parent, inherited a
