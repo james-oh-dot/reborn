@@ -24,6 +24,15 @@
   width: 100%;
   height: 100%;
   margin: 0;
+  /* HARD RULE — the pair is stretched to the box by the two lines above, so without a
+   * fit the browser's default (fill) squeezes the picture to whatever shape the box
+   * happens to be. That is how the capability record cards shipped at 0.61 of their
+   * correct width: the component set a frame and forgot the fit, and nothing here
+   * stopped it. cover is the default because it satisfies both halves of the rule at
+   * once -- the frame is always full, and the picture is never distorted; what does not
+   * fit is cropped instead. A component that genuinely wants letterboxing overrides with
+   * object-fit: contain, and every such rule in site.css already outspecifies this one. */
+  object-fit: cover;
 }
 
 .progressive-image__preview {

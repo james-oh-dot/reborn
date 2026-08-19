@@ -1976,7 +1976,13 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
 .cap-record{margin-top:clamp(40px,4vw,62px)}
 .cap-record-row{display:flex;flex-wrap:wrap;gap:clamp(14px,1.6vw,22px);margin-top:16px}
 .cap-rec{flex:1 1 200px;max-width:320px;color:inherit}
-.cap-rec-shot{display:block;aspect-ratio:4/3;overflow:hidden;background:#0d0f11}
+/* 16/9, not the 4/3 this shipped with, because it is the shape the material already is.
+   Three of the six records are exactly 16/9 and crop nothing at all; motion-measure is
+   too. Against 4/3 every one of them lost a quarter of its width and face-access lost
+   39 per cent -- a device lineup with the tablet and the door terminal cut off its ends.
+   At 16/9 the worst case is face-access at 18 per cent, and the shorter frame raises
+   pixel density as a side effect (1.15 to 1.53 at 1600 on a 2x screen). */
+.cap-rec-shot{display:block;aspect-ratio:16/9;overflow:hidden;background:#0d0f11}
 /* Only the full layer scales. The preview carries its own transform for the blur-up
    and a blanket img rule would cancel it, leaving the placeholder unblurred. */
 .cap-rec-shot .progressive-image__full{transition:transform .85s var(--ease)}
