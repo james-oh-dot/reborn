@@ -501,20 +501,18 @@ addEventListener('keydown',e=>{
  if(e.shiftKey&&(document.activeElement===first||document.activeElement===panel)){e.preventDefault();last.focus()}
  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}})})();
 (()=>{const v=document.querySelector('.hero-video');if(!v)return;
-/* The clip is ~6MB and is cropped hard at phone aspect ratios, so the poster frame is
-   the DEFAULT and the video is an enhancement that has to earn its download. The
-   <source> carries data-src, not src, so nothing is fetched until every gate passes:
-   wide enough to show the composition, motion allowed, and not on a metered link. */
+/* Poster is the first paint. The loop (~5MB) loads only when motion is allowed and
+   the link is not save-data / 2g. <source> stays on data-src until then. */
 const reduce=matchMedia('(prefers-reduced-motion: reduce)');
 const src=v.querySelector('source[data-src]');
 const conn=navigator.connection;
 const cheapLink=()=>!conn||(!conn.saveData&&!/^(slow-2g|2g|3g)$/.test(conn.effectiveType||''));
-const allowed=()=>innerWidth>=768&&!reduce.matches&&cheapLink();
+const allowed=()=>!reduce.matches&&cheapLink();
 const apply=()=>{
  if(!allowed()){v.pause();return}
  if(src&&!src.getAttribute('src')){src.setAttribute('src',src.dataset.src);v.load()}
  v.play().catch(()=>{})};
-apply();reduce.addEventListener?.('change',apply);addEventListener('resize',apply,{passive:true})})();
+apply();reduce.addEventListener?.('change',apply)})();
 /* iOS-safe scroll lock. body{overflow:hidden} is ignored by Safari on iOS, so the page
    behind an open menu or drawer still rubber-bands. Pin the body at its current offset
    instead and restore it on release. A class observer drives it so the menu and the
