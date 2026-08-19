@@ -650,7 +650,9 @@ html[lang=en] .card-en-name{display:none}
 .rail-track{position:relative;height:calc(100vh - var(--header-h) + var(--rail-scroll,220vh))}
 .rail-sticky{position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));display:flex;align-items:center;overflow:hidden}
 .rail-inner{width:min(100%,var(--wide));display:flex;flex-direction:column;justify-content:center;height:100%;padding-block:clamp(28px,4vh,56px)}
-.work-rail .section-head{flex:none}
+.work-rail .section-head{flex:none;align-items:flex-start}
+.work-rail .section-head .link{margin-top:18px}
+.work-rail .section-head-support{margin:14px 0 0;max-width:46ch}
 /* Starts flush with the section title (no full-bleed breakout, which drifted
    left of the title once the wrap hit its max width) and simply overflows to
    the right — .rail-sticky already clips at the viewport edges, so cards run
