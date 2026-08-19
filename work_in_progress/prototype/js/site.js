@@ -53,7 +53,7 @@ const slotH=steps[0].parentElement.clientHeight||420,HOLD=.2,RAMP=.5-HOLD;
 const ease=t=>t*t*(3-2*t);
 const offsetFor=d=>{const a=Math.abs(d);return a<=HOLD?0:Math.sign(d)*ease(clamp((a-HOLD)/RAMP,0,1))};
 steps.forEach((s,i)=>{const off=offsetFor(idx-i);s.style.setProperty('--step-y',(-off*slotH).toFixed(1)+'px');s.style.setProperty('--step-o',Math.abs(off)>=1?'0':'1')});
-visuals.forEach((v,i)=>{const off=offsetFor(idx-i);v.style.setProperty('--vis-y',(-off*100).toFixed(2)+'%');v.style.setProperty('--vis-o',Math.abs(off)>=1?'0':'1')});const near=Math.round(idx);rail.forEach((r,i)=>r.classList.toggle('on',i===near));steps.forEach((s,i)=>s.classList.toggle('active',i===near))};const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);reduce.addEventListener?.('change',onScroll);update()})();
+visuals.forEach((v,i)=>{const off=offsetFor(idx-i);v.style.setProperty('--vis-y',(-off*100).toFixed(2)+'%');v.style.setProperty('--vis-o',Math.abs(off)>=1?'0':'1')});const near=Math.round(idx);rail.forEach((r,i)=>r.classList.toggle('on',i===near));steps.forEach((s,i)=>s.classList.toggle('active',i===near));visuals.forEach((v,i)=>v.classList.toggle('active',i===near))};const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);reduce.addEventListener?.('change',onScroll);update()})();
 (()=>{const band=document.querySelector('.dna-band'),track=band?.querySelector('.dna-track'),half=band?.querySelector('.dna-half');if(!band||!track||!half)return;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
 /* One full loop takes LOOP_S at rest. Scrolling adds speed on top: scrolling down
    pushes the strip left, scrolling up pushes it right. `vel` decays back to the
@@ -278,14 +278,28 @@ const DETAIL={
   keys:['Digital Twin','VR/AR','Simulator','Experience Systems','Technology Integration','Digital City','Contracted Project']}};
 /* A second, unused-on-page image where one exists and adds something the card shot does
    not: the Yancheng simulator mid-installation. Hongdae extras moved to MEDIA. */
-const EXTRA={
- yancheng:['projects/yancheng/installation','옌청 자동차 테마파크 레이싱 시뮬레이터 설치 현장','Racing simulator being installed at Yancheng Automotive Theme Park']};
+const EXTRA={};
 /* Spatial-record drawers. Previous card stills remain on disk
    (Hongdae: interactive-screen, vr-screen; Hyundai: curved-screen).
    Restore from backup/pre-hongdae-media-20260818,
    backup/pre-hyundai-media-20260818, backup/pre-fitm-media-20260818,
    or backup/pre-handan-media-20260818. */
 const MEDIA={
+ hana:{
+  heroVideo:{src:'../assets/projects/hana/face-access.mp4',
+   poster:'../assets/projects/hana/face-access.poster.jpg',
+   cap:['FACE RECOGNITION · ACCESS RECORD','FACE RECOGNITION · ACCESS RECORD']},
+  still:['projects/hana/face-access3','얼굴인식 출입보안 솔루션 화면','Face-recognition access-security solution interface']},
+ yancheng:{
+  heroVideo:{src:'../assets/projects/yancheng/simulator.mp4',
+   poster:'../assets/projects/yancheng/simulator.poster.jpg',
+   cap:['RACING SIMULATION · SPATIAL RECORD','RACING SIMULATION · SPATIAL RECORD']},
+  still:['projects/yancheng/installation','옌청 자동차 테마파크 레이싱 시뮬레이터 설치 현장','Racing simulator being installed at Yancheng Automotive Theme Park']},
+ sevencubic:{
+  heroVideo:{src:'../assets/products/7cubic/7cubic.mp4',
+   poster:'../assets/products/7cubic/7cubic.poster.jpg',
+   cap:['3D ENVIRONMENT · PRODUCT RECORD','3D ENVIRONMENT · PRODUCT RECORD']},
+  still:['products/7cubic/7cubic-ui-03','7 Cubic 디지털 환경','7 Cubic digital environment']},
  hongdae:{
   heroVideo:{src:'../assets/projects/hongdae/screen-visual-loop.mp4',
    poster:'../assets/projects/hongdae/screen-visual-loop.poster.webp',
@@ -742,3 +756,31 @@ btns.forEach(b=>b.addEventListener('click',()=>{
     than the one the HTML ships, which reads as a flicker on load. */
  const start=Math.max(0,layers.indexOf(first));
  show(start)})})();
+/* Inline project loops. A still is already in the markup; the clip is fetched only
+   when that still is on screen. The home CORE stage stacks three visuals in one box,
+   so intersecting the stage is not enough -- play only the active / open one. */
+(()=>{const clips=[...document.querySelectorAll('.live-loop-video[data-src]')];if(!clips.length)return;
+ const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+ const conn=navigator.connection;
+ const cheap=()=>!conn||(!conn.saveData&&!/^(slow-2g|2g)$/.test(conn.effectiveType||''));
+ const allowed=()=>!reduce.matches&&cheap();
+ const hostOn=v=>{
+  const vis=v.closest('.cap-flow-visual');if(vis)return vis.classList.contains('active');
+  const acc=v.closest('.cap-flow-accordion-item');if(acc)return acc.classList.contains('open');
+  return true};
+ const seen=new WeakSet();
+ const arm=v=>{if(v.dataset.armed)return;const src=v.dataset.src;if(!src)return;
+  v.dataset.armed='1';const s=document.createElement('source');s.src=src;s.type='video/mp4';v.appendChild(s);v.load()};
+ const play=v=>{if(!allowed()||!hostOn(v))return;arm(v);
+  const go=()=>v.closest('.live-loop')?.classList.add('is-playing');
+  v.play().then(go).catch(()=>{});if(v.readyState>=2)go()};
+ const stop=v=>{v.pause();v.closest('.live-loop')?.classList.remove('is-playing')};
+ const sync=()=>clips.forEach(v=>{if(seen.has(v)&&hostOn(v))play(v);else stop(v)});
+ if('IntersectionObserver'in window){
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)seen.add(e.target);else seen.delete(e.target)});sync()},{rootMargin:'120px',threshold:.15});
+  clips.forEach(v=>io.observe(v))}
+ else{clips.forEach(v=>seen.add(v));sync()}
+ document.querySelectorAll('.cap-flow-visual,.cap-flow-accordion-item').forEach(el=>{
+  new MutationObserver(sync).observe(el,{attributes:true,attributeFilter:['class']})});
+ reduce.addEventListener?.('change',sync);
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)clips.forEach(stop);else sync()})})();

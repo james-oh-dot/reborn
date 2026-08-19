@@ -380,7 +380,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 /* Products & systems inventory — moved from Work. Same archive list as before,
    scoped here so Work no longer hosts a capability catalogue. */
 .cap-systems .archive-list li{padding-block:14px}
-.cap-systems .archive-visual{height:240px;margin-top:26px}
+.cap-systems .archive-visual{position:relative;height:240px;margin-top:26px;overflow:hidden;background:#0d0f11}
 @media(max-width:767px){
   .cap-systems .archive-cols{display:block}
   .cap-systems .archive-col+.archive-col{margin-top:48px}
@@ -544,6 +544,22 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
   display:block;width:100%;height:100%;object-fit:cover;
   transform:scale(1.02);transition:transform 1s var(--ease)}
 .visual-card:hover img{transform:scale(1.06)}
+/* Live project clips sit on top of the still. The still is the first paint and the
+   reduced-motion fallback; the video is an enhancement that has to earn its download. */
+.live-loop{position:relative;display:block;width:100%;height:100%;overflow:hidden}
+.visual-card>.live-loop,.cap-rec-shot>.live-loop,.archive-visual>.live-loop{position:absolute;inset:0}
+.live-loop-video{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .7s var(--ease);pointer-events:none;background:#0d0f11}
+.live-loop.is-playing .live-loop-video{opacity:1}
+.visual-card>.live-loop{transform:scale(1.02);transition:transform 1s var(--ease)}
+.visual-card:hover>.live-loop{transform:scale(1.06)}
+.visual-card>.live-loop img{transform:none}
+.visual-card:hover>.live-loop img{transform:none}
+.cap-rec-shot>.live-loop .progressive-image__full{transition:none}
+.cap-rec:hover .cap-rec-shot>.live-loop{transform:scale(1.04);transition:transform .85s var(--ease)}
+@media(max-width:767px){
+  .visual-card>.live-loop,.visual-card:hover>.live-loop{transform:none}
+}
 /* Our stills run from dark venue photos to white product UI, and each card's
    copy block is a different height — so the scrim rides on .card-copy itself
    rather than a fixed percentage of the card. */
@@ -1967,7 +1983,7 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
    39 per cent -- a device lineup with the tablet and the door terminal cut off its ends.
    At 16/9 the worst case is face-access at 18 per cent, and the shorter frame raises
    pixel density as a side effect (1.15 to 1.53 at 1600 on a 2x screen). */
-.cap-rec-shot{display:block;aspect-ratio:16/9;overflow:hidden;background:#0d0f11}
+.cap-rec-shot{position:relative;display:block;aspect-ratio:16/9;overflow:hidden;background:#0d0f11}
 /* Only the full layer scales. The preview carries its own transform for the blur-up
    and a blanket img rule would cancel it, leaving the placeholder unblurred. */
 .cap-rec-shot .progressive-image__full{transition:transform .85s var(--ease)}

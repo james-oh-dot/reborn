@@ -65,6 +65,14 @@
     linear-gradient(#f2f1ed,#f2f1ed) 100% 100%/16px 1px no-repeat,
     linear-gradient(#f2f1ed,#f2f1ed) 100% 100%/1px 16px no-repeat}
 .cap-flow-frame .progressive-image__preview,.cap-flow-frame .progressive-image__full{object-fit:contain;object-position:center;filter:grayscale(.45) contrast(1.06) brightness(.78)}
+.cap-flow-frame .live-loop{position:absolute;inset:0}
+.cap-flow-frame .live-loop-video{object-fit:contain;filter:none;background:transparent}
+.cap-flow-panel .live-loop{position:absolute;inset:6px}
+.cap-flow-panel .live-loop-video{filter:none}
+.cap-flow-photo .live-loop{position:absolute;inset:0}
+.cap-flow-photo .live-loop-video{filter:none}
+.cap-flow-accordion-visual .live-loop{position:absolute;inset:0}
+.cap-flow-accordion-visual--wide .live-loop-video{object-fit:contain;background:transparent}
 
 /* 02 interaction — response rings, no photo */
 .cap-flow-rings{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
