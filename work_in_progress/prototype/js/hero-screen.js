@@ -45,23 +45,16 @@ const baseAt = (u) => {
    streams converge and their particles shrink toward the far end without being told to. */
 const heightAt = (u) => baseAt(u) - topAt(u);
 
-/* Thirteen streams, each a wave in wall space. The frequencies and drifts are deliberately not
-   multiples of one another and five of them run backwards, so crossings keep moving
-   instead of settling into a repeating knot. */
-const STREAMS = [
-  { v: 0.18, amp: 0.085, freq: 1.7, phase: 0.00, drift: 0.055, weight: 1.00 },
-  { v: 0.30, amp: 0.120, freq: 2.3, phase: 1.20, drift: -0.041, weight: 0.85 },
-  { v: 0.42, amp: 0.070, freq: 3.1, phase: 2.40, drift: 0.067, weight: 1.00 },
-  { v: 0.50, amp: 0.145, freq: 1.3, phase: 0.60, drift: -0.029, weight: 0.75 },
-  { v: 0.58, amp: 0.095, freq: 2.7, phase: 3.10, drift: 0.048, weight: 0.90 },
-  { v: 0.66, amp: 0.060, freq: 4.1, phase: 1.80, drift: -0.073, weight: 0.70 },
-  { v: 0.74, amp: 0.130, freq: 1.9, phase: 4.20, drift: 0.036, weight: 0.80 },
-  { v: 0.84, amp: 0.075, freq: 3.5, phase: 2.90, drift: -0.052, weight: 0.60 },
-  { v: 0.92, amp: 0.050, freq: 5.3, phase: 0.35, drift: 0.061, weight: 0.45 },
-  { v: 0.24, amp: 0.105, freq: 2.9, phase: 5.10, drift: -0.058, weight: 0.80 },
-  { v: 0.36, amp: 0.065, freq: 4.7, phase: 3.70, drift: 0.079, weight: 0.65 },
-  { v: 0.62, amp: 0.115, freq: 2.1, phase: 1.45, drift: -0.044, weight: 0.85 },
-  { v: 0.79, amp: 0.088, freq: 3.3, phase: 5.80, drift: 0.033, weight: 0.70 },
+/* One primary current, then quieter harmonics of different weights. The previous version
+   drew thirteen bead-filaments of similar thickness; they crossed into something that
+   read as veins. These stay roughly parallel, travel the same way, and leave the braiding
+   to particles peeling off the lines rather than to the lines themselves. */
+const MAIN = { v: 0.50, amp: 0.072, freq: 1.28, phase: 0.18, drift: 0.034, width: 1.35, glow: 1.00 };
+const WAVES = [
+  { v: 0.32, amp: 0.040, freq: 1.92, phase: 1.35, drift: 0.046, width: 0.46, glow: 0.42 },
+  { v: 0.68, amp: 0.034, freq: 1.64, phase: 2.70, drift: 0.027, width: 0.30, glow: 0.34 },
+  { v: 0.20, amp: 0.028, freq: 2.36, phase: 0.62, drift: 0.041, width: 0.18, glow: 0.26 },
+  { v: 0.80, amp: 0.024, freq: 2.10, phase: 3.85, drift: 0.022, width: 0.11, glow: 0.20 },
 ];
 
 const CORE = 'rgba(255,241,232,';   /* warm white, the part that reads as light */
@@ -80,7 +73,34 @@ export class HeroScreen {
     this.running = false;
     this.t = 0;
     this.last = 0;
+    this.dt = 0.016;
+    this.seedParticles();
     this.resize();
+  }
+
+  seedParticles() {
+    this.particles = [];
+    for (let i = 0; i < 86; i += 1) {
+      const wave = i < 38 ? MAIN : WAVES[(i - 38) % WAVES.length];
+      this.particles.push(this.makeParticle(wave, true));
+    }
+  }
+
+  /* Particles start on a wave and peel off it. They are not beads that sit on the
+     stroke — that is what made the last pass read as veins. */
+  makeParticle(wave, anywhere) {
+    const sign = Math.random() < 0.5 ? -1 : 1;
+    return {
+      wave,
+      u: anywhere ? U_MIN + Math.random() * (U_MAX - U_MIN)
+                  : U_MIN + 0.05 + Math.random() * (U_MAX - U_MIN - 0.10),
+      speed: 0.045 + Math.random() * 0.055 + (wave === MAIN ? 0.01 : 0),
+      off: (Math.random() - 0.5) * 0.012,
+      vo: sign * (0.07 + Math.random() * 0.16),
+      age: anywhere ? Math.random() * 0.9 : 0,
+      life: 0.55 + Math.random() * 0.85,
+      size: (wave === MAIN ? 1.05 : 0.65) + Math.random() * 1.25,
+    };
   }
 
   /* The canvas shares the stage box with the photograph, so it has to reproduce the same
@@ -166,51 +186,105 @@ export class HeroScreen {
     return p;
   }
 
+  waveV(s, u, t) {
+    return s.v + s.amp * Math.sin(Math.PI * 2 * (s.freq * u + s.phase + s.drift * t));
+  }
+
+  /* One continuous stroke per span, not a chain of round-capped segments.
+     Short round-capped pieces stacked into overlapping circles, which is why the
+     last pass still read as beads even after the filament count dropped. Width is
+     stepped in three spans so the far end still thins with the wall. */
+  strokeWave(s, t) {
+    const { ctx } = this;
+    const wallPx = Math.abs(this.fit.h);
+    const spans = [[0, 0.34], [0.34, 0.67], [0.67, 1]];
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    for (const [a, b] of spans) {
+      const midU = U_MIN + (U_MAX - U_MIN) * ((a + b) / 2);
+      const w = Math.max(0.7, (heightAt(midU) / 0.725) * wallPx * 0.014 * s.width);
+      const N = 28;
+      ctx.beginPath();
+      let started = false;
+      for (let i = 0; i <= N; i += 1) {
+        const u = U_MIN + (U_MAX - U_MIN) * (a + (b - a) * (i / N));
+        const h = heightAt(u);
+        const v = this.waveV(s, u, t);
+        if (v < 0.02 || v > 0.98) { started = false; continue; }
+        const [x, y] = this.px(u, topAt(u) + v * h);
+        if (!started) { ctx.moveTo(x, y); started = true; }
+        else ctx.lineTo(x, y);
+      }
+      if (!started) continue;
+
+      const fade = smooth(((a + b) / 2) / 0.10) * smooth((1 - (a + b) / 2) / 0.12);
+      const aGlow = s.glow * fade * this.intensity;
+      ctx.strokeStyle = GLOW + (aGlow * 0.38).toFixed(3) + ')';
+      ctx.lineWidth = w * 2.4;
+      ctx.stroke();
+      ctx.strokeStyle = CORE + (aGlow * 0.82).toFixed(3) + ')';
+      ctx.lineWidth = w;
+      ctx.stroke();
+    }
+  }
+
+  stepParticles(dt) {
+    for (let i = 0; i < this.particles.length; i += 1) {
+      const p = this.particles[i];
+      p.age += dt;
+      p.u += p.speed * dt;
+      p.off += p.vo * dt * (0.35 + p.age * 1.15);
+      if (p.u > U_MAX + 0.02 || p.age > p.life) {
+        this.particles[i] = this.makeParticle(p.wave, false);
+      }
+    }
+  }
+
+  drawParticles(t) {
+    const { ctx } = this;
+    const wallPx = Math.abs(this.fit.h);
+    ctx.globalCompositeOperation = 'lighter';
+
+    for (const p of this.particles) {
+      const h = heightAt(p.u);
+      if (h <= 0) continue;
+      const v = this.waveV(p.wave, p.u, t) + p.off;
+      if (v < 0.02 || v > 0.98) continue;
+
+      const fadeU = smooth((p.u - U_MIN) / 0.07) * smooth((U_MAX - p.u) / 0.05);
+      const fadeV = smooth(v / 0.10) * smooth((1 - v) / 0.10);
+      const life = 1 - (p.age / p.life);
+      const a = fadeU * fadeV * life * this.intensity;
+      if (a <= 0.02) continue;
+
+      const [x, y] = this.px(p.u, topAt(p.u) + v * h);
+      const r = Math.max(0.45, (h / 0.725) * wallPx * 0.0022 * p.size);
+
+      ctx.fillStyle = GLOW + (a * 0.38).toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(x, y, r * 2.8, 0, 6.2832); ctx.fill();
+      ctx.fillStyle = CORE + (a * 0.72).toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
+    }
+  }
+
   frame(t) {
     const { ctx } = this;
     if (!this.fit) this.resize();
     if (!this.fit) return;
     ctx.clearRect(0, 0, this.box.width, this.box.height);
     ctx.save();
-    /* Hard clip to the measured wall. Whatever the streams do, nothing reaches the
+    /* Hard clip to the measured wall. Whatever the waves do, nothing reaches the
        ceiling, the floor or the structures on the right. */
     ctx.clip(this.wallPath());
-    ctx.globalCompositeOperation = 'lighter';
 
-    const wallPx = Math.abs(this.fit.h);
-    /* Fine enough that the sprites overlap into a filament. Any coarser and the stream
-       reads as a string of beads, which is a different and much cheaper-looking thing. */
-    const step = 0.0016;
-
-    for (const s of STREAMS) {
-      for (let u = U_MIN; u <= U_MAX; u += step) {
-        const h = heightAt(u);
-        const v = s.v + s.amp * Math.sin(Math.PI * 2 * (s.freq * u + s.phase + s.drift * t));
-        if (v < 0.02 || v > 0.98) continue;
-
-        /* Fade at every boundary the eye could catch an edge on: the two ends of the wall
-           and the top and bottom of the band. */
-        const fadeU = smooth((u - U_MIN) / 0.09) * smooth((U_MAX - u) / 0.07);
-        const fadeV = smooth(v / 0.10) * smooth((1 - v) / 0.10);
-        let a = s.weight * fadeU * fadeV * this.intensity;
-        if (a <= 0.002) continue;
-
-        /* A brightness packet travelling along the stream is what makes it read as flow
-           rather than as a static dotted line. */
-        const packet = 0.45 + 0.55 * Math.pow(
-          Math.max(0, Math.sin(Math.PI * 2 * (u * 2.1 - s.drift * t * 3.4 + s.phase))), 3);
-        a *= packet;
-
-        const [x, y] = this.px(u, topAt(u) + v * h);
-        /* Size follows the wall, so the far end of the stream is finer than the near end. */
-        const r = Math.max(0.5, (h / 0.725) * wallPx * 0.0030);
-
-        ctx.fillStyle = GLOW + (a * 0.30).toFixed(3) + ')';
-        ctx.beginPath(); ctx.arc(x, y, r * 3.2, 0, 6.2832); ctx.fill();
-        ctx.fillStyle = CORE + (a * 0.52).toFixed(3) + ')';
-        ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
-      }
-    }
+    /* Lines are source-over so overlapping harmonics do not climb into a red mass.
+       Particles keep the additive blend so they read as light peeling off the current. */
+    ctx.globalCompositeOperation = 'source-over';
+    for (const s of WAVES) this.strokeWave(s, t);
+    this.strokeWave(MAIN, t);
+    if (this.running) this.stepParticles(this.dt);
+    this.drawParticles(t);
     ctx.restore();
 
     /* Taken out after the clip is released, so the falloff is free to reach past the wall
@@ -231,7 +305,8 @@ export class HeroScreen {
       if (!this.running) return;
       /* Time, not frame count, so a slow device runs the same motion more coarsely
          instead of running it in slow motion. */
-      this.t += Math.min(0.05, (now - this.last) / 1000);
+      this.dt = Math.min(0.05, (now - this.last) / 1000);
+      this.t += this.dt;
       this.last = now;
       this.frame(this.t);
       this.raf = requestAnimationFrame(loop);

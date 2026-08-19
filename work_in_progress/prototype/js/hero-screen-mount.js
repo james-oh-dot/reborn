@@ -6,7 +6,7 @@
  * -- when to run, when to stop, what to do about reduced motion -- is what changes.
  */
 
-import { HeroScreen } from './hero-screen.js';
+import { HeroScreen } from './hero-screen.js?v=11';
 
 const stage = document.querySelector('.home-hero .hero-stage');
 const canvas = stage?.querySelector('.hero-screen');
