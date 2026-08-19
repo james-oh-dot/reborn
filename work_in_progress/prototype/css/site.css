@@ -2009,3 +2009,27 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
   /* One card per row at the cap. Two would put a 15px name under a 165px picture. */
   .cap-rec{flex:1 1 100%}
 }
+
+/* ---------- CAPABILITY BAND — the rail is a head, not a column ----------
+   .cap-detail's first child sits at grid-column 1/4, the same rail every .section-head
+   on a subpage uses. A head rail holds an eyebrow and a title. This one was also holding
+   the body paragraph, the tag list and the practice list, and it is the only place on the
+   site that puts body copy in that rail -- #integrated, on this same page, puts its
+   body-large in the 5/13 field with a max-width, which is the pattern.
+
+   Measured, the rail was 350px at 1600 and 235px at 1100, running the claim sentence at
+   13 and 10.4 Korean characters a line against a comfortable 25-35. Meanwhile the 973px
+   field held 320px cards and 262-431px of nothing. Width was on the wrong side.
+
+   Widening the rail was tried and rejected: at 1/6 the measure recovers to 26 characters,
+   but the field then starts at 812px while every other section on the page starts its
+   content at 563px, and that break shows as soon as you scroll from CORE 03 into
+   INTEGRATED. Moving the copy into the field fixes the measure and keeps the rail on the
+   line the rest of the page uses.
+
+   DOM order is unchanged, so the stacked breakpoints keep the reading order they had, and
+   at 390 the column is narrower than the cap so a phone renders exactly as before. Between
+   about 600 and 1023, where .cap-detail is display:block across the full wrap, the cap does
+   now bind -- 512px of 727 at 767, 486px of 828 at 900 -- which pulls those from roughly 38
+   characters a line back to 27. That is the same correction, not a side effect to undo. */
+.cap-detail .body-large{max-width:46ch}
