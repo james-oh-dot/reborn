@@ -737,4 +737,8 @@ btns.forEach(b=>b.addEventListener('click',()=>{
   row.addEventListener('click',pick);
   row.addEventListener('focus',pick);
   row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}})});
- show(0)})})();
+/* Start on whichever row owns the layer that is already in the markup, so the first paint
+    and the first JS state agree. Falling back to row 0 would show a different certificate
+    than the one the HTML ships, which reads as a flicker on load. */
+ const start=Math.max(0,layers.indexOf(first));
+ show(start)})})();
