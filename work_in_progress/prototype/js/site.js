@@ -130,8 +130,23 @@ const update=()=>{ticking=false;
  const h=block.offsetHeight||1;const revealed=Math.max(0,Math.min(h,innerHeight-Math.max(0,main.getBoundingClientRect().bottom)));const p=revealed/h;block.style.setProperty('--reveal-dim',((1-p)*MAX).toFixed(3))};
 const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};
 addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);update()})();
+/* The drawer shell used to be authored into work.html and index.html, identically, and
+   nowhere else -- which is exactly why a capability link had to navigate to Work before it
+   could show anything. It is built here instead, so it exists on every page and there is
+   one copy of it rather than one per page that happens to want it. Nothing is lost with
+   JS off: an empty dialog in the markup was never useful on its own, and the links that
+   feed it are still ordinary hrefs that navigate. */
+(()=>{if(document.getElementById('project-drawer'))return;
+ const host=document.createElement('div');
+ host.innerHTML='<div class="drawer" id="project-drawer"><div class="drawer-scrim" data-drawer-close></div><aside class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title" tabindex="-1"><button class="drawer-close" type="button" data-drawer-close aria-label="닫기" data-alt-ko="닫기" data-alt-en="Close"><span aria-hidden="true">✕</span></button><div class="drawer-scroll"><div class="drawer-media"></div><div class="drawer-body"><div class="drawer-status meta"></div><h2 class="drawer-title" id="drawer-title"></h2><p class="drawer-class meta"></p><p class="drawer-summary"></p><div class="drawer-desc"></div><div class="drawer-extra"></div><div class="drawer-boundary"></div><p class="drawer-note meta" data-ko="KEYWORDS" data-en="KEYWORDS">KEYWORDS</p><div class="drawer-tags"></div></div></div></aside></div>';
+ document.body.appendChild(host.firstElementChild)})();
 (()=>{const drawer=document.getElementById('project-drawer');if(!drawer)return;
-const cards=[...document.querySelectorAll('.visual-card[data-project]')];if(!cards.length)return;
+const cards=[...document.querySelectorAll('.visual-card[data-project]')];
+const triggers=[...document.querySelectorAll('a[href*="work.html?project="]')];
+/* A shared ?project= URL has to open on whatever page it names, even one carrying
+   neither a card nor a link -- otherwise the address is only good on Work. */
+const deepKey=new URLSearchParams(location.search).get('project');
+if(!cards.length&&!triggers.length&&!deepKey)return;
 const panel=drawer.querySelector('.drawer-panel'),media=drawer.querySelector('.drawer-media'),
  elStatus=drawer.querySelector('.drawer-status'),elTitle=drawer.querySelector('.drawer-title'),
  elSummary=drawer.querySelector('.drawer-summary'),elTags=drawer.querySelector('.drawer-tags'),
@@ -351,7 +366,10 @@ const videoFigure=(spec,kind)=>{
  fig._tryAuto=()=>{if(canAuto())v.play().catch(()=>{})};
  return fig};
 let opener=null;
-const open=card=>{
+/* `from` is what focus goes back to on close. It defaults to the card because that is
+   what was clicked on Work and Home, but a borrowed card is a detached node -- focusing
+   it would silently do nothing -- so the capability link passes itself instead. */
+const open=(card,from)=>{
  const key=card.dataset.project;
  const img=card.querySelector('.progressive-image'),
        eyebrow=card.querySelector('.card-eyebrow'),
@@ -365,7 +383,10 @@ const open=card=>{
  if(pack&&pack.heroVideo){
   const fig=videoFigure(pack.heroVideo,'loop');media.appendChild(fig);
   requestAnimationFrame(()=>fig._tryAuto())}
- else if(img){const c=img.cloneNode(true);c.removeAttribute('data-parallax');c.style.removeProperty('transform');media.appendChild(c)}
+ else if(img){const c=img.cloneNode(true);c.removeAttribute('data-parallax');c.style.removeProperty('transform');media.appendChild(c);
+  /* A card lifted from the fetched page never rendered, so its blur-up was never armed
+     and the clone would sit on the blurred preview for good. Harmless to re-arm a local one. */
+  const full=c.querySelector('.progressive-image__full');if(full)armProgressive(full,c)}
  else{/* cards with no archive image carry a placeholder — carry it through, don't leave an empty box */
   const ph=card.querySelector('.card-media-empty');if(ph)media.appendChild(ph.cloneNode(true))}
  const d=DETAIL[key];
@@ -399,7 +420,7 @@ const open=card=>{
  elTags.replaceChildren();
  ((d&&d.keys)||[]).forEach(t=>{const s=document.createElement('span');s.textContent=t;elTags.appendChild(s)});
  elNote.hidden=!(d&&d.keys&&d.keys.length);
- scroll.scrollTop=0;opener=card;
+ scroll.scrollTop=0;opener=(from!==undefined)?from:card;
  drawer.classList.add('is-open');document.body.classList.add('drawer-open');
  panel.focus()};
 const close=()=>{if(!drawer.classList.contains('is-open'))return;
@@ -408,12 +429,49 @@ const close=()=>{if(!drawer.classList.contains('is-open'))return;
  elExtra.classList.remove('drawer-extra-stack');
  if(opener){opener.focus();opener=null}};
 cards.forEach(c=>c.addEventListener('click',e=>{e.preventDefault();open(c)}));
-/* Arriving from a capability link: ?project=<key> opens that card's drawer once the
-   page has settled, so the capabilities page can point at real evidence instead of
-   just naming it. Unknown keys are ignored rather than throwing. */
-(()=>{const key=new URLSearchParams(location.search).get('project');if(!key)return;
- const card=cards.find(c=>c.dataset.project===key);if(!card)return;
- const go=()=>setTimeout(()=>open(card),420);
+
+/* Opening from a page that has no cards.
+   open() reads the record off the card -- status, series, English name, title, blurb and
+   the hero image all live in the markup, and only the long-form copy lives in DETAIL.
+   Rather than copy those fields into a second place and let the two drift, the card is
+   borrowed from work.html, which stays the one source for them. So a drawer opened from
+   Capabilities shows exactly what Work shows, because it is the same node.
+   Cost is one fetch of a static same-origin page, once per page load, warmed on hover. */
+let deck=null;
+const fetchDeck=()=>deck||(deck=fetch('work.html',{credentials:'same-origin'})
+ .then(r=>{if(!r.ok)throw new Error(r.status);return r.text()})
+ .then(t=>new DOMParser().parseFromString(t,'text/html'))
+ .catch(e=>{deck=null;throw e}));
+const cardFor=key=>{
+ const local=cards.find(c=>c.dataset.project===key);
+ if(local)return Promise.resolve(local);
+ return fetchDeck().then(doc=>{
+  const found=doc.querySelector('.visual-card[data-project="'+CSS.escape(key)+'"]');
+  if(!found)throw new Error('no card for '+key);
+  const node=document.importNode(found,true);
+  /* Imported images were never in a rendered document, so alt text is still whatever
+     work.html ships and nothing has armed the blur-up. Fix both before open() clones it. */
+  node.querySelectorAll('[data-alt-ko]').forEach(im=>{
+   im.alt=lang()==='en'?im.dataset.altEn:im.dataset.altKo});
+  return node})};
+
+triggers.forEach(a=>{
+ const key=new URL(a.href,location.href).searchParams.get('project');
+ if(!key)return;
+ /* Warm the fetch on intent, so the click usually lands on an already-parsed document. */
+ const warm=()=>fetchDeck().catch(()=>{});
+ a.addEventListener('pointerenter',warm,{once:true});
+ a.addEventListener('focus',warm,{once:true});
+ a.addEventListener('click',e=>{
+  /* Leave the modified clicks alone -- cmd/ctrl/shift/middle still mean "new tab". */
+  if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+  e.preventDefault();
+  cardFor(key).then(c=>open(c,a)).catch(()=>{location.href=a.href})})});
+
+/* Arriving by URL: ?project=<key> opens that drawer once the page has settled. It works
+   on any page now, not just the one holding the cards, so the link can be shared. */
+(()=>{const key=deepKey;if(!key)return;
+ const go=()=>setTimeout(()=>cardFor(key).then(c=>open(c,null)).catch(()=>{}),420);
  if(document.readyState==='complete')go();else addEventListener('load',go,{once:true})})();
 drawer.querySelectorAll('[data-drawer-close]').forEach(b=>b.addEventListener('click',close));
 addEventListener('keydown',e=>{
