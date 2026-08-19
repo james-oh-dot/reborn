@@ -11,7 +11,7 @@
  * and scroll parallax — including the gate that keeps the copy column legible.
  */
 
-import { ParticleWave } from './particle-wave.js';
+import { ParticleWave } from './particle-wave.js?v=14';
 
 const host = document.querySelector('.page-hero .hero-field');
 const variation = document.body.dataset.field;

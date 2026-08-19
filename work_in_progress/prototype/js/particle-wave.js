@@ -205,7 +205,9 @@ export class ParticleWave {
     this.canvas = canvas;
     const variation = options.variation ? VARIATIONS[options.variation] : null;
     this.opts = { ...DEFAULTS, ...variation, ...options };
-    this.ctx = canvas.getContext('2d', { alpha: false });
+    /* Transparent is for overlaying a photograph: the subpage heroes paint an opaque
+       ground and sit under mix-blend-mode: screen. A photo cannot take that ground. */
+    this.ctx = canvas.getContext('2d', { alpha: !!this.opts.transparent });
     this.preset = PRESETS[this.opts.preset] || PRESETS.gold;
     this.tier = this.opts.quality === 'auto' ? 'high' : this.opts.quality;
     this.limits = { ...TIERS[this.tier] };
@@ -225,7 +227,10 @@ export class ParticleWave {
     this.build();
     this.resize();
     this.onResize = () => this.resize();
-    if (typeof addEventListener === 'function') addEventListener('resize', this.onResize);
+    /* `managed` means a host (the home wall) owns canvas size and the animation frame.
+       A second resize listener would fight that host and paint a full frame without the
+       wall clip. */
+    if (!this.opts.managed && typeof addEventListener === 'function') addEventListener('resize', this.onResize);
   }
 
   get strength() {
@@ -234,18 +239,24 @@ export class ParticleWave {
 
   /* ------------------------------------------------------------------ setup */
 
+  /** One curve, or every curve when the host asked for a composite. */
+  layerList() {
+    return this.opts.layers || [this.opts];
+  }
+
   build() {
     const random = mulberry32(this.opts.seed);
-    const { bands } = this.opts;
+    const layers = this.layerList();
     const { particles, grains, bokeh } = this.limits;
-    const pick = () => bands[Math.floor(random() * bands.length)];
+    const pick = (layer) => layer.bands[Math.floor(random() * layer.bands.length)];
+    const allBands = layers.flatMap((layer) => layer.bands);
 
     /* Two populations, because the reference has two. The grain is hard, tiny and very
        numerous — the glitter itself. The sparks are the soft haloed points sitting on top
        of it. One population tuned to the average of both lands on neither and reads as
        mush, which is what the first pass did. */
-    this.lo = bands[0] - 0.05;
-    this.span = bands[bands.length - 1] - this.lo + 0.09;
+    this.lo = Math.min(...allBands) - 0.05;
+    this.span = Math.max(...allBands) - this.lo + 0.09;
 
     /* Most of the grain never changes brightness, so drawing it as thirty thousand
        fillRects every frame pays for nothing: measured, it was 58ms of a 68ms frame. It is
@@ -259,8 +270,10 @@ export class ParticleWave {
          is what turned the first grain pass into nine stripes instead of a volume. */
       const offset = this.lo + random() * this.span;
       const u = random();
-      if (random() > this.opts.density(u, offset)) continue;
+      const layer = layers[Math.floor(random() * layers.length)];
+      if (random() > layer.density(u, offset)) continue;
       const speck = {
+        layer,
         u,
         band: offset,
         driftU: 1 + Math.floor(random() * 3),
@@ -279,23 +292,25 @@ export class ParticleWave {
 
     this.dots = [];
     for (let i = 0; i < particles; i += 1) {
-      const layer = i % 4;
+      const depth = i % 4;
+      const curve = layers[Math.floor(random() * layers.length)];
       const loose = random() < 0.34;
-      const band = pick();
+      const band = pick(curve);
       /* Three uniforms summed approximates a normal, which packs the sparks against their
          band rather than smearing them evenly across the gap. */
       const signed = random() + random() + random() - 1.5;
 
       this.dots.push({
+        layer: curve,
         u: random(),
         band,
         loose,
-        spread: signed * (0.018 + layer * 0.007),
+        spread: signed * (0.018 + depth * 0.007),
         drop: loose ? Math.pow(random(), 0.6) : 0,
         driftU: 1 + Math.floor(random() * 4),
         phase: random() * TAU,
         phaseB: random() * TAU,
-        size: 0.3 + Math.pow(random(), 1.9) * (layer === 3 ? 1.7 : 0.8),
+        size: 0.3 + Math.pow(random(), 1.9) * (depth === 3 ? 1.7 : 0.8),
         colour: Math.min(4, Math.floor(Math.pow(random(), 1.7) * 5)),
         alpha: 0.08 + Math.pow(random(), 1.5) * 0.5,
         twinkle: random() > 0.86,
@@ -326,6 +341,18 @@ export class ParticleWave {
   }
 
   resize() {
+    if (this.opts.managed) {
+      const width = this.canvas.width;
+      const height = this.canvas.height;
+      if (!width || !height) return;
+      if (width === this.width && height === this.height) return;
+      this.width = width;
+      this.height = height;
+      this.dpr = this.opts.hostDpr || this.dpr || 1;
+      this.scale = Math.min(width / 1600, height / 900) || 1;
+      this.buildSprites();
+      return;
+    }
     const rect = this.canvas.getBoundingClientRect();
     const dpr = Math.min(this.limits.dprCap, this.opts.maxDpr, (typeof devicePixelRatio === 'number' ? devicePixelRatio : 1) || 1);
     const width = Math.max(1, Math.round((rect.width || this.canvas.width) * dpr));
@@ -370,36 +397,42 @@ export class ParticleWave {
 
   /* -------------------------------------------------------------- geometry */
 
-  waveAt(u, t) {
-    return (
-      splineAt(this.opts.wave, u) +
+  /** Field (u, yNorm) → canvas pixels. Subpages are a rectangle; the home wall
+   *  supplies a perspective `project` so the same ribbons sit on the screen. */
+  xy(u, yNorm) {
+    if (this.opts.project) return this.opts.project(u, yNorm);
+    return [u * this.width, yNorm * this.height];
+  }
+
+  waveAt(u, t, layer = this.opts) {
+    const y =
+      splineAt(layer.wave, u) +
       Math.sin(u * 4.1 + t * TAU) * this.opts.swell +
       Math.sin(u * 9.3 - t * TAU * 2) * this.opts.swell * 0.44 +
-      Math.sin(u * 15.7 + t * TAU * 3 + 1.2) * this.opts.swell * 0.19
-    );
+      Math.sin(u * 15.7 + t * TAU * 3 + 1.2) * this.opts.swell * 0.19;
+    return layer.invertY ? 1 - y : y;
   }
 
   /** How wide the ribbon stack opens at each point along the curve. Pinching it somewhere
    *  is what gives the sheets their twist instead of leaving them as parallel copies, and
    *  where it pinches is most of what separates one variation from the next. */
-  bandScale(u) {
-    return this.opts.bandScale(u);
+  bandScale(u, layer = this.opts) {
+    return layer.bandScale(u);
   }
 
-  ribbonPath(ctx, band, t, thickness) {
-    const { width: W, height: H } = this;
+  ribbonPath(ctx, band, t, thickness, layer = this.opts) {
     const steps = 96;
     ctx.beginPath();
     for (let i = 0; i <= steps; i += 1) {
       const u = i / steps;
-      const y = (this.waveAt(u, t) + band * this.bandScale(u)) * H;
-      if (i === 0) ctx.moveTo(u * W, y);
-      else ctx.lineTo(u * W, y);
+      const [x, y] = this.xy(u, this.waveAt(u, t, layer) + band * this.bandScale(u, layer));
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
     }
     for (let i = steps; i >= 0; i -= 1) {
       const u = i / steps;
-      const y = (this.waveAt(u, t) + (band + thickness) * this.bandScale(u)) * H;
-      ctx.lineTo(u * W, y);
+      const [x, y] = this.xy(u, this.waveAt(u, t, layer) + (band + thickness) * this.bandScale(u, layer));
+      ctx.lineTo(x, y);
     }
     ctx.closePath();
   }
@@ -442,33 +475,38 @@ export class ParticleWave {
 
   /** Warp the baked strip onto the wave. Each column carries the local slope as a shear,
    *  so the sheet follows the curve instead of stair-stepping across it. */
-  paintBaked(t) {
+  paintBaked(t, layer = this.opts, weight = 1) {
     if (!this.strip) return;
-    const { ctx, width: W, height: H } = this;
+    const { ctx } = this;
     const cols = this.limits.columns;
-    const colW = W / cols;
     const scroll = t;
     const sw = this.stripW / cols;
 
     ctx.globalCompositeOperation = 'lighter';
-    ctx.globalAlpha = this.strength;
+    ctx.globalAlpha = this.strength * weight;
     for (let i = 0; i < cols; i += 1) {
       const u0 = i / cols;
       const u1 = (i + 1) / cols;
-      const scale0 = this.bandScale(u0);
-      const y0 = (this.waveAt(u0, t) + this.lo * scale0) * H;
-      const y1 = (this.waveAt(u1, t) + this.lo * this.bandScale(u1)) * H;
-      const dh = this.span * scale0 * H;
+      const scale0 = this.bandScale(u0, layer);
+      const yTop = this.waveAt(u0, t, layer) + this.lo * scale0;
+      const yTop1 = this.waveAt(u1, t, layer) + this.lo * this.bandScale(u1, layer);
+      const yBot = yTop + this.span * scale0;
+      const [dx, y0] = this.xy(u0, yTop);
+      const [x1, y1] = this.xy(u1, yTop1);
+      const [, pb] = this.xy(u0, yBot);
+      const colW = x1 - dx;
+      const dh = pb - y0;
+      if (colW <= 0 || !dh) continue;
       const slope = (y1 - y0) / colW;
-      const dx = u0 * W;
       const sx = ((u0 + scroll) % 1) * this.stripW;
 
+      ctx.save();
       ctx.setTransform(1, slope, 0, 1, 0, 0);
       /* +1 on the destination width closes the hairline seam that rounding leaves
          between adjacent columns. */
       ctx.drawImage(this.strip, sx, 0, sw, 512, dx, y0 - slope * dx, colW + 1, dh);
+      ctx.restore();
     }
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalAlpha = 1;
   }
 
@@ -543,33 +581,37 @@ export class ParticleWave {
     ctx.stroke();
   }
 
-  paintRibbons(t) {
-    const { ctx, width: W } = this;
-    const strength = this.strength;
+  paintRibbons(t, layer = this.opts, weight = 1) {
+    const { ctx } = this;
+    const strength = this.strength * weight;
+    const [gx0] = this.xy(0, 0.5);
+    const [gx1] = this.xy(1, 0.5);
     ctx.globalCompositeOperation = 'lighter';
 
-    this.opts.bands.forEach((band, index) => {
+    layer.bands.forEach((band, index) => {
       const nearCrest = 1 - Math.min(1, Math.abs(band) / 0.13);
       const thickness = 0.02 + nearCrest * 0.05;
       const breathe = 0.72 + 0.28 * Math.sin(t * TAU + index * 0.7);
       const alpha = (0.035 + nearCrest * 0.115) * breathe * strength;
 
-      const wash = ctx.createLinearGradient(0, 0, W, 0);
+      const wash = ctx.createLinearGradient(gx0, 0, gx1, 0);
       wash.addColorStop(0, this.fade(this.preset.particles[1], 0));
       wash.addColorStop(0.2, this.fade(this.preset.particles[2], alpha * 0.7));
       wash.addColorStop(0.52, this.fade(this.preset.particles[3], alpha));
       wash.addColorStop(0.84, this.fade(this.preset.particles[2], alpha * 0.8));
       wash.addColorStop(1, this.fade(this.preset.particles[1], 0));
 
-      this.ribbonPath(ctx, band, t, thickness);
+      this.ribbonPath(ctx, band, t, thickness, layer);
       ctx.fillStyle = wash;
       ctx.fill();
     });
   }
 
-  paintCore(t) {
-    const { ctx, width: W, height: H } = this;
-    const strength = this.strength * this.opts.coreScale;
+  paintCore(t, layer = this.opts, weight = 1) {
+    const { ctx } = this;
+    const strength = this.strength * this.opts.coreScale * weight;
+    const [gx0] = this.xy(0, 0.5);
+    const [gx1] = this.xy(1, 0.5);
     ctx.globalCompositeOperation = 'lighter';
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
@@ -579,15 +621,15 @@ export class ParticleWave {
       const steps = 128;
       for (let i = 0; i <= steps; i += 1) {
         const u = i / steps;
-        const y = (this.waveAt(u, t + phase) + band * this.bandScale(u)) * H;
-        if (i === 0) ctx.moveTo(u * W, y);
-        else ctx.lineTo(u * W, y);
+        const [x, y] = this.xy(u, this.waveAt(u, t + phase, layer) + band * this.bandScale(u, layer));
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       }
     };
 
     /* A crest of even brightness end to end reads as a drawn wire. Gating it along its
        length is what makes it read as light travelling through the material. */
-    const veil = ctx.createLinearGradient(0, 0, W, 0);
+    const veil = ctx.createLinearGradient(gx0, 0, gx1, 0);
     veil.addColorStop(0, 'rgba(255,255,255,.15)');
     veil.addColorStop(0.16, 'rgba(255,255,255,.62)');
     veil.addColorStop(0.38, 'rgba(255,255,255,.95)');
@@ -619,9 +661,11 @@ export class ParticleWave {
     /* A travelling brightening along the crest, so the light reads as moving through the
        material rather than the whole line pulsing at once. */
     const head = (t * 2) % 1;
+    const [hx0] = this.xy(head - 0.26, 0.5);
+    const [hx1] = this.xy(head + 0.26, 0.5);
     ctx.save();
     ctx.beginPath();
-    const sweep = ctx.createLinearGradient((head - 0.26) * W, 0, (head + 0.26) * W, 0);
+    const sweep = ctx.createLinearGradient(hx0, 0, hx1, 0);
     sweep.addColorStop(0, this.fade(this.preset.core, 0));
     sweep.addColorStop(0.5, this.fade(this.preset.core, 0.42 * strength));
     sweep.addColorStop(1, this.fade(this.preset.core, 0));
@@ -635,20 +679,21 @@ export class ParticleWave {
   /** The twinkling minority, on top of the baked strip. fillRect at 1-2px with
    *  globalAlpha per particle: no sprite, no arc, no per-particle fillStyle string. */
   paintGrain(t) {
-    const { ctx, width: W, height: H } = this;
+    const { ctx, height: H } = this;
     const strength = this.strength;
     const colours = this.preset.particles;
     ctx.globalCompositeOperation = 'lighter';
     let current = -1;
 
     for (const g of this.grain) {
+      const layer = g.layer || this.opts;
       const u = (g.u + t * g.driftU) % 1;
-      const y = this.waveAt(u, t) + g.band * this.bandScale(u) + Math.sin(t * TAU * 2 + g.phase) * 0.004;
-      const py = y * H;
+      const y = this.waveAt(u, t, layer) + g.band * this.bandScale(u, layer) + Math.sin(t * TAU * 2 + g.phase) * 0.004;
+      const [x, py] = this.xy(u, y);
       if (py < 0 || py > H) continue;
 
       const shimmer = Math.pow(0.5 + 0.5 * Math.sin(t * TAU * 3 + g.phase), 4);
-      const alpha = g.alpha * shimmer * strength;
+      const alpha = g.alpha * shimmer * strength * (layer.weight ?? 1);
       if (alpha < 0.02) continue;
 
       if (g.colour !== current) {
@@ -657,27 +702,28 @@ export class ParticleWave {
       }
       ctx.globalAlpha = alpha > 1 ? 1 : alpha;
       const s = g.size * (this.scale > 1 ? this.scale : 1);
-      ctx.fillRect(u * W, py, s, s);
+      ctx.fillRect(x, py, s, s);
     }
     ctx.globalAlpha = 1;
   }
 
   paintDots(t) {
-    const { ctx, width: W, height: H } = this;
+    const { ctx, height: H } = this;
     const strength = this.strength;
     const colours = this.preset.particles;
     ctx.globalCompositeOperation = 'lighter';
 
     for (const dot of this.dots) {
+      const layer = dot.layer || this.opts;
       /* driftU is a whole number of traversals per loop, so the flow never jumps at wrap. */
       const u = (dot.u + t * dot.driftU) % 1;
-      const base = this.waveAt(u, t);
+      const base = this.waveAt(u, t, layer);
       const y = dot.loose
         ? base + dot.spread * 3.4 + dot.drop * 0.3 + Math.sin(t * TAU + dot.phase) * 0.012
-        : base + (dot.band + dot.spread) * this.bandScale(u) + Math.sin(t * TAU * 2 + dot.phaseB) * 0.006;
+        : base + (dot.band + dot.spread) * this.bandScale(u, layer) + Math.sin(t * TAU * 2 + dot.phaseB) * 0.006;
 
-      const x = u * W + Math.sin(t * TAU + dot.phase) * 9 * this.scale;
-      const py = y * H;
+      const [x0, py] = this.xy(u, y);
+      const x = x0 + Math.sin(t * TAU + dot.phase) * 9 * this.scale;
       if (py < -30 || py > H + 30) continue;
 
       /* Brightest where the crest is brightest, so the glitter and the light agree. */
@@ -685,7 +731,7 @@ export class ParticleWave {
       const shimmer = dot.twinkle
         ? Math.pow(0.5 + 0.5 * Math.sin(t * TAU * 3 + dot.phase), 3)
         : 0.62 + 0.38 * Math.sin(t * TAU * 2 + dot.phaseB);
-      const alpha = clamp(dot.alpha * along * shimmer * (dot.loose ? 0.5 : 1) * strength, 0, 1);
+      const alpha = clamp(dot.alpha * along * shimmer * (dot.loose ? 0.5 : 1) * strength * (layer.weight ?? 1), 0, 1);
       if (alpha < 0.012) continue;
 
       const sprite = this.sprites.get(colours[dot.colour]);
@@ -710,22 +756,21 @@ export class ParticleWave {
     ctx.globalAlpha = 1;
   }
 
-  paintFlares(t) {
-    const { ctx, width: W, height: H } = this;
+  paintFlares(t, layer = this.opts, weight = 1) {
+    const { ctx } = this;
     const sprite = this.sprites.get(this.preset.core);
     ctx.globalCompositeOperation = 'lighter';
     for (const flare of this.flares) {
       const u = (flare.u + t) % 1;
       const pulse = Math.pow(0.5 + 0.5 * Math.sin(t * TAU * 2 + flare.phase), 6);
       if (pulse < 0.02) continue;
-      const x = u * W;
-      const y = (this.waveAt(u, t) + flare.band * this.bandScale(u)) * H;
+      const [x, y] = this.xy(u, this.waveAt(u, t, layer) + flare.band * this.bandScale(u, layer));
       const r = flare.size * this.scale * 9;
-      ctx.globalAlpha = clamp(pulse * 0.55 * this.strength, 0, 1);
+      ctx.globalAlpha = clamp(pulse * 0.55 * this.strength * weight, 0, 1);
       ctx.drawImage(sprite.canvas, x - r, y - r, r * 2, r * 2);
 
       /* The cross flare is what sells a highlight as a point of light rather than a blob. */
-      ctx.strokeStyle = this.fade(this.preset.core, pulse * 0.3 * this.strength);
+      ctx.strokeStyle = this.fade(this.preset.core, pulse * 0.3 * this.strength * weight);
       ctx.lineWidth = 1 * this.scale;
       ctx.beginPath();
       ctx.moveTo(x - r * 1.7, y); ctx.lineTo(x + r * 1.7, y);
@@ -740,15 +785,34 @@ export class ParticleWave {
   /** Render one frame. `t` is loop position in 0..1 — pass it explicitly to capture. */
   frame(t) {
     this.t = t;
-    this.paintGround();
-    this.paintMotes(t);
-    this.paintRibbons(t);
-    this.paintBaked(t);
-    this.paintGrain(t);
-    this.paintDots(t);
-    this.paintCore(t);
-    this.paintFlares(t);
-    this.paintShelf(t);
+    if (!this.opts.leaveClear) {
+      if (this.opts.transparent) this.ctx.clearRect(0, 0, this.width, this.height);
+      else this.paintGround();
+    }
+    if (!this.opts.transparent) this.paintMotes(t);
+    const layers = this.opts.layers;
+    if (layers) {
+      /* Ribbons and crests carry the four identities. Glitter is baked once onto the
+         primary curve — warping the strip four times packed the wall into mush and
+         brought the vein look back. Dots still scatter across every layer. */
+      layers.forEach((layer, index) => {
+        const weight = layer.weight ?? 1;
+        this.paintRibbons(t, layer, weight);
+        if (index === 0) this.paintBaked(t, layer, weight);
+      });
+      this.paintGrain(t);
+      this.paintDots(t);
+      layers.forEach((layer) => this.paintCore(t, layer, layer.weight ?? 1));
+      this.paintFlares(t, layers[0], layers[0].weight ?? 1);
+    } else {
+      this.paintRibbons(t);
+      this.paintBaked(t);
+      this.paintGrain(t);
+      this.paintDots(t);
+      this.paintCore(t);
+      this.paintFlares(t);
+    }
+    if (!this.opts.transparent) this.paintShelf(t);
     this.ctx.globalCompositeOperation = 'source-over';
   }
 
