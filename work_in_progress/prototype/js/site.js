@@ -140,6 +140,16 @@ addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onS
  const host=document.createElement('div');
  host.innerHTML='<div class="drawer" id="project-drawer"><div class="drawer-scrim" data-drawer-close></div><aside class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title" tabindex="-1"><button class="drawer-close" type="button" data-drawer-close aria-label="닫기" data-alt-ko="닫기" data-alt-en="Close"><span aria-hidden="true">✕</span></button><div class="drawer-scroll"><div class="drawer-media"></div><div class="drawer-body"><div class="drawer-status meta"></div><h2 class="drawer-title" id="drawer-title"></h2><p class="drawer-class meta"></p><p class="drawer-summary"></p><div class="drawer-desc"></div><div class="drawer-extra"></div><div class="drawer-boundary"></div><p class="drawer-note meta" data-ko="KEYWORDS" data-en="KEYWORDS">KEYWORDS</p><div class="drawer-tags"></div></div></div></aside></div>';
  document.body.appendChild(host.firstElementChild)})();
+/* Shared by the drawer and the proof gallery, so they live at file scope rather than
+   inside whichever module happened to need them first. armProgressive is the image
+   pipeline's own helper -- any module that builds a progressive-image has to arm it,
+   or the layer sits on its blurred preview for good. */
+const lang=()=>document.documentElement.lang==='en'?'en':'ko';
+const armProgressive=(img,box)=>{
+ const host=()=>box||img.closest('[data-progressive]');
+ const go=()=>host()?.classList.add('is-ready');
+ if(img.complete&&img.naturalWidth>0)go();
+ else{img.addEventListener('load',go,{once:true});img.addEventListener('error',go,{once:true})}};
 (()=>{const drawer=document.getElementById('project-drawer');if(!drawer)return;
 const cards=[...document.querySelectorAll('.visual-card[data-project]')];
 const triggers=[...document.querySelectorAll('a[href*="work.html?project="]')];
@@ -302,15 +312,9 @@ const MEDIA={
    poster:'../assets/projects/ktv/screen-visual-loop.poster.webp',
    cap:['INDOOR EXPERIENCE · SPATIAL RECORD','INDOOR EXPERIENCE · SPATIAL RECORD']},
   still:['projects/ktv/panorama-entry','360도 파노라마가 적용된 실내 체험 공간','An indoor experience space with a 360° panorama']}};
-const lang=()=>document.documentElement.lang==='en'?'en':'ko';
 const bi=(el,ko,en)=>{el.dataset.ko=ko;el.dataset.en=en;el.textContent=lang()==='en'?en:ko};
 const reduceMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 const stopDrawerVideos=()=>drawer.querySelectorAll('video').forEach(v=>{v.pause();try{v.currentTime=0}catch{}});
-const armProgressive=(img,box)=>{
- const host=()=>box||img.closest('[data-progressive]');
- const go=()=>host()?.classList.add('is-ready');
- if(img.complete&&img.naturalWidth>0)go();
- else{img.addEventListener('load',go,{once:true});img.addEventListener('error',go,{once:true})}};
 const stillFigure=(base,ako,aen)=>{
  const fig=document.createElement('figure');fig.className='drawer-still';
  const w=document.createElement('span');w.className='progressive-image';w.setAttribute('data-progressive','');
@@ -691,3 +695,46 @@ btns.forEach(b=>b.addEventListener('click',()=>{
   if(!e.target.closest('.pending-row')){rows.forEach(r=>r.classList.remove('is-touched'));hide()}},{passive:true});
  /* Language can flip while a toast is up. */
  document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',hide))})();
+/* Proof gallery: the credential row you attend to shows its certificate.
+   Hover is not enough on its own -- a touch screen has no hover, and iOS fakes one on the
+   first tap, which would make the scan appear only after a tap that looks like it did
+   nothing. So the row is driven by pointerenter for a real pointer, click for everything
+   else, and focus so it is reachable from the keyboard; a row that owns a scan becomes
+   focusable and announces itself. Sticky by design -- see the note in site.css. */
+(()=>{document.querySelectorAll('.proof-list').forEach(list=>{
+ const feature=list.querySelector('.proof-feature');
+ const rows=[...list.querySelectorAll('.proof-row[data-shot]')];
+ if(!feature||!rows.length)return;
+ const first=feature.querySelector('.progressive-image');
+ /* The layer already in the markup belongs to whichever row names that same shot, so it is
+    claimed rather than duplicated -- otherwise the default certificate would load twice. */
+ const inMarkup=first&&first.querySelector('.progressive-image__full')?.getAttribute('src')||'';
+ const layerFor=row=>{
+  const base=row.dataset.shot;
+  if(first&&inMarkup.includes(base+'.webp'))
+   {if(!first.dataset.shot)first.dataset.shot=base;if(first.dataset.shot===base)return first}
+  let found=[...feature.querySelectorAll('.progressive-image')].find(l=>l.dataset.shot===base);
+  if(found)return found;
+  const w=document.createElement('span');w.className='progressive-image';
+  w.setAttribute('data-progressive','');w.dataset.shot=base;
+  const mk=(cls,src,alt)=>{const im=document.createElement('img');im.className=cls;im.src=src;
+   im.alt=alt;im.draggable=false;im.loading='eager';im.decoding='async';return im};
+  const pv=mk('progressive-image__preview','../assets/'+base+'.preview.webp','');
+  pv.setAttribute('aria-hidden','true');
+  const ako=row.dataset.shotKo||'',aen=row.dataset.shotEn||ako;
+  const full=mk('progressive-image__full','../assets/'+base+'.webp',lang()==='en'?aen:ako);
+  full.dataset.altKo=ako;full.dataset.altEn=aen;
+  w.append(pv,full);feature.appendChild(w);armProgressive(full,w);
+  return w};
+ const layers=rows.map(layerFor);
+ const show=i=>{layers.forEach((l,n)=>l.classList.toggle('is-shown',n===i));
+  rows.forEach((r,n)=>{const on=n===i;r.classList.toggle('is-shown',on);
+   r.setAttribute('aria-pressed',String(on))})};
+ rows.forEach((row,i)=>{
+  row.tabIndex=0;row.setAttribute('role','button');row.setAttribute('aria-pressed','false');
+  const pick=()=>show(i);
+  row.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')pick()});
+  row.addEventListener('click',pick);
+  row.addEventListener('focus',pick);
+  row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}})});
+ show(0)})})();

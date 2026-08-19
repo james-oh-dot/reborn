@@ -2039,3 +2039,47 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
    now bind -- 512px of 727 at 767, 486px of 828 at 900 -- which pulls those from roughly 38
    characters a line back to 27. That is the same correction, not a side effect to undo. */
 .cap-detail .body-large{max-width:46ch}
+
+/* ---------- PROOF GALLERY — the credential list drives the certificate beside it ----------
+   The feature held one certificate and the rows beside it named five, so four of them had
+   nothing to look at. A row that owns a scan now carries data-shot and putting attention on
+   it brings that scan up: hover on a mouse, tap on a touch screen, focus on a keyboard.
+
+   The swap is sticky -- the last one asked for stays. Reverting on mouse-leave flickers when
+   the pointer crosses between rows, and on a touch screen there is no leave event at all, so
+   sticky is the only behaviour that is the same on both.
+
+   Layers rather than a src swap: each shot is its own progressive-image stacked in the frame
+   and crossfaded, so a certificate never blinks through white while the next one decodes.
+   js/site.js builds every layer but the first, which stays in the markup so the section still
+   shows something with no JS. */
+/* A4, because that is what the scans are, so a certificate fills the frame instead of
+   floating in it. The width is capped as well: the feature owns half the row, and a
+   portrait frame given 736px of it renders a certificate over a thousand pixels tall and
+   leaves the section standing on empty space. 420 is about as large as a document wants
+   to be read at here. The paddings the old auto-height box carried are dropped -- the
+   ratio governs the shape now, and the cap leaves the gutter the padding used to fake. */
+.proof-feature{position:relative;width:min(100%,420px);aspect-ratio:1/1.414;padding:0}
+.proof-feature .progressive-image{position:absolute;inset:0;opacity:0;
+  transition:opacity .38s var(--ease)}
+.proof-feature .progressive-image.is-shown{opacity:1}
+/* A certificate is a document -- it may never be cropped, so this frame is the one place that
+   overrides the pipeline's cover default. The frame is close to the scans' own proportion, so
+   the letterbox it leaves is a few pixels rather than a band. */
+.proof-feature .progressive-image__preview,
+.proof-feature .progressive-image__full{object-fit:contain}
+.proof-row[data-shot]{cursor:pointer;transition:color .22s var(--ease)}
+.proof-row[data-shot]:hover,.proof-row[data-shot]:focus-visible{color:var(--link-accent)}
+.proof-row[data-shot]:focus-visible{outline:2px solid var(--brand-soft);outline-offset:6px}
+/* The marker sits in the year column's own gutter, so turning it on moves nothing. */
+.proof-row[data-shot]{position:relative}
+.proof-row[data-shot]::before{content:"";position:absolute;left:-3px;top:calc(50% - 5px);
+  width:5px;height:10px;background:var(--link-accent);opacity:0;transition:opacity .28s var(--ease)}
+.proof-row.is-shown::before{opacity:1}
+@media(max-width:1023px){
+  /* No left gutter to sit in once the rail collapses, so the marker moves under the year. */
+  .proof-row[data-shot]::before{left:0;top:auto;bottom:6px;width:18px;height:2px}
+}
+@media(prefers-reduced-motion:reduce){
+  .proof-feature .progressive-image,.proof-row[data-shot]::before{transition:none}
+}
