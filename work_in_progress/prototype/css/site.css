@@ -1649,10 +1649,14 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
   height:0;pointer-events:none;user-select:none}
 .section-star svg{
   width:100px;height:100px;overflow:visible;stroke-width:4;
-  /* Dropped halfway into the section's bottom padding -- the star adds no height of
-     its own, so it lands in the empty run below the content without moving anything.
-     Rotation comes from js/site.js. */
-  transform:translateY(calc(var(--space) / 2)) rotate(var(--star-rot,0deg));
+  /* The star adds no height of its own, so it lands in the empty run between two
+     sections without moving anything. How far down is measured in js/site.js and
+     written here as --star-drop: the gap is the two sections' facing paddings, and
+     the mark's own height has to come out of the centring. The fallback is the
+     correct value for the standard subpage rhythm (--space on both faces, 100px
+     glyph) and is only ever painted if that script does not run -- which cannot
+     happen, since the same script is what injects the mark. */
+  transform:translateY(var(--star-drop,calc(var(--space) - 50px))) rotate(var(--star-rot,0deg));
   color:currentColor;opacity:.42}
 .on-dark .section-star svg,.dark .section-star svg,.graphite .section-star svg{opacity:.38}
 @media(max-width:767px){
@@ -1661,7 +1665,7 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
   .section-star svg{width:72px;height:72px}
 }
 @media(prefers-reduced-motion:reduce){
-  .section-star svg{transform:translateY(calc(var(--space) / 2))}
+  .section-star svg{transform:translateY(var(--star-drop,calc(var(--space) - 50px)))}
 }
 
 /* CTA press state -----------------------------------------------------------------

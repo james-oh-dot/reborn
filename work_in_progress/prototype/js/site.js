@@ -518,20 +518,40 @@ btns.forEach(b=>b.addEventListener('click',()=>{
      takes that section's own ink, and CSS drops it into the middle of the padding
      below the content, which is the empty half of the gap. */
   s.appendChild(d);
-  stars.push(d)});
- if(!stars.length||reduce)return;
+  stars.push({el:d,svg:d.firstChild,prev:s,next})});
+ if(!stars.length)return;
+ /* Centre the mark in the gap, measured rather than assumed. The CSS used to drop it
+    by half of --space, which is right only if the gap is one --space and the mark has
+    no height. Neither holds. On a subpage every section carries --space on both faces,
+    so the gap is two of them -- at 1600 that is 640px, and the mark's centre was
+    landing at 210, a clear 110px high. Home fails the other way: .home-sco has zero
+    padding and its content starts at its own top edge, so the gap is one 190px padding
+    and the mark was sitting 20px past the boundary, on top of the incoming section.
+    One measured centre fixes both, and survives any section that does not use the
+    standard rhythm. */
+ const place=()=>stars.forEach(t=>{
+  const top=t.el.getBoundingClientRect().top;
+  const bottom=t.prev.getBoundingClientRect().bottom+parseFloat(getComputedStyle(t.next).paddingTop);
+  /* Computed height, not the rect: the glyph is rotated, and a rotated square reports
+     a bounding box up to 1.41x its own side. */
+  const h=parseFloat(getComputedStyle(t.svg).height);
+  t.svg.style.setProperty('--star-drop',(((bottom-top)-h)/2).toFixed(1)+'px')});
+ /* Runs whether or not motion is allowed -- the centring is placement, not animation,
+    and the reduced-motion path returns before the scroll wiring below. */
+ place();addEventListener('resize',place,{passive:true});
+ if(reduce)return;
  /* Written straight from the scroll handler rather than batched through rAF. The
     batched version latched: the first frame ran, and if a later rAF did not fire the
     in-flight flag stayed set and every subsequent scroll was dropped, leaving the mark
     frozen at whatever angle it happened to hold. Four rect reads on a passive listener
     is cheap enough that the batching bought nothing worth that failure mode. */
  const update=()=>{const vh=innerHeight;
-  stars.forEach(d=>{const r=d.getBoundingClientRect();
+  stars.forEach(t=>{const r=t.el.getBoundingClientRect();
    if(r.bottom<-200||r.top>vh+200)return;
    /* Measured across the whole pass -- well above the viewport to well below -- so the
       turn is steady, not a spin that only happens while the mark is dead centre. */
    const p=((vh/2)-r.top)/vh;
-   d.firstChild.style.setProperty('--star-rot',(p*180).toFixed(1)+'deg')})};
+   t.svg.style.setProperty('--star-rot',(p*180).toFixed(1)+'deg')})};
  addEventListener('scroll',update,{passive:true});
  addEventListener('resize',update,{passive:true});update()})();
 /* Let a CTA confirm before it leaves. Routing on the raw click gave no acknowledgement
