@@ -54,7 +54,7 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .dna-star svg{width:1em;height:1em;display:block}
 
 /* work cards and media */
-.section-head{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:22px;border-bottom:1px solid currentColor;margin-bottom:clamp(52px,6vw,90px)}.section-head small{opacity:.55}.lead-work{display:grid;grid-template-columns:7fr 4fr;gap:clamp(28px,5vw,84px);align-items:end}.media{overflow:hidden;background:#17191b}.media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}.media:hover img{transform:scale(1.015)}.lead-work .media{height:min(62vw,720px)}.work-info h3{font-size:clamp(40px,4.8vw,76px);line-height:1.02;letter-spacing:-.04em;margin:20px 0}.work-info p{color:var(--muted-l);max-width:530px}.secondary-work{display:grid;grid-template-columns:4fr 6fr;gap:clamp(28px,5vw,84px);align-items:center;margin-top:clamp(100px,13vw,190px)}.secondary-work .media{height:min(45vw,560px)}.editorial-cases{display:grid;grid-template-columns:1fr 1fr;margin-top:clamp(100px,12vw,170px);border-top:1px solid var(--line-l)}.editorial-case{padding:44px 7vw 60px 0;border-bottom:1px solid var(--line-l)}.editorial-case:nth-child(even){padding-left:4vw;border-left:1px solid var(--line-l)}.editorial-case h3{font-size:clamp(30px,3vw,48px);margin:18px 0}.editorial-case .thumb{height:230px;margin-bottom:30px}.editorial-case .thumb img{object-fit:contain;background:#e8e7e2}.proof-list{display:grid;grid-template-columns:5fr 7fr;border-top:1px solid var(--line-l)}.proof-feature{padding:50px 5vw 50px 0}.proof-feature img{width:100%;max-height:540px;object-fit:contain;filter:saturate(.35)}.proof-rows{border-left:1px solid var(--line-l)}.proof-row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:24px;padding:30px 0 30px 4vw;border-bottom:1px solid var(--line-l)}.proof-row h3{margin:0;font-size:20px}.proof-row p{margin:8px 0 0;color:var(--muted-l)}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:22px;border-bottom:1px solid currentColor;margin-bottom:clamp(52px,6vw,90px)}.section-head small{opacity:.55}.lead-work{display:grid;grid-template-columns:7fr 4fr;gap:clamp(28px,5vw,84px);align-items:end}.media{overflow:hidden;background:#17191b}.media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}.media:hover img{transform:scale(1.015)}.lead-work .media{height:min(62vw,720px)}.work-info h3{font-size:clamp(40px,4.8vw,76px);line-height:1.02;letter-spacing:-.04em;margin:20px 0}.work-info p{color:var(--muted-l);max-width:530px}.secondary-work{display:grid;grid-template-columns:4fr 6fr;gap:clamp(28px,5vw,84px);align-items:center;margin-top:clamp(100px,13vw,190px)}.secondary-work .media{height:min(45vw,560px)}.editorial-cases{display:grid;grid-template-columns:1fr 1fr;margin-top:clamp(100px,12vw,170px);border-top:1px solid var(--line-l)}.editorial-case{padding:44px 7vw 60px 0;border-bottom:1px solid var(--line-l)}.editorial-case:nth-child(even){padding-left:4vw;border-left:1px solid var(--line-l)}.editorial-case h3{font-size:clamp(30px,3vw,48px);margin:18px 0}.editorial-case .thumb{height:230px;margin-bottom:30px}.editorial-case .thumb img{object-fit:contain;background:#e8e7e2}.proof-list{display:grid;grid-template-columns:5fr 7fr;border-top:1px solid var(--line-l)}.proof-feature{padding:50px 5vw 50px 0}.proof-feature img{width:100%;object-fit:contain;filter:saturate(.35)}.proof-rows{border-left:1px solid var(--line-l)}.proof-row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:24px;padding:30px 0 30px 4vw;border-bottom:1px solid var(--line-l)}.proof-row h3{margin:0;font-size:20px}.proof-row p{margin:8px 0 0;color:var(--muted-l)}
 .current{position:relative;overflow:hidden}.current:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(8.33% - 1px),rgba(255,255,255,.04) calc(8.33% - 1px) 8.33%);opacity:.6}.current .wrap{position:relative}.current-grid{display:grid;grid-template-columns:4fr 7fr;gap:8.33vw;align-items:end}.current h2{font-size:var(--h2);line-height:1.02;letter-spacing:-.045em;margin:18px 0 0}.current-copy{color:var(--muted-d)}
 .bridge{display:grid;grid-template-columns:8fr 4fr;align-items:end;gap:40px}.bridge .section-title{max-width:980px}.bridge-links{display:flex;flex-direction:column;align-items:flex-start}
 
@@ -101,10 +101,8 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .work-current .current-grid{align-items:start}
 .work-current .current-copy{display:grid;grid-template-columns:1fr 1fr;gap:28px;color:var(--muted-d)}
 .sco-evidence{position:relative;margin:0;overflow:hidden;background:#0b0d0f;border:1px solid var(--line-d)}
-.sco-evidence-primary .progressive-image{position:absolute;top:-5%;bottom:-5%;left:0;right:0;height:auto}
 .sco-evidence img{display:block;width:100%;height:100%;object-fit:cover}
 .sco-evidence figcaption{position:absolute;left:14px;bottom:12px;padding:7px 9px;background:rgba(9,10,11,.78);color:rgba(242,241,237,.8);font-size:9px;letter-spacing:.12em;text-transform:uppercase;backdrop-filter:blur(8px)}
-.sco-evidence-primary img{object-position:center 54%}
 .sco-evidence-secondary img{object-position:center}
 /* Figure box size is driven by aspect-ratio down in the ONGOING PROJECT block, not by
    fixed heights here: both sources are 16:9, and a shared px/vw row height was cropping
@@ -117,8 +115,6 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
 .company-history .timeline-row{padding-block:20px}
 .company-credibility{padding-block:clamp(76px,7vw,112px)}
 .company-credibility .section-head{margin-bottom:clamp(38px,4vw,58px)}
-.company-credibility .proof-feature{padding-block:28px}
-.company-credibility .proof-feature img{max-height:430px}
 .company-credibility .proof-row{padding-block:22px}
 .company-facts{padding-block:clamp(72px,7.1vw,104px)}
 .company-facts .section-head{margin-bottom:36px}
@@ -146,8 +142,6 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
   .home-page .selected-work-section .secondary-work .media{height:min(36vw,500px)}
   .home-page main>.section:nth-of-type(5) .section-head{margin-bottom:clamp(78px,7vw,108px)}
   .home-page main>.section:nth-of-type(5) .proof-list{grid-template-columns:6.5fr 5.5fr}
-  .home-page main>.section:nth-of-type(5) .proof-feature{padding:0 clamp(60px,6vw,100px) 0 0}
-  .home-page main>.section:nth-of-type(5) .proof-feature img{max-height:610px}
   .home-page main>.section:nth-of-type(5) .proof-row{padding-block:44px}
   .home-page .current-grid{grid-template-columns:7fr 4fr;align-items:center;gap:8.33vw}
   .home-page .current-copy{font-size:clamp(19px,1.5vw,23px);line-height:1.7}
@@ -195,7 +189,6 @@ body .selected-work-section .section-head{margin-bottom:clamp(44px,4.5vw,68px)}b
   .home-page .selected-work-section .lead-work .work-info h3{font-size:46px}
   .home-page .selected-work-section .secondary-work{margin-top:130px}
   .home-page main>.section:nth-of-type(5){padding-block:120px}
-  .home-page main>.section:nth-of-type(5) .proof-feature{padding-block:0 54px}
   .home-page main>.section:nth-of-type(5) .proof-row{padding-block:34px}
   .home-page .current-copy{margin-top:64px}
 
@@ -989,14 +982,6 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
    Scoping the fix to <=767px hid it on phones and left it on desktop. */
 .home-page .wrap>.section-head+*{border-top:0}
 
-/* Stacked-layer images need an explicit box once a grid collapses. .progressive-image
-   positions its preview and full layers absolutely, so the wrapper has no intrinsic
-   height — on desktop the proof grid stretches it to the row height, but below 768px
-   .proof-list becomes display:block and the certificate collapsed to 350x0, leaving a
-   bare gap under the section title. Give it a box; object-fit:contain letterboxes. */
-@media(max-width:767px){
-  .proof-feature .progressive-image{display:block;height:clamp(280px,86vw,460px)}
-}
 
 /* ---------- 01 / ONGOING PROJECT — SCO Noah's Ark ----------
    Six levels of hierarchy on the subpage 12-column grid:
@@ -2060,6 +2045,12 @@ body.menu-open .nav-here{opacity:0;pointer-events:none}
    to be read at here. The paddings the old auto-height box carried are dropped -- the
    ratio governs the shape now, and the cap leaves the gutter the padding used to fake. */
 .proof-feature{position:relative;width:min(100%,420px);aspect-ratio:1/1.414;padding:0}
+/* The old box sized itself to whichever certificate was in the markup, so it carried a
+   max-height and paddings per page to keep that one scan in proportion. The ratio does
+   that job now for every scan, and those overrides only fought it -- company capped the
+   picture at 430px inside a 594px frame, which left the certificate floating above a
+   band of empty paper. They are gone, including the 767px height clamp that existed
+   only because an absolutely-stacked layer had no intrinsic height to collapse from. */
 .proof-feature .progressive-image{position:absolute;inset:0;opacity:0;
   transition:opacity .38s var(--ease)}
 .proof-feature .progressive-image.is-shown{opacity:1}
