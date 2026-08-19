@@ -7,54 +7,63 @@
  * rather than laid over the picture. So everything here is drawn in the wall's own
  * coordinates and then mapped through its perspective.
  *
- * The wall was measured off the photograph rather than guessed. Sampling luminance and
- * blueness down columns finds two edges: the ceiling junction, where a lit bluish ceiling
- * drops to flat black, and the base, which is the warm light strip along the floor and is
- * the brightest thing in the lower half. Both are recorded below as fractions of the
- * image, so they survive any crop the hero happens to make.
+ * The screen was traced off a live overlay of the photograph rather than guessed
+ * from luminance. u/v live in the panel's own coordinates and then map through
+ * its perspective, so the current stays on the glass and not on the ceiling, the
+ * floor strip, or the family standing in front of it.
  */
 
-/* u runs left to right along the wall, v runs top to bottom down it. The wall stops at
-   0.52 because the raised platform and the console table take over past that. */
-const U_MIN = 0.0, U_MAX = 0.52;
+/* u runs left to right along the projection screen, v runs top to bottom down it.
+   The screen is the dark curved panel on the wall — not the whole wall down to the
+   floor strip. It was traced off the live hero: it begins just in from the left edge
+   and runs behind the family, ending at the panel's right reveal. */
+const U_MIN = 0.05, U_MAX = 0.74;
 
-/* Ceiling junction: measured 0.21 at u=0.20 and 0.33 at u=0.35, which is a straight line
-   in this projection. The left end is unlit and has no edge to find, so it is the same
-   line extrapolated rather than a separate reading. */
-const topAt = (u) => 0.05 + 0.80 * u;
-
-/* Base: the warm floor strip, sampled every 0.05 and kept as the samples. It is close to
-   straight for the first two thirds and then flattens as the wall turns away, and a fitted
-   curve was a worse match than the readings themselves. */
-const BASE = [
-  [0.00, 0.775], [0.05, 0.752], [0.10, 0.730], [0.15, 0.708], [0.20, 0.686],
-  [0.25, 0.663], [0.30, 0.640], [0.35, 0.625], [0.40, 0.619], [0.45, 0.618], [0.50, 0.620], [0.52, 0.621],
-];
-const baseAt = (u) => {
-  for (let i = 1; i < BASE.length; i += 1) {
-    if (u <= BASE[i][0]) {
-      const [ua, va] = BASE[i - 1], [ub, vb] = BASE[i];
+const sample = (table, u) => {
+  if (u <= table[0][0]) return table[0][1];
+  for (let i = 1; i < table.length; i += 1) {
+    if (u <= table[i][0]) {
+      const [ua, va] = table[i - 1], [ub, vb] = table[i];
       return va + (vb - va) * ((u - ua) / (ub - ua));
     }
   }
-  return BASE[BASE.length - 1][1];
+  return table[table.length - 1][1];
 };
 
-/* Wall height in image fractions. It falls from 0.725 at the left edge to 0.232 at the
-   right end, which is the whole perspective: anything drawn in wall space inherits it, so
-   streams converge and their particles shrink toward the far end without being told to. */
-const heightAt = (u) => baseAt(u) - topAt(u);
+/* Top of the panel. It drops with the wall's perspective until about u=0.40, then
+   the curve turns and the far edge rises again — that rise is what lets the waves
+   climb over the family instead of running through them. */
+const TOP = [
+  [0.05, 0.096], [0.10, 0.156], [0.15, 0.202], [0.20, 0.245], [0.25, 0.277],
+  [0.30, 0.315], [0.35, 0.344], [0.40, 0.359], [0.45, 0.356], [0.50, 0.347],
+  [0.55, 0.335], [0.60, 0.325], [0.65, 0.315], [0.70, 0.298], [0.74, 0.260],
+];
+const topAt = (u) => sample(TOP, u);
 
-/* One primary current, then quieter harmonics of different weights. The previous version
-   drew thirteen bead-filaments of similar thickness; they crossed into something that
-   read as veins. These stay roughly parallel, travel the same way, and leave the braiding
-   to particles peeling off the lines rather than to the lines themselves. */
-const MAIN = { v: 0.50, amp: 0.072, freq: 1.28, phase: 0.18, drift: 0.034, width: 1.35, glow: 1.00 };
+/* Bottom of the panel. Past u=0.35 it sits just above the family's heads; waves
+   do not use this edge on the right — they lift toward the top before they get there. */
+const BASE = [
+  [0.05, 0.764], [0.10, 0.724], [0.15, 0.678], [0.20, 0.641], [0.25, 0.619],
+  [0.30, 0.603], [0.35, 0.593], [0.40, 0.591], [0.45, 0.586], [0.50, 0.583],
+  [0.55, 0.588], [0.60, 0.591], [0.65, 0.591], [0.70, 0.596], [0.74, 0.600],
+];
+const baseAt = (u) => sample(BASE, u);
+
+const heightAt = (u) => baseAt(u) - topAt(u);
+const H0 = heightAt(U_MIN);
+
+/* From u=0.36 the current climbs toward the top of the panel so it stays above
+   the family. 0 at the left, 1 at the far edge. */
+const liftAt = (u) => smooth((u - 0.36) / (U_MAX - 0.36));
+
+/* One primary current, then quieter harmonics. They share the lift, so the whole
+   bundle goes up together on the right instead of the lower ones clipping the people. */
+const MAIN = { v: 0.46, amp: 0.070, freq: 1.22, phase: 0.18, drift: 0.034, width: 1.35, glow: 1.00 };
 const WAVES = [
-  { v: 0.32, amp: 0.040, freq: 1.92, phase: 1.35, drift: 0.046, width: 0.46, glow: 0.42 },
-  { v: 0.68, amp: 0.034, freq: 1.64, phase: 2.70, drift: 0.027, width: 0.30, glow: 0.34 },
-  { v: 0.20, amp: 0.028, freq: 2.36, phase: 0.62, drift: 0.041, width: 0.18, glow: 0.26 },
-  { v: 0.80, amp: 0.024, freq: 2.10, phase: 3.85, drift: 0.022, width: 0.11, glow: 0.20 },
+  { v: 0.30, amp: 0.042, freq: 1.88, phase: 1.35, drift: 0.046, width: 0.46, glow: 0.42 },
+  { v: 0.60, amp: 0.036, freq: 1.60, phase: 2.70, drift: 0.027, width: 0.30, glow: 0.34 },
+  { v: 0.18, amp: 0.028, freq: 2.28, phase: 0.62, drift: 0.041, width: 0.18, glow: 0.26 },
+  { v: 0.70, amp: 0.024, freq: 2.04, phase: 3.85, drift: 0.022, width: 0.11, glow: 0.20 },
 ];
 
 const CORE = 'rgba(255,241,232,';   /* warm white, the part that reads as light */
@@ -89,14 +98,13 @@ export class HeroScreen {
   /* Particles start on a wave and peel off it. They are not beads that sit on the
      stroke — that is what made the last pass read as veins. */
   makeParticle(wave, anywhere) {
-    const sign = Math.random() < 0.5 ? -1 : 1;
     return {
       wave,
       u: anywhere ? U_MIN + Math.random() * (U_MAX - U_MIN)
                   : U_MIN + 0.05 + Math.random() * (U_MAX - U_MIN - 0.10),
       speed: 0.045 + Math.random() * 0.055 + (wave === MAIN ? 0.01 : 0),
-      off: (Math.random() - 0.5) * 0.012,
-      vo: sign * (0.07 + Math.random() * 0.16),
+      off: (Math.random() - 0.5) * 0.010,
+      vo: -Math.abs(0.05 + Math.random() * 0.12),
       age: anywhere ? Math.random() * 0.9 : 0,
       life: 0.55 + Math.random() * 0.85,
       size: (wave === MAIN ? 1.05 : 0.65) + Math.random() * 1.25,
@@ -187,46 +195,74 @@ export class HeroScreen {
   }
 
   waveV(s, u, t) {
-    return s.v + s.amp * Math.sin(Math.PI * 2 * (s.freq * u + s.phase + s.drift * t));
+    const lift = liftAt(u);
+    const rest = s.v * (1 - lift * 0.72) + 0.10 * lift;
+    const amp = s.amp * (1 - lift * 0.45);
+    return rest + amp * Math.sin(Math.PI * 2 * (s.freq * u + s.phase + s.drift * t));
   }
 
-  /* One continuous stroke per span, not a chain of round-capped segments.
-     Short round-capped pieces stacked into overlapping circles, which is why the
-     last pass still read as beads even after the filament count dropped. Width is
-     stepped in three spans so the far end still thins with the wall. */
+  /* One filled ribbon per wave, not three butted strokes. Splitting the path to
+     change width left a visible join in the middle of the main line. The ribbon
+     keeps a single outline and still thins with the panel's perspective. */
   strokeWave(s, t) {
-    const { ctx } = this;
     const wallPx = Math.abs(this.fit.h);
-    const spans = [[0, 0.34], [0.34, 0.67], [0.67, 1]];
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    for (const [a, b] of spans) {
-      const midU = U_MIN + (U_MAX - U_MIN) * ((a + b) / 2);
-      const w = Math.max(0.7, (heightAt(midU) / 0.725) * wallPx * 0.014 * s.width);
-      const N = 28;
-      ctx.beginPath();
-      let started = false;
-      for (let i = 0; i <= N; i += 1) {
-        const u = U_MIN + (U_MAX - U_MIN) * (a + (b - a) * (i / N));
-        const h = heightAt(u);
-        const v = this.waveV(s, u, t);
-        if (v < 0.02 || v > 0.98) { started = false; continue; }
-        const [x, y] = this.px(u, topAt(u) + v * h);
-        if (!started) { ctx.moveTo(x, y); started = true; }
-        else ctx.lineTo(x, y);
-      }
-      if (!started) continue;
-
-      const fade = smooth(((a + b) / 2) / 0.10) * smooth((1 - (a + b) / 2) / 0.12);
-      const aGlow = s.glow * fade * this.intensity;
-      ctx.strokeStyle = GLOW + (aGlow * 0.38).toFixed(3) + ')';
-      ctx.lineWidth = w * 2.4;
-      ctx.stroke();
-      ctx.strokeStyle = CORE + (aGlow * 0.82).toFixed(3) + ')';
-      ctx.lineWidth = w;
-      ctx.stroke();
+    const N = 96;
+    const pts = [];
+    for (let i = 0; i <= N; i += 1) {
+      const u = U_MIN + (U_MAX - U_MIN) * (i / N);
+      const h = heightAt(u);
+      let v = this.waveV(s, u, t);
+      v = Math.max(0.04, Math.min(0.92, v));
+      const [x, y] = this.px(u, topAt(u) + v * h);
+      const w = Math.max(0.7, (h / H0) * wallPx * 0.013 * s.width);
+      pts.push({ x, y, w });
     }
+    const a = s.glow * this.intensity;
+    this.fillRibbon(pts, 2.4, GLOW + (a * 0.38).toFixed(3) + ')');
+    this.fillRibbon(pts, 1.0, CORE + (a * 0.82).toFixed(3) + ')');
+  }
+
+  fillRibbon(pts, widthMul, color) {
+    if (pts.length < 2) return;
+    const { ctx } = this;
+    const left = [], right = [];
+    for (let i = 0; i < pts.length; i += 1) {
+      const p = pts[i];
+      const q = i === 0 ? pts[1] : i === pts.length - 1 ? pts[i - 1] : pts[i + 1];
+      let dx = q.x - p.x, dy = q.y - p.y;
+      if (i === pts.length - 1) { dx = p.x - q.x; dy = p.y - q.y; }
+      const len = Math.hypot(dx, dy) || 1;
+      const nx = -dy / len, ny = dx / len;
+      const hw = p.w * widthMul * 0.5;
+      left.push([p.x + nx * hw, p.y + ny * hw]);
+      right.push([p.x - nx * hw, p.y - ny * hw]);
+    }
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(left[0][0], left[0][1]);
+    for (let i = 1; i < left.length; i += 1) ctx.lineTo(left[i][0], left[i][1]);
+    for (let i = right.length - 1; i >= 0; i -= 1) ctx.lineTo(right[i][0], right[i][1]);
+    ctx.closePath();
+    ctx.fill();
+    const cap = pts[0].w * widthMul * 0.5;
+    const end = pts[pts.length - 1];
+    ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, cap, 0, 6.2832); ctx.fill();
+    ctx.beginPath(); ctx.arc(end.x, end.y, end.w * widthMul * 0.5, 0, 6.2832); ctx.fill();
+  }
+
+  /* Soften the far edge so the current dissolves on the panel instead of hitting
+     the clip and reading as a cut. Drawn after the waves, still inside the clip. */
+  fadeRight() {
+    const { ctx } = this;
+    const [x0] = this.px(U_MAX - 0.16, 0.5);
+    const [x1] = this.px(U_MAX + 0.01, 0.5);
+    const g = ctx.createLinearGradient(x0, 0, x1, 0);
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(0.45, 'rgba(0,0,0,0.35)');
+    g.addColorStop(1, 'rgba(0,0,0,1)');
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.fillStyle = g;
+    ctx.fill(this.wallPath());
   }
 
   stepParticles(dt) {
@@ -252,14 +288,14 @@ export class HeroScreen {
       const v = this.waveV(p.wave, p.u, t) + p.off;
       if (v < 0.02 || v > 0.98) continue;
 
-      const fadeU = smooth((p.u - U_MIN) / 0.07) * smooth((U_MAX - p.u) / 0.05);
+      const fadeU = smooth((p.u - U_MIN) / 0.07) * smooth((U_MAX - p.u) / 0.16);
       const fadeV = smooth(v / 0.10) * smooth((1 - v) / 0.10);
       const life = 1 - (p.age / p.life);
       const a = fadeU * fadeV * life * this.intensity;
       if (a <= 0.02) continue;
 
       const [x, y] = this.px(p.u, topAt(p.u) + v * h);
-      const r = Math.max(0.45, (h / 0.725) * wallPx * 0.0022 * p.size);
+      const r = Math.max(0.45, (h / H0) * wallPx * 0.0022 * p.size);
 
       ctx.fillStyle = GLOW + (a * 0.38).toFixed(3) + ')';
       ctx.beginPath(); ctx.arc(x, y, r * 2.8, 0, 6.2832); ctx.fill();
@@ -274,8 +310,8 @@ export class HeroScreen {
     if (!this.fit) return;
     ctx.clearRect(0, 0, this.box.width, this.box.height);
     ctx.save();
-    /* Hard clip to the measured wall. Whatever the waves do, nothing reaches the
-       ceiling, the floor or the structures on the right. */
+    /* Hard clip to the measured screen. Whatever the waves do, nothing leaves the
+       panel or runs through the family below its lower edge. */
     ctx.clip(this.wallPath());
 
     /* Lines are source-over so overlapping harmonics do not climb into a red mass.
@@ -285,6 +321,7 @@ export class HeroScreen {
     this.strokeWave(MAIN, t);
     if (this.running) this.stepParticles(this.dt);
     this.drawParticles(t);
+    this.fadeRight();
     ctx.restore();
 
     /* Taken out after the clip is released, so the falloff is free to reach past the wall
