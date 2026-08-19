@@ -1,0 +1,49 @@
+# Publishes only the public WIP site (prototype + assets) to GitHub Pages.
+# Source/, docs/, review/, and older Prototype folders stay in the repo
+# but are not on the domain.
+name: Deploy site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build publish tree
+        run: |
+          set -euo pipefail
+          mkdir -p publish/assets
+          # Site files at domain root so example.com/ is HOME, not /prototype/.
+          # HTML already points at ../assets/, which from the root is /assets/.
+          cp -R work_in_progress/prototype/. publish/
+          rsync -a --exclude='.DS_Store' --exclude='_raw' \
+            work_in_progress/assets/ publish/assets/
+          # GitHub Pages otherwise runs Jekyll and can hide files that start with _.
+          touch publish/.nojekyll
+          if [ -f work_in_progress/CNAME ]; then
+            cp work_in_progress/CNAME publish/CNAME
+          fi
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: publish
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
