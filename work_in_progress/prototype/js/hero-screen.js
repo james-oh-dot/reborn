@@ -114,7 +114,7 @@ export class HeroScreen {
     this.canvas.height = Math.round(box.height * dpr);
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    const nw = this.media.naturalWidth || 3344, nh = this.media.naturalHeight || 1882;
+    const nw = this.media.naturalWidth || 5016, nh = this.media.naturalHeight || 2823;
     const pos = getComputedStyle(this.media).objectPosition.split(' ');
     const frac = (s, i) => (s && s.endsWith('%') ? parseFloat(s) / 100 : i);
     const px = frac(pos[0], 0.5), py = frac(pos[1] ?? pos[0], 0.5);
