@@ -43,6 +43,28 @@ const scrollHeader=()=>{
  else if(dy<-HEADER_DELTA)setHeaderHidden(false);
  headerLastY=y};
 addEventListener('scroll',scrollHeader,{passive:true});scrollHeader();
+/* Document-length scroll progress across every page. Uses the real scrollable
+   range (including reveal-spacer / closing travel) so 0% is the top and 100% is
+   the last pixel that can be scrolled into view. */
+const progressRail=document.createElement('div');
+progressRail.className='scroll-progress';
+progressRail.setAttribute('aria-hidden','true');
+progressRail.innerHTML='<span class="scroll-progress__bar"></span>';
+body.appendChild(progressRail);
+let progressTicking=false;
+const updateScrollProgress=()=>{
+ progressTicking=false;
+ const max=Math.max(1,root.scrollHeight-innerHeight);
+ const p=Math.min(1,Math.max(0,scrollY/max));
+ root.style.setProperty('--scroll-progress',p.toFixed(4))};
+const onScrollProgress=()=>{if(!progressTicking){progressTicking=true;requestAnimationFrame(updateScrollProgress)}};
+addEventListener('scroll',onScrollProgress,{passive:true});
+addEventListener('resize',onScrollProgress,{passive:true});
+/* Closing/reveal spacers and late image loads can change document height after
+   the first paint — remeasure when layout settles. */
+if(typeof ResizeObserver==='function'){
+ new ResizeObserver(onScrollProgress).observe(body)}
+updateScrollProgress();
 const trigger=document.querySelector('.menu-trigger'),panel=document.querySelector('.nav-panel');function closeMenu(){if(!trigger||!panel)return;if(panel.classList.contains('open'))setMenu(false)}document.querySelectorAll('.nav-item').forEach((el,i)=>el.style.setProperty('--i',i));
 const setMenu=open=>{
  if(!trigger||!panel)return;

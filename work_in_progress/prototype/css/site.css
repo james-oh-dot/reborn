@@ -1493,6 +1493,17 @@ body.menu-open .menu-fab{opacity:0;visibility:hidden;pointer-events:none;transfo
   .menu-fab{display:none!important}
 }
 
+/* Page scroll progress — fixed 4px rail at the bottom edge of every screen. */
+.scroll-progress{
+  position:fixed;left:0;right:0;bottom:0;z-index:1100;
+  height:4px;background:#000;pointer-events:none;
+  /* Sit above the iOS home indicator without changing the visual 4px weight. */
+  margin-bottom:env(safe-area-inset-bottom,0px)}
+.scroll-progress__bar{
+  display:block;height:100%;width:100%;background:var(--brand);
+  transform-origin:left center;transform:scaleX(var(--scroll-progress,0));
+  will-change:transform}
+
 /* Nothing competes with the menu while it is open: the mark and the header language
    toggle step aside, and the panel carries its own toggle at the foot. */
 .brand,.site-header .lang{transition:opacity .28s var(--ease),visibility .28s}
