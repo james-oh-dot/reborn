@@ -132,6 +132,12 @@ body.pd-page main>section.pd-band{position:relative;height:min(86vh,900px);paddi
 .pd-list-back{border-top:1px solid var(--line-l);padding-top:clamp(30px,3vw,46px);margin-top:clamp(60px,6vw,96px)}
 .pd-list-back .link{margin-top:0}
 
+/* Generic .page-hero padding is for text-only subpage openers. This hero is a
+   full-bleed cover with a dense copy stack; that padding collides with the facts
+   and, on short phones, clips them. */
+.page-hero.pd-hero{padding-top:0;padding-bottom:clamp(28px,5vh,56px)}
+.pd-hero .scroll-cue{display:none}
+
 @media(max-width:1023px){
   .pd-grid{grid-template-columns:1fr;gap:34px}
   .pd-aside{position:static}
@@ -139,8 +145,11 @@ body.pd-page main>section.pd-band{position:relative;height:min(86vh,900px);paddi
   .pd-band{height:70vh}
 }
 @media(max-width:767px){
-  .pd-hero{min-height:96svh}
-  .pd-hero-facts{gap:18px 26px}
+  .page-hero.pd-hero{min-height:100svh;height:auto;overflow:visible;padding-bottom:28px}
+  .pd-title{font-size:clamp(34px,9.2vw,42px);line-height:1.08}
+  .pd-hero-desc{margin-top:20px}
+  .pd-hero-facts{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+  .pd-fact{min-width:0}
 }
 
 @media(prefers-reduced-motion:reduce){
