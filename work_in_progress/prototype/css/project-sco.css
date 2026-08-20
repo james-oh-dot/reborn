@@ -99,8 +99,8 @@ body.pd-page main>section.pj-dark+section{padding-top:clamp(88px,9vw,150px)!impo
    Paper shows on all four sides. Copy sits beside the picture, never on it.
    Floor openers keep 100svh; these plates must stay below that. */
 .sa-article .pd-wrap+.pd-wrap{margin-top:clamp(56px,6vw,96px)}
-.sa-article .sa-plate + .sa-wide,
-.sa-article .sa-wide + .sa-plate{margin-top:clamp(46px,5vw,84px)}
+.sa-article .sa-plate + .sa-duo,
+.sa-article .sa-plate + .sa-plate{margin-top:clamp(46px,5vw,84px)}
 body.pd-page.sco-a main>section.sa-article{
   padding-bottom:clamp(88px,9vw,150px)!important}
 
@@ -113,8 +113,7 @@ body.pd-page.sco-a main>section.sa-article{
 .sa-plate-fig .pj-cap{margin-top:10px}
 .sa-plate-copy{grid-column:9/13;display:flex;flex-direction:column;justify-content:flex-end;
   min-width:0;padding-left:clamp(14px,1.2vw,22px);border-left:2px solid var(--brand)}
-.sa-plate-code{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--brand)}
-.sa-plate-copy h3{margin:12px 0 0;font-size:clamp(28px,2.8vw,48px);line-height:1.08;
+.sa-plate-copy h3{margin:0;font-size:clamp(28px,2.8vw,48px);line-height:1.08;
   letter-spacing:-.035em;font-weight:600;word-break:keep-all}
 .sa-plate-copy .copy{margin:16px 0 0;max-width:42ch;color:var(--muted-l)}
 .sa-plate-facts{margin:auto 0 0;padding-top:22px;display:flex;flex-direction:column;gap:8px;
@@ -126,9 +125,6 @@ body.pd-page.sco-a main>section.sa-article{
 .sa-plate--finale .sa-plate-fig .progressive-image__full,
 .sa-plate--finale .sa-plate-fig .progressive-image__preview{object-position:center 38%}
 .sa-plate--finale .sa-plate-copy{grid-column:1/9;justify-content:flex-start;margin-top:4px}
-
-.sa-folio{margin:clamp(40px,4vw,64px) 0 0;padding-top:18px;border-top:1px solid var(--line-l);
-  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-l)}
 
 /* ---------- B · Editorial ---------- */
 .sb-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:clamp(14px,1.5vw,28px)}
