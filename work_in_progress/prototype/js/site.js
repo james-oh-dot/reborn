@@ -606,14 +606,16 @@ let done=false;
 const go=()=>{if(done)return;done=true;setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'start'}),80)};
 if(document.readyState==='complete')go();else addEventListener('load',go,{once:true});
 setTimeout(go,1200)})();
-/* Back-to-top icon FAB. Appears after the page has been scrolled, sits at the
-   bottom-right above the progress rail, and returns to the document top. */
+/* Back-to-top icon FAB. Reparented onto <body> so it is not trapped inside the
+   fixed .reveal-block/footer stacking context (which made it look like it only
+   appeared with the footer). Same chrome layer as the menu FAB (z-index 1001). */
 (()=>{const btns=[...document.querySelectorAll('.footer-totop')];if(!btns.length)return;
 const reduce=matchMedia('(prefers-reduced-motion: reduce)');
 const SHOW_Y=420;
 const label=()=>document.documentElement.lang==='en'?'Back to top':'맨 위로';
 const icon='<svg class="footer-totop-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 5.2 5.6 11.6l1.4 1.4L11 8.9V19h2V8.9l4 4.1 1.4-1.4z"/></svg>';
 btns.forEach(b=>{
+ document.body.appendChild(b);
  b.removeAttribute('data-ko');b.removeAttribute('data-en');
  b.setAttribute('aria-label',label());
  b.innerHTML=icon;
