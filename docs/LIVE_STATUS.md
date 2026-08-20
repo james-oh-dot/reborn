@@ -58,23 +58,24 @@ HOME selected work 레일(한단 카드 포함) 과 Work 페이지 정합, 커�
    (MASTER_FRAMEWORK / EVIDENCE_LEDGER / CODEX_EXECUTION_SPEC) 를 먼저 확인한다.
    CONTRACTED ≠ DELIVERED, MOU ≠ COMPLETED 원칙이 카피에 그대로 적용된다.
 
-## 6. 프리뷰 (라이브를 건드리지 않고 확인하기)
+## 6. 시안 확인 경로 (라이브 목록은 그대로)
 
-`.github/workflows/deploy-preview.yml` 는 `claude/**` 브랜치 push 시 다음을 배포한다.
+GitHub Pages의 `github-pages` 환경은 기본 브랜치에서만 배포를 허용한다. 그래서 브랜치를
+`/preview/<slug>/` 로 올리는 워크플로는 러너를 받기 전에 거부됐고, 결국 **별도 URL을 본문에
+같이 배포하는 방식**으로 바꿨다. (권한을 열려면 Settings → Environments → `github-pages` →
+Deployment branches 에 `claude/*` 추가. 여는 경우 `deploy-preview.yml` 을 되살리면 된다 —
+git 이력에 남아 있다.)
 
-- 사이트 루트: `origin/main` 에서 다시 빌드 (= 라이브 그대로, 변경 없음)
-- `/preview/<slug>/`: 해당 브랜치의 `work_in_progress/prototype`
-  (에셋 중복 복사 대신 `../assets/` 참조를 `/assets/` 로 치환해 루트 에셋을 사용)
+현재 구조:
 
-업로드 직전에 `diff -r` 로 **루트가 main 과 동일한지 검증**하고, 다르면 배포를 중단한다.
+| 경로 | 내용 |
+| --- | --- |
+| `/work.html` | 라이브 프로젝트 페이지. **변경 없음** |
+| `/work2.html` | 새 목록 시안 — 01을 큰 비주얼 카드 3장으로. 어디에서도 링크하지 않음 |
+| `/project-sco-ark.html` | SCO 상세 · TYPE A 시네마틱 |
+| `/project-sco-ark-b.html` | SCO 상세 · TYPE B 에디토리얼 |
+| `/project-sco-ark-c.html` | SCO 상세 · TYPE C 인덱스 |
 
-한 가지 전제가 있다: GitHub Pages 의 `github-pages` 환경은 기본적으로 기본 브랜치에서만
-배포를 허용한다. 그래서 이 워크플로는 권한이 열리기 전까지 "Branch not allowed to deploy"
-로 즉시 실패한다. 여는 방법은
-Settings → Environments → `github-pages` → Deployment branches 에
-`claude/*` 를 추가하는 것이다. 열고 나면 프리뷰 주소는
-
-- `https://rebornsoft.co.kr/preview/flagship/work.html`
-- `https://rebornsoft.co.kr/preview/flagship/project-sco-ark.html`
-
-권한을 열기 전 임시 확인 경로는 raw.githack.com 이다 (커밋 SHA 고정, 별도 설정 불필요).
+시안 4종에는 `noindex,nofollow` 를 걸어 검색에 노출되지 않게 했다. 링크가 어디에도 없으므로
+주소를 직접 입력해야 들어갈 수 있다. 시안이 확정되면 `work2.html` 의 01 섹션을 `work.html` 로
+옮기고 noindex를 걷어내면 된다.
