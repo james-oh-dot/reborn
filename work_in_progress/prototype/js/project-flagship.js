@@ -110,5 +110,27 @@ if(title&&!reduced()){
   mo.observe(title,{childList:true})}
 }
 requestAnimationFrame(()=>requestAnimationFrame(light));
+
+/* After the route lands, hold the still for 2s, then crossfade into the looping cover. */
+(()=>{
+ const cover=hero.querySelector('.pd-hero-cover');
+ const video=cover&&cover.querySelector('.pd-hero-video');
+ if(!cover||!video)return;
+ const src=video.querySelector('source[data-src]');
+ const conn=navigator.connection;
+ const cheap=()=>!conn||(!conn.saveData&&!/^(slow-2g|2g|3g)$/.test(conn.effectiveType||''));
+ if(reduced()||!cheap())return;
+ if(src&&!src.getAttribute('src')){src.setAttribute('src',src.dataset.src);video.load()}
+ let armed=false;
+ const reveal=()=>{
+  if(!armed||video.readyState<2)return;
+  video.play().then(()=>cover.classList.add('is-playing')).catch(()=>{})};
+ video.addEventListener('canplay',reveal);
+ setTimeout(()=>{armed=true;reveal()},2000);
+ const io='IntersectionObserver'in window&&new IntersectionObserver(es=>{
+  es.forEach(e=>{if(!cover.classList.contains('is-playing'))return;
+   if(e.isIntersecting)video.play().catch(()=>{});else video.pause()})},{threshold:.2});
+ if(io)io.observe(hero);
+})();
 })();
 })();
