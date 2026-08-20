@@ -1,0 +1,135 @@
+/* 01 / 현재 진행중인 프로젝트 — list row, cover expand transition, project detail page
+ * WORK reads as a list: one row per project, copy on the left and a large cover on
+ * the right. Clicking the row grows the cover to full screen and only then routes to
+ * project-sco-ark.html, which opens with that same full-screen cover already in place.
+ * 02 / SELECTED WORK is untouched and keeps its drawer.
+ */
+
+/* ---------- list row ----------
+   WORK is a subpage, so main is paper and the row reads on light. The cover keeps the
+   dark card treatment the page already uses, which is also what grows to full screen. */
+.project-list{list-style:none;margin:0;padding:0}
+.project-list-item+.project-list-item{margin-top:clamp(56px,5vw,96px);padding-top:clamp(56px,5vw,96px);border-top:1px solid var(--line-l)}
+.project-row{display:block;color:inherit;text-decoration:none}
+.project-row:focus-visible{outline:2px solid var(--brand);outline-offset:8px}
+
+/* The cover is the element that grows on click, so it owns a clean rectangle and
+   nothing may overflow it before the transition starts. */
+.project-row-cover{position:relative;overflow:hidden;aspect-ratio:16/9;background:#0b0d0f}
+.cover-frame{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;transition:transform .9s var(--ease);background:
+  radial-gradient(120% 90% at 70% 18%,rgba(255,255,255,.08),transparent 62%),
+  repeating-linear-gradient(90deg,transparent 0 calc(16.666% - 1px),rgba(255,255,255,.04) calc(16.666% - 1px) 16.666%),
+  #0b0d0f}
+.cover-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cover-frame-label{position:relative;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(242,241,237,.42)}
+.cover-frame-label:before{content:"";display:block;width:34px;height:1px;margin:0 auto 14px;background:rgba(242,241,237,.28)}
+
+.project-row-foot{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(28px,3vw,64px);margin-top:clamp(28px,2.8vw,44px)}
+.project-row-index{display:block;font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--muted-l)}
+.project-row-title{margin:12px 0 0;font-size:clamp(28px,2.9vw,46px);line-height:1.06;letter-spacing:-.035em;font-weight:600;transition:transform .6s var(--ease)}
+.project-row .sco-status-line{margin:16px 0 0}
+.project-row-summary{margin:0;color:var(--muted-l)}
+.project-row-class{display:flex;flex-wrap:wrap;gap:8px 18px;margin:22px 0 0;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-l)}
+.project-row-class span+span{padding-left:18px;border-left:1px solid var(--line-l)}
+.project-row-cta{display:inline-flex;align-items:center;gap:10px;margin-top:clamp(24px,2.4vw,34px);padding-bottom:7px;border-bottom:1px solid currentColor;font-size:11px;font-weight:700;letter-spacing:.1em}
+.project-row-cta i{font-style:normal;transition:transform .5s var(--ease)}
+
+@media(hover:hover){
+  .project-row:hover .cover-frame{transform:scale(1.025)}
+  .project-row:hover .project-row-title{transform:translateX(6px)}
+  .project-row:hover .project-row-cta i{transform:translateX(5px)}
+}
+
+@media(max-width:1023px){
+  .project-row-foot{grid-template-columns:1fr;gap:26px}
+  .project-row-cover{aspect-ratio:16/10}
+}
+
+/* ---------- cover → full screen, then route ---------- */
+.cover-transition{position:fixed;z-index:120;overflow:hidden;background:#0b0d0f;border:0;will-change:width,height,top,left}
+.is-cover-leaving main,.is-cover-leaving .site-header,.is-cover-leaving .reveal-block,.is-cover-leaving .reveal-spacer{transition:opacity .42s var(--ease);opacity:0}
+
+/* ---------- detail page ---------- */
+/* Subpages flatten every non-hero section onto one paper surface. The hero opts out
+   through .page-hero, exactly as the other subpage heroes do; the photographic band
+   keeps its own dark palette the way .visual-card and .sco-evidence already do. */
+.pd-page{background:#0b0d0f}
+.pd-wrap{position:relative;z-index:1;width:min(100%,var(--wide));margin:auto;padding-inline:var(--gutter)}
+/* A direct load has no cover handed over to it, so it establishes one of its own.
+   Arrivals from the list skip this: the cover is already there, full size. */
+.is-cover-fresh .pd-hero-cover{animation:pd-cover-in 1.5s var(--ease) both}
+@keyframes pd-cover-in{from{opacity:0;transform:scale(1.06)}to{opacity:1;transform:none}}
+.pd-hero{position:relative;min-height:100svh;display:grid;align-items:end;align-content:end;overflow:hidden;background:#0b0d0f}
+.pd-hero-cover{position:absolute;inset:0}
+.pd-hero-cover .cover-frame{transition:none}
+.pd-hero-cover .cover-frame-label{position:absolute;top:calc(var(--header-h) + 30px);right:var(--gutter)}
+.pd-hero:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(9,10,11,.5) 0%,rgba(9,10,11,.34) 38%,rgba(9,10,11,.86) 82%,rgba(9,10,11,.97) 100%)}
+.pd-hero-copy{position:relative;z-index:2;width:100%}
+.pd-hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-d)}
+.pd-title,.project-row-title{word-break:keep-all}
+.pd-title{margin:clamp(16px,1.8vw,26px) 0 0;font-size:clamp(42px,6.2vw,104px);line-height:1.02;letter-spacing:-.045em;font-weight:700;color:var(--warm)}
+.pd-hero-desc{margin:clamp(24px,3vw,40px) 0 0;max-width:var(--sco-measure);color:var(--warm)}
+.pd-hero-facts{display:flex;flex-wrap:wrap;gap:14px 42px;margin:clamp(26px,3vw,42px) 0 0;padding-top:22px;border-top:1px solid var(--line-d)}
+.pd-fact{min-width:150px}
+.pd-fact dt{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-d)}
+.pd-fact dd{margin:8px 0 0;font-size:15px;letter-spacing:-.01em;color:var(--warm)}
+
+/* Per-character entrance. Words stay unbreakable so the reveal never splits a word
+   across lines mid-animation. */
+.pd-title .wd{display:inline-block;white-space:nowrap}
+.pd-title .ch{display:inline-block;opacity:0;transform:translateY(.44em);filter:blur(9px);transition:opacity .95s var(--ease),transform .95s var(--ease),filter .95s var(--ease);transition-delay:calc(var(--ch-i,0) * 34ms + var(--ch-base,0ms))}
+.pd-title.is-lit .ch{opacity:1;transform:none;filter:none}
+.pd-hero-eyebrow,.pd-hero-desc,.pd-hero-facts,.pd-hero .sco-status-line{opacity:0;transform:translateY(20px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.pd-hero.is-lit .pd-hero-eyebrow{opacity:1;transform:none;transition-delay:.05s}
+.pd-hero.is-lit .sco-status-line{opacity:1;transform:none;transition-delay:.5s}
+.pd-hero.is-lit .pd-hero-desc{opacity:1;transform:none;transition-delay:.62s}
+.pd-hero.is-lit .pd-hero-facts{opacity:1;transform:none;transition-delay:.74s}
+
+/* Body */
+
+.pd-grid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:clamp(40px,5vw,96px);align-items:start}
+.pd-aside{position:sticky;top:calc(var(--header-h) + 40px)}
+.pd-aside .meta{display:block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.pd-aside h2{margin:14px 0 0;font-size:clamp(26px,2.4vw,38px);line-height:1.1;letter-spacing:-.03em;font-weight:560}
+.pd-body p+p{margin-top:22px}
+.pd-body .tag-list{list-style:none;padding-left:0}
+.pd-body .body-large{margin:0 0 clamp(28px,3vw,44px)}
+
+/* Full-bleed parallax band. The image sits taller than its frame so the parallax
+   shift never uncovers an edge. */
+body.pd-page main>section.pd-band{position:relative;height:min(86vh,900px);padding-block:0!important;overflow:hidden;background:#0b0d0f;color:var(--warm);--warm:#f2f1ed;--muted-d:rgba(242,241,237,.6);--line-d:rgba(255,255,255,.14)}
+.pd-band .progressive-image{position:absolute;left:0;right:0;top:-90px;bottom:-90px;height:auto}
+.pd-band .progressive-image__preview,.pd-band .progressive-image__full{width:100%;height:100%;object-fit:cover}
+.pd-band:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,10,11,.55),rgba(9,10,11,.2) 45%,rgba(9,10,11,.72))}
+.pd-band-copy{position:absolute;z-index:2;inset:auto 0 0 0;padding-bottom:clamp(44px,6vh,90px)}
+.pd-band-copy p{margin:0;max-width:20ch;font-size:clamp(24px,2.8vw,46px);line-height:1.14;letter-spacing:-.035em;color:var(--warm)}
+
+.pd-shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(18px,2vw,34px)}
+.subpage .pd-shot{background:#0b0d0f}
+.pd-shot{position:relative;margin:0;overflow:hidden;aspect-ratio:4/3;background:#0b0d0f;border:1px solid var(--line-d)}
+.pd-shot .progressive-image{position:absolute;left:0;right:0;top:-56px;bottom:-56px;height:auto}
+.pd-shot img{width:100%;height:100%;object-fit:cover}
+.pd-shot figcaption{position:absolute;left:14px;bottom:12px;z-index:2;padding:7px 9px;background:rgba(9,10,11,.78);color:rgba(242,241,237,.8);font-size:10px;letter-spacing:.12em;text-transform:uppercase;backdrop-filter:blur(8px)}
+
+.pd-boundary{max-width:var(--sco-measure);margin-top:clamp(38px,4vw,60px);padding:clamp(26px,3vw,40px);border:1px solid var(--line-d);background:rgba(0,0,0,.03)}
+.pd-boundary .meta{display:block;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-d)}
+.pd-boundary p{margin:14px 0 0;color:var(--muted-d)}
+
+.pd-back{display:inline-flex;align-items:center;gap:10px;margin-top:clamp(40px,4vw,64px);padding-bottom:7px;border-bottom:1px solid currentColor;font-size:11px;font-weight:700;letter-spacing:.1em;color:inherit;text-decoration:none}
+
+@media(max-width:1023px){
+  .pd-grid{grid-template-columns:1fr;gap:34px}
+  .pd-aside{position:static}
+  .pd-shots{grid-template-columns:1fr}
+  .pd-band{height:70vh}
+}
+@media(max-width:767px){
+  .pd-hero{min-height:96svh}
+  .pd-hero-facts{gap:18px 26px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .is-cover-fresh .pd-hero-cover{animation:none}
+  .pd-title .ch,.pd-hero-eyebrow,.pd-hero-desc,.pd-hero-facts,.pd-hero .sco-status-line{opacity:1;transform:none;filter:none;transition:none}
+  .cover-frame{transition:none}
+}
