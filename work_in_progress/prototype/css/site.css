@@ -1371,7 +1371,7 @@ main>section[id]>.wrap{scroll-margin-top:calc(var(--header-h) + clamp(28px,4vh,5
 .footer-copy{margin:0;font-size:12px;letter-spacing:.01em;line-height:1.5;opacity:.85}
 /* Back-to-top is a fixed icon FAB (bottom-right), not an in-footer text link. */
 .footer-totop{
-  position:fixed;z-index:1101;
+  position:fixed;z-index:1001;
   right:max(14px,env(safe-area-inset-right,0px));
   bottom:calc(4px + env(safe-area-inset-bottom,0px) + 16px);
   width:48px;height:48px;border-radius:50%;border:0;padding:0;cursor:pointer;
