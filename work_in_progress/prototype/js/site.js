@@ -606,12 +606,32 @@ let done=false;
 const go=()=>{if(done)return;done=true;setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'start'}),80)};
 if(document.readyState==='complete')go();else addEventListener('load',go,{once:true});
 setTimeout(go,1200)})();
-/* Footer back-to-top. The pages run long -- home is around 7,900px -- and the footer
-   otherwise offers no way back. Honours reduced motion rather than always animating. */
+/* Back-to-top icon FAB. Appears after the page has been scrolled, sits at the
+   bottom-right above the progress rail, and returns to the document top. */
 (()=>{const btns=[...document.querySelectorAll('.footer-totop')];if(!btns.length)return;
 const reduce=matchMedia('(prefers-reduced-motion: reduce)');
-btns.forEach(b=>b.addEventListener('click',()=>{
- scrollTo({top:0,behavior:reduce.matches?'auto':'smooth'})}))})();
+const SHOW_Y=420;
+const label=()=>document.documentElement.lang==='en'?'Back to top':'맨 위로';
+const icon='<svg class="footer-totop-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 5.2 5.6 11.6l1.4 1.4L11 8.9V19h2V8.9l4 4.1 1.4-1.4z"/></svg>';
+btns.forEach(b=>{
+ b.removeAttribute('data-ko');b.removeAttribute('data-en');
+ b.setAttribute('aria-label',label());
+ b.innerHTML=icon;
+ b.addEventListener('click',()=>{
+  scrollTo({top:0,behavior:reduce.matches?'auto':'smooth'})})});
+let toTopTicking=false;
+const syncToTop=()=>{
+ toTopTicking=false;
+ const show=scrollY>SHOW_Y&&!document.body.classList.contains('menu-open');
+ btns.forEach(b=>{
+  b.classList.toggle('is-visible',show);
+  b.setAttribute('aria-label',label())})};
+const onToTopScroll=()=>{if(!toTopTicking){toTopTicking=true;requestAnimationFrame(syncToTop)}};
+addEventListener('scroll',onToTopScroll,{passive:true});
+addEventListener('resize',onToTopScroll,{passive:true});
+/* Keep the accessible name in the active language when KR/EN flips. */
+document.querySelectorAll('[data-lang]').forEach(btn=>btn.addEventListener('click',()=>requestAnimationFrame(syncToTop)));
+syncToTop()})();
 /* Touch activation for the card brand wash. :hover is not dependable on touch --
    it either never fires or latches on after the tap and leaves a card washed while
    the user reads something else -- so the press state is driven explicitly and
