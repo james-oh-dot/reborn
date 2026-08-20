@@ -70,10 +70,10 @@
 .pd-hero-cover .cover-frame-label{position:absolute;top:calc(var(--header-h) + 30px);right:var(--gutter)}
 .pd-hero:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(9,10,11,.5) 0%,rgba(9,10,11,.34) 38%,rgba(9,10,11,.86) 82%,rgba(9,10,11,.97) 100%)}
 /* TYPE A: the cover/video paint after :before, so the shade only reads if it sits
-   above the media. Dark-red, heavier at the copy, open at the ark. */
+   above the media. Dark-red, heavier at the copy. */
 .sco-a .pd-hero:before{z-index:1;background:
-  linear-gradient(180deg,rgba(18,4,8,.36) 0%,rgba(28,6,12,.2) 28%,rgba(20,4,9,.62) 58%,rgba(10,2,4,.9) 82%,rgba(6,1,2,.97) 100%),
-  linear-gradient(90deg,rgba(80,8,18,.32) 0%,transparent 52%)}
+  linear-gradient(180deg,rgba(8,2,4,.62) 0%,rgba(9,3,5,.5) 26%,rgba(7,2,4,.82) 56%,rgba(5,1,2,.95) 80%,rgba(3,0,1,.98) 100%),
+  linear-gradient(90deg,rgba(12,2,4,.5) 0%,transparent 48%)}
 .sco-a .pd-hero .sco-status-line{color:var(--brand-soft)}
 .sco-a .pd-hero-eyebrow{color:rgba(242,241,237,.78)}
 .pd-hero-copy{position:relative;z-index:2;width:100%}
