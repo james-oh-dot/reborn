@@ -57,3 +57,24 @@ HOME selected work 레일(한단 카드 포함) 과 Work 페이지 정합, 커�
 5. 콘텐츠/문구 변경 전에는 `AGENTS.md` 와 `docs/canonical/` 의 v2.1 문서
    (MASTER_FRAMEWORK / EVIDENCE_LEDGER / CODEX_EXECUTION_SPEC) 를 먼저 확인한다.
    CONTRACTED ≠ DELIVERED, MOU ≠ COMPLETED 원칙이 카피에 그대로 적용된다.
+
+## 6. 프리뷰 (라이브를 건드리지 않고 확인하기)
+
+`.github/workflows/deploy-preview.yml` 는 `claude/**` 브랜치 push 시 다음을 배포한다.
+
+- 사이트 루트: `origin/main` 에서 다시 빌드 (= 라이브 그대로, 변경 없음)
+- `/preview/<slug>/`: 해당 브랜치의 `work_in_progress/prototype`
+  (에셋 중복 복사 대신 `../assets/` 참조를 `/assets/` 로 치환해 루트 에셋을 사용)
+
+업로드 직전에 `diff -r` 로 **루트가 main 과 동일한지 검증**하고, 다르면 배포를 중단한다.
+
+한 가지 전제가 있다: GitHub Pages 의 `github-pages` 환경은 기본적으로 기본 브랜치에서만
+배포를 허용한다. 그래서 이 워크플로는 권한이 열리기 전까지 "Branch not allowed to deploy"
+로 즉시 실패한다. 여는 방법은
+Settings → Environments → `github-pages` → Deployment branches 에
+`claude/*` 를 추가하는 것이다. 열고 나면 프리뷰 주소는
+
+- `https://rebornsoft.co.kr/preview/flagship/work.html`
+- `https://rebornsoft.co.kr/preview/flagship/project-sco-ark.html`
+
+권한을 열기 전 임시 확인 경로는 raw.githack.com 이다 (커밋 SHA 고정, 별도 설정 불필요).
