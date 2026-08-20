@@ -1,4 +1,9 @@
 (()=>{const root=document.documentElement,body=document.body,header=document.querySelector('.site-header');const setLang=lang=>{lang=lang==='en'?'en':'ko';root.lang=lang;try{localStorage.setItem('rebornsoft_lang',lang)}catch{}document.querySelectorAll('[data-ko][data-en]').forEach(el=>{el.textContent=el.dataset[lang]});document.querySelectorAll('[data-alt-ko]').forEach(el=>{el.alt=el.dataset[lang==='ko'?'altKo':'altEn']});document.querySelectorAll('[data-lang]').forEach(btn=>{const on=btn.dataset.lang===lang;btn.classList.toggle('active',on);btn.setAttribute('aria-pressed',String(on))});
+const fab=document.querySelector('.menu-fab'),trig=document.querySelector('.menu-trigger');
+const menuOpen=document.body.classList.contains('menu-open');
+const openL=lang==='en'?'Close menu':'메뉴 닫기',shutL=lang==='en'?'Open menu':'메뉴 열기';
+if(fab)fab.setAttribute('aria-label',shutL);
+if(trig)trig.setAttribute('aria-label',menuOpen?openL:shutL);
 /* Slide the header toggle's pill onto the active button. It is measured from the
    buttons themselves rather than assumed to be half the group, so it stays correct if
    the labels ever differ in width. Skipped where there is no pill (the mobile panel
@@ -7,16 +12,50 @@ document.querySelectorAll('.lang').forEach(g=>{
  const pill=g.querySelector('.lang-pill'),on=g.querySelector('button.active');
  if(!pill||!on)return;
  pill.style.width=on.offsetWidth+'px';
- pill.style.transform='translateX('+on.offsetLeft+'px)'});};document.querySelectorAll('.lang').forEach(g=>{const p=document.createElement('span');p.className='lang-pill';p.setAttribute('aria-hidden','true');g.insertBefore(p,g.firstChild)});let saved='ko';try{saved=localStorage.getItem('rebornsoft_lang')||'ko'}catch{}setLang(saved);addEventListener('resize',()=>setLang(root.lang==='en'?'en':'ko'),{passive:true});document.querySelectorAll('[data-lang]').forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.lang)));requestAnimationFrame(()=>body.classList.add('loaded'));const scrollHeader=()=>{header?.classList.toggle('scrolled',scrollY>48);body.classList.toggle('is-scrolled',scrollY>120)};addEventListener('scroll',scrollHeader,{passive:true});scrollHeader();const trigger=document.querySelector('.menu-trigger'),panel=document.querySelector('.nav-panel');function closeMenu(){if(!trigger||!panel)return;if(panel.classList.contains('open'))setMenu(false)}document.querySelectorAll('.nav-item').forEach((el,i)=>el.style.setProperty('--i',i));
+ pill.style.transform='translateX('+on.offsetLeft+'px)'});};document.querySelectorAll('.lang').forEach(g=>{const p=document.createElement('span');p.className='lang-pill';p.setAttribute('aria-hidden','true');g.insertBefore(p,g.firstChild)});let saved='ko';try{saved=localStorage.getItem('rebornsoft_lang')||'ko'}catch{}setLang(saved);addEventListener('resize',()=>setLang(root.lang==='en'?'en':'ko'),{passive:true});document.querySelectorAll('[data-lang]').forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.lang)));requestAnimationFrame(()=>body.classList.add('loaded'));
+/* Header auto-hide on downward scroll; a floating inverted menu FAB appears while
+   the bar is away, and opens the same panel. Opening the menu always reveals the
+   header so the existing hamburger→X chrome stays the close affordance. */
+const reduceHeaderMotion=matchMedia('(prefers-reduced-motion: reduce)');
+const menuFab=document.createElement('button');
+menuFab.type='button';
+menuFab.className='menu-fab';
+menuFab.setAttribute('aria-label','메뉴 열기');
+menuFab.setAttribute('aria-controls','site-menu');
+menuFab.innerHTML='<span class="mt-bars" aria-hidden="true"><span class="mt-bar"><i></i></span><span class="mt-bar"><i></i></span><span class="mt-bar"><i></i></span></span>';
+body.appendChild(menuFab);
+let headerLastY=scrollY;
+const HEADER_TOP=96,HEADER_DELTA=8;
+const setHeaderHidden=hide=>{
+ if(!header||reduceHeaderMotion.matches||body.classList.contains('menu-open'))hide=false;
+ header?.classList.toggle('is-hidden',hide);
+ menuFab.classList.toggle('is-visible',hide);
+};
+const scrollHeader=()=>{
+ const y=scrollY;
+ header?.classList.toggle('scrolled',y>48);
+ body.classList.toggle('is-scrolled',y>120);
+ if(!header||reduceHeaderMotion.matches||body.classList.contains('menu-open')){
+  setHeaderHidden(false);headerLastY=y;return}
+ const dy=y-headerLastY;
+ if(y<=HEADER_TOP)setHeaderHidden(false);
+ else if(dy>HEADER_DELTA)setHeaderHidden(true);
+ else if(dy<-HEADER_DELTA)setHeaderHidden(false);
+ headerLastY=y};
+addEventListener('scroll',scrollHeader,{passive:true});scrollHeader();
+const trigger=document.querySelector('.menu-trigger'),panel=document.querySelector('.nav-panel');function closeMenu(){if(!trigger||!panel)return;if(panel.classList.contains('open'))setMenu(false)}document.querySelectorAll('.nav-item').forEach((el,i)=>el.style.setProperty('--i',i));
 const setMenu=open=>{
+ if(!trigger||!panel)return;
+ if(open)setHeaderHidden(false);
  trigger.setAttribute('aria-expanded',String(open));
  panel.classList.toggle('open',open);
  panel.setAttribute('aria-hidden',String(!open));
  body.classList.toggle('menu-open',open);
  /* The icon carries the state visually; this keeps the accessible name in step. */
- trigger.setAttribute('aria-label',open
-   ?(root.lang==='en'?'Close menu':'메뉴 닫기')
-   :(root.lang==='en'?'Open menu':'메뉴 열기'));
+ const openLabel=root.lang==='en'?'Close menu':'메뉴 닫기';
+ const shutLabel=root.lang==='en'?'Open menu':'메뉴 열기';
+ trigger.setAttribute('aria-label',open?openLabel:shutLabel);
+ menuFab.setAttribute('aria-label',shutLabel);
  /* Focus the panel, NOT the first link. Focusing a link marked it as :focus-visible --
     the browser treats programmatic focus after a click as keyboard-ish -- so opening
     the menu on a phone left a red ring and underline sitting on 회사소개 as though it
@@ -25,6 +64,7 @@ const setMenu=open=>{
  if(open)panel.focus();
  else trigger.focus()};
 trigger?.addEventListener('click',()=>setMenu(trigger.getAttribute('aria-expanded')!=='true'));
+menuFab.addEventListener('click',()=>setMenu(true));
 /* Keep Tab inside the open panel; without this focus walks the page behind it. */
 addEventListener('keydown',e=>{
  if(e.key!=='Tab'||!panel?.classList.contains('open'))return;
