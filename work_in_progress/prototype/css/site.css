@@ -1044,35 +1044,44 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 
 /* Evidence field — editorial quartet (lead + stack + wide).
    A fills the left column height; B/C stack on the right; D is a full-width
-   documentary plate under the pair. Equal 2×2 grids are avoided on purpose. */
+   documentary plate under the pair. Equal 2×2 grids are avoided on purpose.
+
+   Mobile note: progressive-image layers are absolute, and figcaption is absolute
+   too — so the figure has no in-flow children. Some real mobile browsers (not
+   desktop device-mode) then collapse aspect-ratio boxes to ~0px, leaving only a
+   dark speck from the #0b0d0f frame. An in-flow ::before ratio strut keeps the
+   box height real on those engines; aspect-ratio is left unset wherever the strut
+   is active so the two sizing methods do not stack. */
 .sco-evidence-field{display:flex;flex-direction:column;gap:clamp(12px,1.6vw,24px);
   margin-top:clamp(36px,3.6vw,56px)}
 .sco-evidence-lead-stack{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);
   gap:clamp(12px,1.6vw,24px);align-items:stretch}
 .sco-evidence-stack{display:flex;flex-direction:column;gap:clamp(12px,1.6vw,24px);min-height:0}
 .sco-evidence-lead{align-self:stretch;height:100%;min-height:0;aspect-ratio:auto}
-.sco-evidence-stack .sco-evidence{flex:0 0 auto;width:100%;aspect-ratio:16/11}
-.sco-evidence-wide{aspect-ratio:16/9}
+.sco-evidence-stack .sco-evidence{flex:0 0 auto;width:100%;aspect-ratio:auto}
+.sco-evidence-wide{aspect-ratio:auto}
 .sco-evidence .progressive-image{position:absolute;inset:0;display:block;width:100%;height:100%}
 .sco-evidence .progressive-image__preview,
 .sco-evidence .progressive-image__full{width:100%;height:100%;object-fit:cover}
+/* In-flow ratio strut — sizes the abspos-only figure. Desktop lead stretches to
+   the B/C stack, so it stays strut-free until the single-column breakpoint. */
+.sco-evidence-stack .sco-evidence:before,
+.sco-evidence-wide:before{content:"";display:block;width:100%;padding-bottom:68.75%}
+.sco-evidence-wide:before{padding-bottom:56.25%}
 
 @media(max-width:1023px){
   .sco-evidence-lead-stack{grid-template-columns:1fr;gap:24px}
-  .sco-evidence-lead{aspect-ratio:16/11;height:auto}
+  .sco-evidence-lead{aspect-ratio:auto;height:auto;min-height:0}
+  .sco-evidence-lead:before{content:"";display:block;width:100%;padding-bottom:68.75%}
   .sco-evidence-stack{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-  .sco-evidence-stack .sco-evidence{aspect-ratio:16/11}
 }
 @media(max-width:767px){
   /* Stack A → B → C → D so the lead lands first and the wide plate closes. */
   .sco-evidence-field{gap:34px;margin-top:36px}
   .sco-evidence-lead-stack{gap:34px}
   .sco-evidence-stack{grid-template-columns:1fr;gap:34px}
-  .sco-evidence-lead,.sco-evidence-stack .sco-evidence{aspect-ratio:16/11}
-  .sco-evidence-wide{aspect-ratio:16/9}
   .sco-head h2{margin-top:14px}
   .sco-body{gap:16px}
-  .sco-boundary{margin-top:40px}
   .sco-keywords{margin-top:52px}
   /* Stacked, the identity block must separate from the narrative by more than the
      22-26px used INSIDE it, or the two groups merge. The generic subpage stack rule
@@ -1080,17 +1089,7 @@ body.is-scroll-locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   .subpage main>section#ongoing-project>.wrap>.sco-narrative{margin-top:56px}
 }
 
-/* Ascending spacing tiers. Previously the four joints in the narrative measured
-   26/34/30/34 (mobile) and 38/48/43/49 (1440) — effectively equal, so five blocks read
-   as a flat list and the boundary note read as another body paragraph. The cadence now
-   widens as the register changes: prose -> evidence -> qualifier -> closing metadata. */
-.sco-boundary{margin-top:clamp(44px,4.4vw,66px)}
-/* Demoted, not dimmed. The old opacity:.9 never applied — .sco-disclaimer is also a
-   .reveal, and .reveal.visible{opacity:1} outranks it (0-2-0 over 0-1-0), so this note
-   rendered at exactly the body colour. Rather than fight that (and spend contrast), the
-   demotion is carried by size, leading and a footnote hairline. The hairline is derived
-   from currentColor, never a literal rgba, so it survives the cream-surface remap; it is
-   vertical, so it adds no horizontal rule beneath the framed evidence boxes. */
+/* Home SCO hero still uses .sco-disclaimer for the short “not completed” note. */
 .sco-disclaimer{margin:0;max-width:var(--sco-measure);font-size:14px;line-height:1.78;
   color:var(--muted-d);padding-left:clamp(16px,1.6vw,22px);
   border-left:1px solid;border-left-color:color-mix(in srgb,currentColor 24%,transparent)}
