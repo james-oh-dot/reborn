@@ -7,6 +7,8 @@
     { "path": "Hero/HERO3.png", "max_width": 5016, "quality": 90 },
     { "path": "projects/sco-noah/site-inspection-primary.jpg", "max_width": 1920 },
     { "path": "projects/sco-noah/sco-public-record-secondary.jpeg", "max_width": 1600 },
+    { "path": "projects/sco-noah/site-activity-lead.jpg", "max_width": 1200 },
+    { "path": "projects/sco-noah/site-exhibition-wide.jpg", "max_width": 1200 },
     { "path": "evidence/kisa-hyper-vision.png", "max_width": 900 },
     { "path": "products/7cubic/*.png", "max_width": 1200 },
     { "path": "projects/fitm/app.png", "max_width": 1200 },
